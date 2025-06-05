@@ -11,12 +11,16 @@ export default function DataCard({ fieldOptions, weatherData }) {
         if (!selectedField) return "No data selected";
 
         const selectedOption = fieldOptions.find((opt) => opt.key === selectedField);
-        return `${weatherData[selectedField]}`;
+        return `${selectedOption?.label}: ${weatherData[selectedField]}`;
     };
 
      return (
-        <div>
-            <select value={selectedField} onChange={handleSelectChange}>
+        <div className="p-4 border m-1 rounded">
+            <select 
+                value={selectedField} 
+                onChange={handleSelectChange}
+                className="border rounded"
+            >
                 <option value="">Please select an option</option>
                 {fieldOptions.map(({ key, label }) => {
                     return (

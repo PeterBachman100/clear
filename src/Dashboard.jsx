@@ -27,7 +27,7 @@ export default function DashBoard() {
 
     return (
         <div>
-            <button onClick={handleAddCard}>Add DataCard</button>
+            <button onClick={handleAddCard} className='px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700'>Add DataCard</button>
             {cards.map(({ id }) => (
                 <DataCard 
                     key={id}
