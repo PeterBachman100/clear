@@ -5,6 +5,15 @@ export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
     const [lat, setLat] = useState(47.3923);
     const [lon, setLon] = useState(-121.4001)
+    const [hourlyParams, setHourlyParams] = useState(["temperature_2m", "apparent_temperature"]);
+
+    const availableParams = [
+        { label: "Temperature", value: "temperature_2m" },
+        { label: "Apparent Temperature", value: "apparent_temperature" },
+        { label: "Humidity", value: "relative_humidity_2m" },
+        { label: "Wind Speed", value: "wind_speed_10m" },
+        { label: "Precipitation", value: "precipitation" },
+    ];
 
     const handleLatChange = (event) => {
         setLat(event.target.value);
@@ -13,12 +22,19 @@ export default function WeatherDisplay() {
         setLon(event.target.value);
     }
 
+    const handleCheckboxChange = (e) => {
+        const { value, checked } = e.target;
+        setHourlyParams((prev) => 
+            checked ? [...prev, value] : prev.filter((param) => param !== value)
+        );
+    };
+
     const fetchWeather = async () => {
         try {
             const params = {
             "latitude": lat,
             "longitude": lon,
-            "hourly": ["temperature_2m", "apparent_temperature"],
+            "hourly": hourlyParams,
             "wind_speed_unit": "mph",
             "temperature_unit": "fahrenheit",
             "precipitation_unit": "inch"
@@ -73,6 +89,17 @@ export default function WeatherDisplay() {
                 value={lon}
                 onChange={handleLonChange}
             />
+            <div className="mb-4">
+                <h3 className="font-medium mb-1 text-sm">Select weather parameters</h3>
+                <div className="space-y-1">
+                    {availableParams.map(({ label, value }) => (
+                        <label key={value} className="flex items-center gap-2 text-sm">
+                            <input type="checkbox" value={value} checked={hourlyParams.includes(value)} onChange={handleCheckboxChange} />
+                            {label}
+                        </label>
+                    ))}
+                </div>
+            </div>
             {weather?.hourly ? (
                 <div>
                     <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
