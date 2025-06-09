@@ -5,14 +5,30 @@ export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
     const [lat, setLat] = useState(47.3923);
     const [lon, setLon] = useState(-121.4001)
-    const [hourlyParams, setHourlyParams] = useState(["temperature_2m", "apparent_temperature"]);
+    const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
 
     const availableParams = [
         { label: "Temperature", value: "temperature_2m" },
         { label: "Apparent Temperature", value: "apparent_temperature" },
         { label: "Humidity", value: "relative_humidity_2m" },
-        { label: "Wind Speed", value: "wind_speed_10m" },
-        { label: "Precipitation", value: "precipitation" },
+        { label: "Dew Point", value: "dew_point_2m"},
+        { label: "Surface", value: "surface_pressure"},
+        { label: "cloud_cover", value: "cloud_cover"},
+        { label: "cloud_cover_low", value: "cloud_cover_low"},
+        { label: "cloud_cover_mid", value: "cloud_cover_mid"},
+        { label: "cloud_cover_high", value: "cloud_cover_high"},
+        { label: "wind_speed_10m", value: "wind_speed_10m"},
+        { label: "wind_gusts_10m", value: "wind_gusts_10m"},
+        { label: "wind_direction_10m", value: "wind_direction_10m"},
+        { label: "precipitation", value: "precipitation"},
+        { label: "Wind snowfall", value: "snowfall" },
+        { label: "rain", value: "rain" },
+        { label: "showers", value: "showers" },
+        { label: "weather_code", value: "weather_code" },
+        { label: "snow_depth", value: "snow_depth" },
+        { label: "freezing_level_height", value: "freezing_level_height" },
+        { label: "visibility", value: "visibility" },
+        { label: "is_day", value: "is_day" },
     ];
 
     const handleLatChange = (event) => {
