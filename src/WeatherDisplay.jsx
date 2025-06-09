@@ -5,6 +5,7 @@ export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
     const [lat, setLat] = useState(47.3923);
     const [lon, setLon] = useState(-121.4001)
+    const [forecastDays, setForecastDays] = useState(1);
     const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
 
     const availableParams = [
@@ -38,6 +39,10 @@ export default function WeatherDisplay() {
         setLon(event.target.value);
     }
 
+    const handleForecastDaysChange = (event) => {
+        setForecastDays(event.target.value);
+    }
+
     const handleCheckboxChange = (e) => {
         const { value, checked } = e.target;
         setHourlyParams((prev) => 
@@ -51,6 +56,7 @@ export default function WeatherDisplay() {
             "latitude": lat,
             "longitude": lon,
             "hourly": hourlyParams,
+            "forecast_days": forecastDays,
             "wind_speed_unit": "mph",
             "temperature_unit": "fahrenheit",
             "precipitation_unit": "inch"
@@ -93,20 +99,34 @@ export default function WeatherDisplay() {
     return (
         <div className="p-4">
             <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
-            <label>Lat: </label>
-            <input 
-                type="number"
-                value={lat}
-                onChange={handleLatChange}
-            />
-            <label>Lon: </label>
-            <input 
-                type="number"
-                value={lon}
-                onChange={handleLonChange}
-            />
             <div className="mb-4">
-                <h3 className="font-medium mb-1 text-sm">Select weather parameters</h3>
+                <h3 className="text-3xl mb-1">Select Location:</h3>
+                <label className="font-bold">Lat: </label>
+                <input 
+                    type="number"
+                    value={lat}
+                    onChange={handleLatChange}
+                />
+                <label className="font-bold">Lon: </label>
+                <input 
+                    type="number"
+                    value={lon}
+                    onChange={handleLonChange}
+                />
+            </div>
+            <div className="mb-4">
+                <h3 className="text-3xl mb-1">Select Forecast Length: {forecastDays} Day(s)</h3>
+                <input 
+                    type="range"
+                    id="forecastDays"
+                    min="1"
+                    max="16"
+                    value={forecastDays}
+                    onChange={handleForecastDaysChange}
+                />
+            </div>
+            <div className="mb-4">
+                <h3 className="text-3xl mb-1">Select weather parameters</h3>
                 <div className="space-y-1">
                     {availableParams.map(({ label, value }) => (
                         <label key={value} className="flex items-center gap-2 text-sm">
