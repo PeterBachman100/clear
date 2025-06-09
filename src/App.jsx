@@ -1,10 +1,10 @@
-import DashBoard from "./Dashboard";
+import WeatherDisplay from "./WeatherDisplay";
 
 function App() {
 
   return (
     <div>
-      <DashBoard />
+      <WeatherDisplay />
     </div>
   );
 }
