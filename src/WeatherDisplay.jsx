@@ -37,17 +37,18 @@ export default function WeatherDisplay() {
             const hourly = response.hourly();
 
             const weatherData = {
+                location: {
+                    latitude: latitude,
+                    longitude: longitude
+                },
                 hourly: {
                     time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())].map(
                         (_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
                     ),
-                    temperature2m: hourly.variables(0).valuesArray(),
-                    temperatureApparent: hourly.variables(1).valuesArray(),
+                    ...Object.fromEntries(
+                        params.hourly.map((name, index) => [name, hourly.variables(index).valuesArray()])
+                    ),
                 },
-                location: {
-                    latitude: latitude,
-                    longitude: longitude
-                }
             };
 
             setWeather(weatherData);
