@@ -18,7 +18,7 @@ export default function WeatherDisplay() {
             const params = {
             "latitude": lat,
             "longitude": lon,
-            "hourly": "temperature_2m",
+            "hourly": ["temperature_2m", "apparent_temperature"],
             "wind_speed_unit": "mph",
             "temperature_unit": "fahrenheit",
             "precipitation_unit": "inch"
@@ -42,6 +42,7 @@ export default function WeatherDisplay() {
                         (_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
                     ),
                     temperature2m: hourly.variables(0).valuesArray(),
+                    temperatureApparent: hourly.variables(1).valuesArray(),
                 },
                 location: {
                     latitude: latitude,
@@ -77,15 +78,24 @@ export default function WeatherDisplay() {
                     <table className="table-auto w-full text-sm border border-gray-300">
                         <thead className="bg-gray-100">
                             <tr>
-                            <th className="px-2 py-1 border-b">Time</th>
-                            <th className="px-2 py-1 border-b">Temperature (°F)</th>
+                                {Object.keys(weather.hourly).map((key) => {
+                                    return <th key={key} className="px-2 py-1 border-b">{key}</th>;
+                                })}
                             </tr>
                         </thead>
                         <tbody>
                             {weather.hourly.time.map((t, i) => (
                             <tr key={i} className="odd:bg-white even:bg-gray-50">
-                                <td className="px-2 py-1 border-b text-center">{t.toLocaleString()}</td>
-                                <td className="px-2 py-1 border-b text-center">{weather.hourly.temperature2m[i]}°F</td>
+                                {/* <td className="px-2 py-1 border-b text-center">{t.toLocaleString()}</td>
+                                <td className="px-2 py-1 border-b text-center">{weather.hourly.temperature2m[i]}°F</td> */}
+                                {Object.entries(weather.hourly).map(([key, values]) => (
+                                        <td key={key} className="px-2 py-1 border-b text-center">
+                                            {key === "time"
+                                                ? values[i].toLocaleString()
+                                                : values[i]
+                                            }
+                                        </td>
+                                ))}
                             </tr>
                         ))}
                         </tbody>
