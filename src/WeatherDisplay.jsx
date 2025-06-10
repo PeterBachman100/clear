@@ -7,6 +7,9 @@ export default function WeatherDisplay() {
     const [lon, setLon] = useState(-121.4001)
     const [forecastDays, setForecastDays] = useState(1);
     const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
+    const [temperatureUnit, setTemperatureUnit] = useState("fahrenheit");
+	const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
+	const [precipitationUnit, setPrecipitationUnit] = useState("inch")
 
     const availableParams = [
         { label: "Temperature", value: "temperature_2m" },
@@ -30,6 +33,24 @@ export default function WeatherDisplay() {
         { label: "freezing_level_height", value: "freezing_level_height" },
         { label: "visibility", value: "visibility" },
         { label: "is_day", value: "is_day" },
+        { label: "uv_index", value: "uv_index"},
+    ];
+
+    const availableWindSpeedUnits = [
+        { label: "mph", value: "mph" },
+        { label: "km/h", value: "kmh" },
+        { label: "m/s", value: "ms" },
+        { label: "Knots", value: "kn" },
+    ];
+
+    const availableTemperatureUnits = [
+        { label: "Fahrenheit", value: "fahrenheit" },
+        { label: "Celsius", value: "celsius" },
+    ];
+
+    const availablePrecipitationUnits = [
+        { label: "Inch", value: "inch" },
+        { label: "Millimeter", value: "mm" },
     ];
 
     const handleLatChange = (event) => {
@@ -43,7 +64,7 @@ export default function WeatherDisplay() {
         setForecastDays(event.target.value);
     }
 
-    const handleCheckboxChange = (e) => {
+    const handleHourlyParamsChange = (e) => {
         const { value, checked } = e.target;
         setHourlyParams((prev) => 
             checked ? [...prev, value] : prev.filter((param) => param !== value)
@@ -57,9 +78,9 @@ export default function WeatherDisplay() {
             "longitude": lon,
             "hourly": hourlyParams,
             "forecast_days": forecastDays,
-            "wind_speed_unit": "mph",
-            "temperature_unit": "fahrenheit",
-            "precipitation_unit": "inch"
+            "wind_speed_unit": windSpeedUnit,
+            "temperature_unit": temperatureUnit,
+            "precipitation_unit": precipitationUnit,
             };
 
             const url = "https://api.open-meteo.com/v1/forecast";
@@ -117,7 +138,7 @@ export default function WeatherDisplay() {
             <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select Forecast Length: {forecastDays} Day(s)</h3>
                 <input 
-                    type="range"
+                    type="number"
                     id="forecastDays"
                     min="1"
                     max="16"
@@ -126,11 +147,41 @@ export default function WeatherDisplay() {
                 />
             </div>
             <div className="mb-4">
+                <h3 className="text-3xl mb-1">Select Units</h3>
+                <h4 className="text-xl">Temperature</h4>
+                <div className="space-y-1">
+                    {availableTemperatureUnits.map(({ label, value }) => (
+                        <label key={value} className="flex items-center gap-2 text-sm">
+                            <input type="radio" value={value} name="temperatureUnit" checked={temperatureUnit === value} onChange={(e) => setTemperatureUnit(e.target.value)} />
+                            {label}
+                        </label>
+                    ))}
+                </div>
+                <h4 className="text-xl">Wind Speed</h4>
+                <div className="space-y-1">
+                    {availableWindSpeedUnits.map(({ label, value }) => (
+                        <label key={value} className="flex items-center gap-2 text-sm">
+                            <input type="radio" name="windSpeedUnit" value={value} checked={windSpeedUnit === value} onChange={(e) => setWindSpeedUnit(e.target.value)} />
+                            {label}
+                        </label>
+                    ))}
+                </div>
+                <h4 className="text-xl">Precipitation</h4>
+                <div className="space-y-1">
+                    {availablePrecipitationUnits.map(({ label, value }) => (
+                        <label key={value} className="flex items-center gap-2 text-sm">
+                            <input type="radio" value={value} checked={precipitationUnit === value} name="precipitationUnit" onChange={(e) => setPrecipitationUnit(e.target.value)} />
+                            {label}
+                        </label>
+                    ))}
+                </div>
+            </div>
+            <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select weather parameters</h3>
                 <div className="space-y-1">
                     {availableParams.map(({ label, value }) => (
                         <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="checkbox" value={value} checked={hourlyParams.includes(value)} onChange={handleCheckboxChange} />
+                            <input type="checkbox" value={value} checked={hourlyParams.includes(value)} onChange={handleHourlyParamsChange} />
                             {label}
                         </label>
                     ))}
