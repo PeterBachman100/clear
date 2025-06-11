@@ -4,6 +4,7 @@ import { availableUnits } from "./assets/availableUnits";
 import { availableParams } from "./assets/availableParams";
 import LocationInput from "./components/LocationInput";
 import ForecastLengthInput from "./components/ForecastLengthInput";
+import UnitSelection from "./components/UnitSelection";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -85,36 +86,7 @@ export default function WeatherDisplay() {
             <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
             <LocationInput location={location} onChange={setLocation} />
             <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
-            <div className="mb-4">
-                <h3 className="text-3xl mb-1">Select Units</h3>
-                <h4 className="text-xl">Temperature</h4>
-                <div className="space-y-1">
-                    {availableUnits.temperature.map(({ label, value }) => (
-                        <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" value={value} name="temperatureUnit" checked={units.temperature === value} onChange={(e) => setUnits((prev) => ({...prev, temperature: e.target.value}))} />
-                            {label}
-                        </label>
-                    ))}
-                </div>
-                <h4 className="text-xl">Wind Speed</h4>
-                <div className="space-y-1">
-                    {availableUnits.windSpeed.map(({ label, value }) => (
-                        <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" name="windSpeedUnit" value={value} checked={units.windSpeed === value} onChange={(e) => setUnits((prev) => ({...prev, windSpeed: e.target.value}))} />
-                            {label}
-                        </label>
-                    ))}
-                </div>
-                <h4 className="text-xl">Precipitation</h4>
-                <div className="space-y-1">
-                    {availableUnits.precipitation.map(({ label, value }) => (
-                        <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" value={value} checked={units.precipitation === value} name="precipitationUnit" onChange={(e) => setUnits((prev) => ({...prev, precipitation: e.target.value}))} />
-                            {label}
-                        </label>
-                    ))}
-                </div>
-            </div>
+            <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>
             <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select weather parameters</h3>
                 <div className="space-y-1">
