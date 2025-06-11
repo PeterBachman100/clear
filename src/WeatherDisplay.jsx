@@ -1,57 +1,26 @@
 import { fetchWeatherApi } from "openmeteo";
 import { useState} from "react";
+import { availableUnits } from "./assets/availableUnits";
+import { availableParams } from "./assets/availableParams";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
-    const [lat, setLat] = useState(47.3923);
-    const [lon, setLon] = useState(-121.4001)
+
+    const [location, setLocation] = useState({
+        latitude: 47.3923,
+        longitude: -121.4001
+    });
+
     const [forecastDays, setForecastDays] = useState(1);
+
     const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
-    const [temperatureUnit, setTemperatureUnit] = useState("fahrenheit");
-	const [windSpeedUnit, setWindSpeedUnit] = useState("mph");
-	const [precipitationUnit, setPrecipitationUnit] = useState("inch")
 
-    const availableParams = [
-        { label: "Temperature", value: "temperature_2m" },
-        { label: "Apparent Temperature", value: "apparent_temperature" },
-        { label: "Humidity", value: "relative_humidity_2m" },
-        { label: "Dew Point", value: "dew_point_2m"},
-        { label: "Surface", value: "surface_pressure"},
-        { label: "cloud_cover", value: "cloud_cover"},
-        { label: "cloud_cover_low", value: "cloud_cover_low"},
-        { label: "cloud_cover_mid", value: "cloud_cover_mid"},
-        { label: "cloud_cover_high", value: "cloud_cover_high"},
-        { label: "wind_speed_10m", value: "wind_speed_10m"},
-        { label: "wind_gusts_10m", value: "wind_gusts_10m"},
-        { label: "wind_direction_10m", value: "wind_direction_10m"},
-        { label: "precipitation", value: "precipitation"},
-        { label: "Wind snowfall", value: "snowfall" },
-        { label: "rain", value: "rain" },
-        { label: "showers", value: "showers" },
-        { label: "weather_code", value: "weather_code" },
-        { label: "snow_depth", value: "snow_depth" },
-        { label: "freezing_level_height", value: "freezing_level_height" },
-        { label: "visibility", value: "visibility" },
-        { label: "is_day", value: "is_day" },
-        { label: "uv_index", value: "uv_index"},
-    ];
+    const [units, setUnits] = useState({
+        temperature: "fahrenheit",
+        windSpeed: "mph",
+        precipitation: "inch"
+    });
 
-    const availableWindSpeedUnits = [
-        { label: "mph", value: "mph" },
-        { label: "km/h", value: "kmh" },
-        { label: "m/s", value: "ms" },
-        { label: "Knots", value: "kn" },
-    ];
-
-    const availableTemperatureUnits = [
-        { label: "Fahrenheit", value: "fahrenheit" },
-        { label: "Celsius", value: "celsius" },
-    ];
-
-    const availablePrecipitationUnits = [
-        { label: "Inch", value: "inch" },
-        { label: "Millimeter", value: "mm" },
-    ];
 
     const handleLatChange = (event) => {
         setLat(event.target.value);
@@ -78,9 +47,9 @@ export default function WeatherDisplay() {
             "longitude": lon,
             "hourly": hourlyParams,
             "forecast_days": forecastDays,
-            "wind_speed_unit": windSpeedUnit,
-            "temperature_unit": temperatureUnit,
-            "precipitation_unit": precipitationUnit,
+            "wind_speed_unit": units.windSpeed,
+            "temperature_unit": units.temperature,
+            "precipitation_unit": units.precipitation,
             };
 
             const url = "https://api.open-meteo.com/v1/forecast";
@@ -122,17 +91,17 @@ export default function WeatherDisplay() {
             <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
             <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select Location:</h3>
-                <label className="font-bold">Lat: </label>
+                <label className="font-bold">Latitude: </label>
                 <input 
                     type="number"
-                    value={lat}
-                    onChange={handleLatChange}
+                    value={location.latitude}
+                    onChange={(e) => setLocation((prev) => ({...prev, latitude: e.target.value}))}
                 />
-                <label className="font-bold">Lon: </label>
+                <label className="font-bold">Longitude: </label>
                 <input 
                     type="number"
-                    value={lon}
-                    onChange={handleLonChange}
+                    value={location.longitude}
+                    onChange={(e) => setLocation((prev) => ({...prev, longitude: e.target.value}))}
                 />
             </div>
             <div className="mb-4">
@@ -150,27 +119,27 @@ export default function WeatherDisplay() {
                 <h3 className="text-3xl mb-1">Select Units</h3>
                 <h4 className="text-xl">Temperature</h4>
                 <div className="space-y-1">
-                    {availableTemperatureUnits.map(({ label, value }) => (
+                    {availableUnits.temperature.map(({ label, value }) => (
                         <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" value={value} name="temperatureUnit" checked={temperatureUnit === value} onChange={(e) => setTemperatureUnit(e.target.value)} />
+                            <input type="radio" value={value} name="temperatureUnit" checked={units.temperature === value} onChange={(e) => setUnits((prev) => ({...prev, temperature: e.target.value}))} />
                             {label}
                         </label>
                     ))}
                 </div>
                 <h4 className="text-xl">Wind Speed</h4>
                 <div className="space-y-1">
-                    {availableWindSpeedUnits.map(({ label, value }) => (
+                    {availableUnits.windSpeed.map(({ label, value }) => (
                         <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" name="windSpeedUnit" value={value} checked={windSpeedUnit === value} onChange={(e) => setWindSpeedUnit(e.target.value)} />
+                            <input type="radio" name="windSpeedUnit" value={value} checked={units.windSpeed === value} onChange={(e) => setUnits((prev) => ({...prev, windSpeed: e.target.value}))} />
                             {label}
                         </label>
                     ))}
                 </div>
                 <h4 className="text-xl">Precipitation</h4>
                 <div className="space-y-1">
-                    {availablePrecipitationUnits.map(({ label, value }) => (
+                    {availableUnits.precipitation.map(({ label, value }) => (
                         <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="radio" value={value} checked={precipitationUnit === value} name="precipitationUnit" onChange={(e) => setPrecipitationUnit(e.target.value)} />
+                            <input type="radio" value={value} checked={units.precipitation === value} name="precipitationUnit" onChange={(e) => setUnits((prev) => ({...prev, precipitation: e.target.value}))} />
                             {label}
                         </label>
                     ))}
@@ -201,8 +170,6 @@ export default function WeatherDisplay() {
                         <tbody>
                             {weather.hourly.time.map((t, i) => (
                             <tr key={i} className="odd:bg-white even:bg-gray-50">
-                                {/* <td className="px-2 py-1 border-b text-center">{t.toLocaleString()}</td>
-                                <td className="px-2 py-1 border-b text-center">{weather.hourly.temperature2m[i]}°F</td> */}
                                 {Object.entries(weather.hourly).map(([key, values]) => (
                                         <td key={key} className="px-2 py-1 border-b text-center">
                                             {key === "time"
