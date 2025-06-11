@@ -7,6 +7,7 @@ import ForecastLengthInput from "./components/ForecastLengthInput";
 import UnitSelection from "./components/UnitSelection";
 import WeatherParameterSelector from "./components/WeatherParameterSelector";
 import WeatherTable from "./components/WeatherTable";
+import { fetchWeather } from "./utils/fetchWeather";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -15,11 +16,8 @@ export default function WeatherDisplay() {
         latitude: 47.3923,
         longitude: -121.4001
     });
-
     const [forecastLength, setForecastLength] = useState(1);
-
     const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
-
     const [units, setUnits] = useState({
         temperature: "fahrenheit",
         windSpeed: "mph",
@@ -29,7 +27,6 @@ export default function WeatherDisplay() {
     const handleForecastLengthChange = (event) => {
         setForecastLength(event.target.value);
     }
-
     const handleHourlyParamsChange = (e) => {
         const { value, checked } = e.target;
         setHourlyParams((prev) => 
@@ -37,47 +34,15 @@ export default function WeatherDisplay() {
         );
     };
 
-    const fetchWeather = async () => {
+    const handleFetchWeather = async () => {
         try {
-            const params = {
-            "latitude": location.latitude,
-            "longitude": location.longitude,
-            "hourly": hourlyParams,
-            "forecast_days": forecastLength,
-            "wind_speed_unit": units.windSpeed,
-            "temperature_unit": units.temperature,
-            "precipitation_unit": units.precipitation,
-            };
-
-            const url = "https://api.open-meteo.com/v1/forecast";
-            const responses = await fetchWeatherApi(url, params);
-            const response = responses[0];
-            
-            const utcOffsetSeconds = response.utcOffsetSeconds();
-            const timezone = response.timezone();
-            const timezoneAbbreviation = response.timezoneAbbreviation();
-            const latitude = response.latitude();
-            const longitude = response.longitude();
-
-            const hourly = response.hourly();
-
-            const weatherData = {
-                location: {
-                    latitude: latitude,
-                    longitude: longitude
-                },
-                hourly: {
-                    time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())].map(
-                        (_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
-                    ),
-                    ...Object.fromEntries(
-                        params.hourly.map((name, index) => [name, hourly.variables(index).valuesArray()])
-                    ),
-                },
-            };
-
+            const weatherData = await fetchWeather({
+                location,
+                hourlyParams,
+                forecastLength,
+                units
+            });
             setWeather(weatherData);
-
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
         }
@@ -85,7 +50,7 @@ export default function WeatherDisplay() {
 
     return (
         <div className="p-4">
-            <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
+            <button onClick={handleFetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
             <LocationInput location={location} onChange={setLocation} />
             <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
             <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>
