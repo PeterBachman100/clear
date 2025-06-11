@@ -1,4 +1,3 @@
-import { fetchWeatherApi } from "openmeteo";
 import { useState} from "react";
 import { availableUnits } from "./assets/availableUnits";
 import { availableParams } from "./assets/availableParams";
