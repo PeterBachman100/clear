@@ -3,6 +3,7 @@ import { useState} from "react";
 import { availableUnits } from "./assets/availableUnits";
 import { availableParams } from "./assets/availableParams";
 import LocationInput from "./components/LocationInput";
+import ForecastLengthInput from "./components/ForecastLengthInput";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -12,7 +13,7 @@ export default function WeatherDisplay() {
         longitude: -121.4001
     });
 
-    const [forecastDays, setForecastDays] = useState(1);
+    const [forecastLength, setForecastLength] = useState(1);
 
     const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
 
@@ -22,8 +23,8 @@ export default function WeatherDisplay() {
         precipitation: "inch"
     });
 
-    const handleForecastDaysChange = (event) => {
-        setForecastDays(event.target.value);
+    const handleForecastLengthChange = (event) => {
+        setForecastLength(event.target.value);
     }
 
     const handleHourlyParamsChange = (e) => {
@@ -39,7 +40,7 @@ export default function WeatherDisplay() {
             "latitude": location.latitude,
             "longitude": location.longitude,
             "hourly": hourlyParams,
-            "forecast_days": forecastDays,
+            "forecast_days": forecastLength,
             "wind_speed_unit": units.windSpeed,
             "temperature_unit": units.temperature,
             "precipitation_unit": units.precipitation,
@@ -83,17 +84,7 @@ export default function WeatherDisplay() {
         <div className="p-4">
             <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
             <LocationInput location={location} onChange={setLocation} />
-            <div className="mb-4">
-                <h3 className="text-3xl mb-1">Select Forecast Length: {forecastDays} Day(s)</h3>
-                <input 
-                    type="number"
-                    id="forecastDays"
-                    min="1"
-                    max="16"
-                    value={forecastDays}
-                    onChange={handleForecastDaysChange}
-                />
-            </div>
+            <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
             <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select Units</h3>
                 <h4 className="text-xl">Temperature</h4>
