@@ -7,6 +7,7 @@ import UnitSelection from "./components/UnitSelection";
 import WeatherParameterSelector from "./components/WeatherParameterSelector";
 import WeatherTable from "./components/WeatherTable";
 import { fetchWeather } from "./utils/fetchWeather";
+import { Button } from "@mui/material";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -49,7 +50,7 @@ export default function WeatherDisplay() {
 
     return (
         <div className="p-4">
-            <button onClick={handleFetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
+            <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             <LocationInput location={location} onChange={setLocation} />
             <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
             <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>

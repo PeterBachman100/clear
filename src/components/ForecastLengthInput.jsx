@@ -1,15 +1,20 @@
+import{ Box, Slider, Typography } from '@mui/material';
+
 export default function ForecastLengthInput( {forecastLength, onChange}) {
     return (
-        <div className="mb-4">
-            <h3 className="text-3xl mb-1">Select Forecast Length: {forecastLength} Day(s)</h3>
-            <input 
-                type="number"
-                id="forecastDays"
-                min="1"
-                max="16"
-                value={forecastLength}
+        <Box sx={{maxWidth: 300}}>
+            <Typography variant='h6'>
+                Forecast Length: {forecastLength} Day{forecastLength > 1 ? 's' : ''}
+            </Typography>
+            <Slider 
+                value={Number(forecastLength)}
+                min={1}
+                max={16}
+                step={1}
                 onChange={onChange}
+                valueLabelDisplay='auto'
+                marks
             />
-        </div>
+        </Box>
     );
 }
