@@ -5,6 +5,7 @@ import { availableParams } from "./assets/availableParams";
 import LocationInput from "./components/LocationInput";
 import ForecastLengthInput from "./components/ForecastLengthInput";
 import UnitSelection from "./components/UnitSelection";
+import WeatherParameterSelector from "./components/WeatherParameterSelector";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -87,17 +88,7 @@ export default function WeatherDisplay() {
             <LocationInput location={location} onChange={setLocation} />
             <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
             <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>
-            <div className="mb-4">
-                <h3 className="text-3xl mb-1">Select weather parameters</h3>
-                <div className="space-y-1">
-                    {availableParams.map(({ label, value }) => (
-                        <label key={value} className="flex items-center gap-2 text-sm">
-                            <input type="checkbox" value={value} checked={hourlyParams.includes(value)} onChange={handleHourlyParamsChange} />
-                            {label}
-                        </label>
-                    ))}
-                </div>
-            </div>
+            <WeatherParameterSelector availableParams={availableParams} hourlyParams={hourlyParams} onChange={handleHourlyParamsChange} />
             {weather?.hourly ? (
                 <div>
                     <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
