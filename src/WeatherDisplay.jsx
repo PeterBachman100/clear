@@ -2,6 +2,7 @@ import { fetchWeatherApi } from "openmeteo";
 import { useState} from "react";
 import { availableUnits } from "./assets/availableUnits";
 import { availableParams } from "./assets/availableParams";
+import LocationInput from "./components/LocationInput";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -21,14 +22,6 @@ export default function WeatherDisplay() {
         precipitation: "inch"
     });
 
-
-    const handleLatChange = (event) => {
-        setLat(event.target.value);
-    }
-    const handleLonChange = (event) => {
-        setLon(event.target.value);
-    }
-
     const handleForecastDaysChange = (event) => {
         setForecastDays(event.target.value);
     }
@@ -43,8 +36,8 @@ export default function WeatherDisplay() {
     const fetchWeather = async () => {
         try {
             const params = {
-            "latitude": lat,
-            "longitude": lon,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
             "hourly": hourlyParams,
             "forecast_days": forecastDays,
             "wind_speed_unit": units.windSpeed,
@@ -89,21 +82,7 @@ export default function WeatherDisplay() {
     return (
         <div className="p-4">
             <button onClick={fetchWeather} className="bg-blue-500 text-white px-4 py-2 rounded mb-4 cursor-pointer">Fetch Weather Data</button>
-            <div className="mb-4">
-                <h3 className="text-3xl mb-1">Select Location:</h3>
-                <label className="font-bold">Latitude: </label>
-                <input 
-                    type="number"
-                    value={location.latitude}
-                    onChange={(e) => setLocation((prev) => ({...prev, latitude: e.target.value}))}
-                />
-                <label className="font-bold">Longitude: </label>
-                <input 
-                    type="number"
-                    value={location.longitude}
-                    onChange={(e) => setLocation((prev) => ({...prev, longitude: e.target.value}))}
-                />
-            </div>
+            <LocationInput location={location} onChange={setLocation} />
             <div className="mb-4">
                 <h3 className="text-3xl mb-1">Select Forecast Length: {forecastDays} Day(s)</h3>
                 <input 
