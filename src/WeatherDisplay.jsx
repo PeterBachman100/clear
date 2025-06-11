@@ -6,6 +6,7 @@ import LocationInput from "./components/LocationInput";
 import ForecastLengthInput from "./components/ForecastLengthInput";
 import UnitSelection from "./components/UnitSelection";
 import WeatherParameterSelector from "./components/WeatherParameterSelector";
+import WeatherTable from "./components/WeatherTable";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -92,29 +93,7 @@ export default function WeatherDisplay() {
             {weather?.hourly ? (
                 <div>
                     <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
-                    <table className="table-auto w-full text-sm border border-gray-300">
-                        <thead className="bg-gray-100">
-                            <tr>
-                                {Object.keys(weather.hourly).map((key) => {
-                                    return <th key={key} className="px-2 py-1 border-b">{key}</th>;
-                                })}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {weather.hourly.time.map((t, i) => (
-                            <tr key={i} className="odd:bg-white even:bg-gray-50">
-                                {Object.entries(weather.hourly).map(([key, values]) => (
-                                        <td key={key} className="px-2 py-1 border-b text-center">
-                                            {key === "time"
-                                                ? values[i].toLocaleString()
-                                                : values[i]
-                                            }
-                                        </td>
-                                ))}
-                            </tr>
-                        ))}
-                        </tbody>
-                    </table>
+                    <WeatherTable weather={weather} />
                 </div>
             ) : (<p>No data loaded yet.</p>)}
         </div>
