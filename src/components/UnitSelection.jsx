@@ -1,3 +1,5 @@
+import { Stack, Typography, FormControl, FormLabel, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+
 export default function UnitSelection({ availableUnits, units, onChange }) {
 	const handleUnitChange = (category, value) => {
 		onChange(prev => ({
@@ -8,26 +10,29 @@ export default function UnitSelection({ availableUnits, units, onChange }) {
 
 	return (
 		<div>
-			<h3>Units</h3>
-			{Object.entries(availableUnits).map(([category, unitOptions]) => (
-				<div key={category}>
-					<strong>{category}</strong>
-					<div>
-						{unitOptions.map(({ label, value }) => (
-							<label key={value}>
-								<input 
-									type="radio"
-									name={category}
+			<Typography variant="h6">Units</Typography>
+			<Stack spacing={2}>
+				{Object.entries(availableUnits).map(([category, unitOptions]) => (
+					<FormControl component="fieldset" key={category}>
+						<FormLabel component="legend" sx={{ textTransform: 'capitalize' }}>{category}</FormLabel>
+						<RadioGroup
+							row
+							name={category}
+							value={units[category]}
+							onChange={(e) => handleUnitChange(category, e.target.value)}
+						>
+							{unitOptions.map(({ label, value }) => (
+								<FormControlLabel
+									key={value}
 									value={value}
-									checked={units[category] === value}
-									onChange={() => handleUnitChange(category, value)}
+									control={<Radio />}
+									label={label}
 								/>
-								{label}
-							</label>
-						))}
-					</div>
-				</div>
-			))}
+							))}
+						</RadioGroup>
+					</FormControl>
+				))}
+			</Stack>
 		</div>
 	);
 }
