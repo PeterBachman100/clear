@@ -8,11 +8,15 @@ import WeatherParameterSelector from "./components/WeatherParameterSelector";
 import WeatherTable from "./components/WeatherTable";
 import { fetchWeather } from "./utils/fetchWeather";
 import { Button } from "@mui/material";
+import LocationSearch from "./components/LocationSearch";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
 
     const [location, setLocation] = useState({
+        name: "Snoqualmie Pass",
+        admin1: "Washington",
+        country: "United States",
         latitude: 47.3923,
         longitude: -121.4001
     });
@@ -52,6 +56,7 @@ export default function WeatherDisplay() {
         <div className="p-4">
             <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             <LocationInput location={location} onChange={setLocation} />
+            <LocationSearch onSelect={setLocation} />
             <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
             <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>
             <WeatherParameterSelector availableParams={availableParams} hourlyParams={hourlyParams} onChange={handleHourlyParamsChange} />
