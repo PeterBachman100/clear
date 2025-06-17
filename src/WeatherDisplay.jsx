@@ -40,6 +40,7 @@ export default function WeatherDisplay() {
             {weather?.hourly ? (
                 <div>
                     <WeatherChart weatherData={weather} />
+                    <WeatherChart weatherData={weather} />
                 </div>
             ) : (<p>No data loaded yet.</p>)}
         </div>

@@ -1,15 +1,23 @@
-import { ChartContainer, ChartsXAxis, ChartsYAxis, LinePlot, LineChart } from "@mui/x-charts";
-import { useState } from "react";
+import { LineChart } from "@mui/x-charts";
+import { useEffect, useState } from "react";
 
 export default function WeatherChart({ weatherData }) {
     const { freezingLevelHeight, isDay, snowDepth, time, weatherCode, windDirection10m, ...rest } = weatherData.hourly;
     const hourlyParams = Object.keys(rest);
 
-    const [selectedParameter, setSelectedParameter] = useState({ parameter: hourlyParams[0], data: weatherData.hourly[hourlyParams[0]] })
+    const [selectedParameter, setSelectedParameter] = useState({ 
+        parameter: hourlyParams[0], 
+        data: weatherData.hourly[hourlyParams[0]] 
+    });
 
-//    const renderedOptions = hourlyParams.map((param) => {
-//     return <button key={param} onClick={() => setSelectedParameter({parameter: param, data: weatherData.hourly[param]})} className="border p-1 m-1 cursor-pointer">{param}</button>;
-//    });
+    useEffect(() => {
+        setSelectedParameter(prev => ({
+            parameter: prev.parameter,
+            data: weatherData.hourly[prev.parameter]
+        }));
+    }, [weatherData]);
+
+
    const optionsDropdown = (
     <select
         className="border p-2 m-2"
@@ -54,7 +62,7 @@ export default function WeatherChart({ weatherData }) {
                 series={series}
                 xAxis={xAxis}
                 yAxis={yAxis}
-                height={500}
+                height={300}
             />
         </div>
     );
