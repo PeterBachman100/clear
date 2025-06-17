@@ -39,8 +39,6 @@ export default function WeatherDisplay() {
             <LocationSearch onSelect={setLocation} />
             {weather?.hourly ? (
                 <div>
-                    {weather.current.time.toString()}
-                    <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
                     <WeatherChart weatherData={weather} />
                 </div>
             ) : (<p>No data loaded yet.</p>)}

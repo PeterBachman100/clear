@@ -2,15 +2,18 @@ import { ChartContainer, ChartsXAxis, ChartsYAxis, LinePlot, LineChart } from "@
 import { useState } from "react";
 
 export default function WeatherChart({ weatherData }) {
-    const [selectedData, setSelectedData] = useState(weatherData.hourly.temperature2m);
+    const [selectedParameter, setSelectedParameter] = useState({ parameter: 'temperature2m', data: weatherData.hourly.temperature2m })
 
-    const renderedButtons = Object.keys(weatherData.hourly).map((param) => {
-        return <button key={param} className="p-4 border m-1" onClick={() => setSelectedData(weatherData.hourly[param])}>{param}</button>;
-    })
+   const { freezingLevelHeight, isDay, snowDepth, time, weatherCode, windDirection10m, ...rest } = weatherData.hourly;
+   const hourlyParams = Object.keys(rest);
+
+   const renderedOptions = hourlyParams.map((param) => {
+    return <button key={param} onClick={() => setSelectedParameter({parameter: param, data: weatherData.hourly[param]})} className="border p-1 m-1 cursor-pointer">{param}</button>;
+   });
 
     const series = [
         {
-            data: selectedData,
+            data: selectedParameter.data,
         }
     ];
     const xAxis = [
@@ -24,13 +27,19 @@ export default function WeatherChart({ weatherData }) {
             
         }
     ];
+    const yAxis = [
+        {
+            label: selectedParameter.parameter
+        }
+    ];
 
     return (
         <div>
-            {renderedButtons}
+            {renderedOptions}
             <LineChart
                 series={series}
                 xAxis={xAxis}
+                yAxis={yAxis}
                 height={500}
             />
         </div>
