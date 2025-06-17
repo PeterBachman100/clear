@@ -2,14 +2,28 @@ import { ChartContainer, ChartsXAxis, ChartsYAxis, LinePlot, LineChart } from "@
 import { useState } from "react";
 
 export default function WeatherChart({ weatherData }) {
-    const [selectedParameter, setSelectedParameter] = useState({ parameter: 'temperature2m', data: weatherData.hourly.temperature2m })
+    const { freezingLevelHeight, isDay, snowDepth, time, weatherCode, windDirection10m, ...rest } = weatherData.hourly;
+    const hourlyParams = Object.keys(rest);
 
-   const { freezingLevelHeight, isDay, snowDepth, time, weatherCode, windDirection10m, ...rest } = weatherData.hourly;
-   const hourlyParams = Object.keys(rest);
+    const [selectedParameter, setSelectedParameter] = useState({ parameter: hourlyParams[0], data: weatherData.hourly[hourlyParams[0]] })
 
-   const renderedOptions = hourlyParams.map((param) => {
-    return <button key={param} onClick={() => setSelectedParameter({parameter: param, data: weatherData.hourly[param]})} className="border p-1 m-1 cursor-pointer">{param}</button>;
-   });
+//    const renderedOptions = hourlyParams.map((param) => {
+//     return <button key={param} onClick={() => setSelectedParameter({parameter: param, data: weatherData.hourly[param]})} className="border p-1 m-1 cursor-pointer">{param}</button>;
+//    });
+   const optionsDropdown = (
+    <select
+        className="border p-2 m-2"
+        value={selectedParameter.parameter}
+        onChange={(e) => setSelectedParameter({
+            parameter: e.target.value,
+            data: weatherData.hourly[e.target.value]
+        })}
+    >
+        {hourlyParams.map((param) => (
+            <option key={param} value={param}>{param}</option>
+        ))}
+    </select>
+   );
 
     const series = [
         {
@@ -35,7 +49,7 @@ export default function WeatherChart({ weatherData }) {
 
     return (
         <div>
-            {renderedOptions}
+            {optionsDropdown}
             <LineChart
                 series={series}
                 xAxis={xAxis}
