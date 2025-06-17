@@ -1,14 +1,10 @@
 import { useState} from "react";
-import { availableUnits } from "./assets/availableUnits";
-import { availableParams } from "./assets/availableParams";
 import LocationInput from "./components/LocationInput";
-import ForecastLengthInput from "./components/ForecastLengthInput";
-import UnitSelection from "./components/UnitSelection";
-import WeatherParameterSelector from "./components/WeatherParameterSelector";
 import WeatherTable from "./components/WeatherTable";
 import { fetchWeather } from "./utils/fetchWeather";
 import { Button } from "@mui/material";
 import LocationSearch from "./components/LocationSearch";
+import WeatherChart from "./components/WeatherChart";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
@@ -40,13 +36,9 @@ export default function WeatherDisplay() {
 
     const handleFetchWeather = async () => {
         try {
-            const weatherData = await fetchWeather({
-                location,
-                hourlyParams,
-                forecastLength,
-                units
-            });
+            const weatherData = await fetchWeather({ location, units });
             setWeather(weatherData);
+            console.log(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
         }
@@ -57,13 +49,10 @@ export default function WeatherDisplay() {
             <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             <LocationInput location={location} onChange={setLocation} />
             <LocationSearch onSelect={setLocation} />
-            <ForecastLengthInput forecastLength={forecastLength} onChange={handleForecastLengthChange} />
-            <UnitSelection  availableUnits={availableUnits} units={units} onChange={setUnits}/>
-            <WeatherParameterSelector availableParams={availableParams} hourlyParams={hourlyParams} onChange={handleHourlyParamsChange} />
             {weather?.hourly ? (
                 <div>
                     <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
-                    <WeatherTable weather={weather} />
+                    <WeatherChart weatherData={weather} />
                 </div>
             ) : (<p>No data loaded yet.</p>)}
         </div>
