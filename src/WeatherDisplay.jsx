@@ -34,9 +34,10 @@ export default function WeatherDisplay() {
 
     return (
         <div className="p-4">
-            <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
-            <LocationInput location={location} onChange={setLocation} />
             <LocationSearch onSelect={setLocation} />
+            <p>or</p>
+            <LocationInput location={location} onChange={setLocation} />
+            <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             {weather?.hourly ? (
                 <div>
                     <WeatherChart weatherData={weather} />

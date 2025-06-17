@@ -3,7 +3,7 @@ import { TextField } from "@mui/material";
 export default function LocationInput({ location, onChange }) {
     return (
         <div className="mb-4">
-            <h3 className="text-3xl mb-1">Location:</h3>
+            <p className="mb-4">Enter lat-long:</p>
             <TextField 
                 label="Latitude"
                 type="number"
