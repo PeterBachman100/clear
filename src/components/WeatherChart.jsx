@@ -2,7 +2,7 @@ import { ChartContainer, ChartsXAxis, ChartsYAxis, LinePlot, LineChart } from "@
 import { useState } from "react";
 
 export default function WeatherChart({ weatherData }) {
-    const [selectedData, setSelectedData] = useState(weatherData.hourly.cloud_cover);
+    const [selectedData, setSelectedData] = useState(weatherData.hourly.temperature2m);
 
     const renderedButtons = Object.keys(weatherData.hourly).map((param) => {
         return <button key={param} className="p-4 border m-1" onClick={() => setSelectedData(weatherData.hourly[param])}>{param}</button>;
@@ -18,7 +18,9 @@ export default function WeatherChart({ weatherData }) {
             scaleType: 'time',
             label: 'Time',
             data: weatherData.hourly.time,
-            valueFormatter: (date) => date.toLocaleTimeString([], {weekday: 'short', hour: 'numeric', hour12: true}),
+            valueFormatter: (timestamp) => new Date(timestamp).toLocaleTimeString('en-US', {
+                weekday: 'short', hour: 'numeric', hour12: true, timeZone: weatherData.timezone
+            }),
             
         }
     ];

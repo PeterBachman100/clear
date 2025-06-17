@@ -18,9 +18,7 @@ export async function fetchWeather({ location, units }) {
     const responses = await fetchWeatherApi(url, params);
     const response = responses[0];
 
-    const utcOffsetSeconds = response.utcOffsetSeconds();
     const timezone = response.timezone();
-    const timezoneAbbreviation = response.timezoneAbbreviation();
     const latitude = response.latitude();
     const longitude = response.longitude();
 
@@ -32,8 +30,13 @@ export async function fetchWeather({ location, units }) {
     const sunset = daily.variables(6);
 
     const weatherData = {
+        timezone: timezone,
+        location: {
+            latitude: latitude,
+            longitude: longitude
+        },
         current: {
-            time: new Date((Number(current.time()) + utcOffsetSeconds) * 1000),
+            time: Number(current.time()) * 1000,
             temperature2m: current.variables(0).value(),
             relativeHumidity2m: current.variables(1).value(),
             apparentTemperature: current.variables(2).value(),
@@ -51,7 +54,7 @@ export async function fetchWeather({ location, units }) {
         },
         hourly: {
             time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())].map(
-                (_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
+                (_, i) => ((Number(hourly.time()) + i * hourly.interval()) * 1000)
             ),
             temperature2m: hourly.variables(0).valuesArray(),
             relativeHumidity2m: hourly.variables(1).valuesArray(),
@@ -79,7 +82,7 @@ export async function fetchWeather({ location, units }) {
         },
         daily: {
             time: [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())].map(
-                (_, i) => new Date((Number(daily.time()) + i * daily.interval() + utcOffsetSeconds) * 1000)
+                (_, i) => (Number(daily.time()) + i * daily.interval()) * 1000
             ),
             weatherCode: daily.variables(0).valuesArray(),
             temperature2mMax: daily.variables(1).valuesArray(),
@@ -87,10 +90,10 @@ export async function fetchWeather({ location, units }) {
             apparentTemperatureMax: daily.variables(3).valuesArray(),
             apparentTemperatureMin: daily.variables(4).valuesArray(),
             sunrise: [...Array(sunrise.valuesInt64Length())].map(
-                (_, i) => new Date((Number(sunrise.valuesInt64(i)) + utcOffsetSeconds) * 1000)
+                (_, i) => (Number(sunrise.valuesInt64(i))) * 1000
             ),
             sunset: [...Array(sunset.valuesInt64Length())].map(
-                (_, i) => new Date((Number(sunset.valuesInt64(i)) + utcOffsetSeconds) * 1000)
+                (_, i) => (Number(sunset.valuesInt64(i))) * 1000
             ),
             daylightDuration: daily.variables(7).valuesArray(),
             rainSum: daily.variables(8).valuesArray(),
@@ -131,19 +134,5 @@ export async function fetchWeather({ location, units }) {
         },
     };
 
-
-    return {
-        location: {
-            latitude: latitude,
-            longitude: longitude
-        },
-        hourly: {
-            time: [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())].map(
-                (_, i) => new Date((Number(hourly.time()) + i * hourly.interval() + utcOffsetSeconds) * 1000)
-            ),
-            ...Object.fromEntries(
-                params.hourly.map((name, index) => [name, hourly.variables(index).valuesArray()])
-            ),
-        },
-    }
+    return weatherData;
 }

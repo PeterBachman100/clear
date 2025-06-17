@@ -1,6 +1,5 @@
 import { useState} from "react";
 import LocationInput from "./components/LocationInput";
-import WeatherTable from "./components/WeatherTable";
 import { fetchWeather } from "./utils/fetchWeather";
 import { Button } from "@mui/material";
 import LocationSearch from "./components/LocationSearch";
@@ -16,23 +15,12 @@ export default function WeatherDisplay() {
         latitude: 47.3923,
         longitude: -121.4001
     });
-    const [forecastLength, setForecastLength] = useState(1);
-    const [hourlyParams, setHourlyParams] = useState(["temperature_2m"]);
+
     const [units, setUnits] = useState({
         temperature: "fahrenheit",
         windSpeed: "mph",
         precipitation: "inch"
     });
-
-    const handleForecastLengthChange = (event) => {
-        setForecastLength(event.target.value);
-    }
-    const handleHourlyParamsChange = (e) => {
-        const { value, checked } = e.target;
-        setHourlyParams((prev) => 
-            checked ? [...prev, value] : prev.filter((param) => param !== value)
-        );
-    };
 
     const handleFetchWeather = async () => {
         try {
@@ -41,7 +29,7 @@ export default function WeatherDisplay() {
             console.log(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
-        }
+        } 
     }
 
     return (
@@ -51,6 +39,7 @@ export default function WeatherDisplay() {
             <LocationSearch onSelect={setLocation} />
             {weather?.hourly ? (
                 <div>
+                    {weather.current.time.toString()}
                     <h2>{`Latitude: ${weather.location.latitude}, Longitude: ${weather.location.longitude}`}</h2>
                     <WeatherChart weatherData={weather} />
                 </div>
