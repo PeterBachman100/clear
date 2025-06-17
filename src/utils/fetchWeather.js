@@ -8,7 +8,7 @@ export async function fetchWeather({ location, units }) {
         "hourly": ["temperature_2m", "relative_humidity_2m", "dew_point_2m", "apparent_temperature", "precipitation_probability", "precipitation", "rain", "showers", "snowfall", "snow_depth", "weather_code", "surface_pressure", "cloud_cover", "cloud_cover_low", "cloud_cover_mid", "cloud_cover_high", "visibility", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "uv_index", "is_day", "freezing_level_height"],
         "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "is_day"],
         "timezone": "auto",
-        "forecast_days": 1,
+        "forecast_days": 3,
         "wind_speed_unit": units.windSpeed,
         "temperature_unit": units.temperature,
         "precipitation_unit": units.precipitation,

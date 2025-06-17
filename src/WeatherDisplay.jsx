@@ -22,6 +22,9 @@ export default function WeatherDisplay() {
         precipitation: "inch"
     });
 
+    const[chartCount, setChartCount] = useState(1);
+    const addChart = () => setChartCount((prev) => prev + 1);
+
     const handleFetchWeather = async () => {
         try {
             const weatherData = await fetchWeather({ location, units });
@@ -40,8 +43,13 @@ export default function WeatherDisplay() {
             <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             {weather?.hourly ? (
                 <div>
-                    <WeatherChart weatherData={weather} />
-                    <WeatherChart weatherData={weather} />
+                    
+                    {Array.from({ length: chartCount }).map((_, i) => (
+                        <div key={i}>
+                            <WeatherChart weatherData={weather} />
+                        </div>
+                    ))}
+                    <button onClick={addChart}>Add chart</button>
                 </div>
             ) : (<p>No data loaded yet.</p>)}
         </div>
