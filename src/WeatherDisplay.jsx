@@ -1,7 +1,7 @@
 import { useState} from "react";
 import LocationInput from "./components/LocationInput";
 import { fetchWeather } from "./utils/fetchWeather";
-import { Button } from "@mui/material";
+import { Button, Box } from "@mui/material";
 import LocationSearch from "./components/LocationSearch";
 import WeatherChart from "./components/WeatherChart";
 
@@ -42,15 +42,14 @@ export default function WeatherDisplay() {
             <LocationInput location={location} onChange={setLocation} />
             <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             {weather?.hourly ? (
-                <div>
-                    
+                <Box sx={{ overflowX: 'auto', width: '100%' }}>
                     {Array.from({ length: chartCount }).map((_, i) => (
-                        <div key={i}>
+                        <Box key={i} sx={{ minWidth: '1200px', width: '100%' }}>
                             <WeatherChart weatherData={weather} />
-                        </div>
+                        </Box>
                     ))}
                     <button onClick={addChart}>Add chart</button>
-                </div>
+                </Box>
             ) : (<p>No data loaded yet.</p>)}
         </div>
     );
