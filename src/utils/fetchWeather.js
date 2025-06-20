@@ -21,6 +21,7 @@ export async function fetchWeather({ location, units }) {
     const timezone = response.timezone();
     const latitude = response.latitude();
     const longitude = response.longitude();
+    
 
     const current = response.current();
     const daily = response.daily();

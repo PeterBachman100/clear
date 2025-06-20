@@ -29,6 +29,7 @@ export default function WeatherDisplay() {
         try {
             const weatherData = await fetchWeather({ location, units });
             setWeather(weatherData);
+            /* For Testing */
             console.log(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
