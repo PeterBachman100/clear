@@ -14,81 +14,53 @@ export default function parseWeather(response) {
         return Unit[variable.unit()];
     }
 
-    const parsedResponse = {
-        location: {
-            latitude: response.latitude(),
-            longitude: response.longitude(),
-            timezone: response.timezone()
-        },
-    }
+    const parseVariablesWithTime = (section, isCurrent = false) => {
+        const parsed = {};
+        const timeStart = Number(section.time()) * 1000;
+        const interval = section.interval();
+        const timeEnd = Number(section.timeEnd?.() ?? 0) * 1000;
 
-    //current
-    parsedResponse.current = {};
-    const current = response.current();
-    parsedResponse.current.time = Number(current.time()) * 1000;
-    parsedResponse.current.weatherVariables = {};
-    
-    for (let i = 0; i < current.variablesLength(); i++) {
-        const weatherVariable = current.variables(i);
-        const key = getVariableKey(weatherVariable);
-        const unit = getUnit(weatherVariable);
-        const value = weatherVariable.value();
+        parsed.time = isCurrent
+            ? timeStart
+            : [...Array((timeEnd - timeStart) / (interval * 1000))].map(
+                (_, i) => timeStart + i * interval * 1000
+                );
 
-        parsedResponse.current.weatherVariables[key] = {
-            value,
-            unit
-        };
- 
-    }
+        parsed.weatherVariables = {};
 
-    //daily
-    const daily = response.daily();
+        for (let i = 0; i < section.variablesLength(); i++) {
+            const variable = section.variables(i);
+            const key = getVariableKey(variable);
+            const unit = getUnit(variable);
 
-    parsedResponse.daily = {};
-    parsedResponse.daily.time = [...Array((Number(daily.timeEnd()) - Number(daily.time())) / daily.interval())].map(
-                (_, i) => (Number(daily.time()) + i * daily.interval()) * 1000
-            );
-    parsedResponse.daily.weatherVariables = {};
+            let values;
 
-    for(let i = 0; i < daily.variablesLength(); i++) {
-        const weatherVariable = daily.variables(i);
-        const key = getVariableKey(weatherVariable);
-        const unit = getUnit(weatherVariable);
-        let values = weatherVariable.valuesArray();
+            if (variable.valuesInt64Length() > 0) {
+                values = Array.from({ length: variable.valuesInt64Length() }, (_, j) =>
+                Number(variable.valuesInt64(j)) * 1000
+                );
+            } else {
+                values = variable.valuesArray();
+            }
 
-        if (key === "sunrise" || key === "sunset") {
-            values = [...Array(weatherVariable.valuesInt64Length())].map(
-                (_, i) => (Number(weatherVariable.valuesInt64(i))) * 1000
-            )
+            parsed.weatherVariables[key] = isCurrent
+                ? { value: variable.value(), unit }
+                : { values, unit };
         }
 
-        parsedResponse.daily.weatherVariables[key] = {
-            values,
-            unit
-        };
-    }
+        return parsed;
+  };
 
-    //hourly
-    const hourly = response.hourly();
-    parsedResponse.hourly = {};
-    parsedResponse.hourly.time = [...Array((Number(hourly.timeEnd()) - Number(hourly.time())) / hourly.interval())].map(
-                (_, i) => ((Number(hourly.time()) + i * hourly.interval()) * 1000)
-            );
-    parsedResponse.hourly.weatherVariables = {};
-
-    for (let i = 0; i < hourly.variablesLength(); i++) {
-        const weatherVariable = hourly.variables(i);
-        const key = getVariableKey(weatherVariable);
-        const unit = getUnit(weatherVariable);
-        let values = weatherVariable.valuesArray();
-
-        parsedResponse.hourly.weatherVariables[key] = {
-            values,
-            unit
-        };
-    }
-
-    return parsedResponse;
+  return {
+    location: {
+      latitude: response.latitude(),
+      longitude: response.longitude(),
+      timezone: response.timezone()
+    },
+    current: parseVariablesWithTime(response.current(), true),
+    daily: parseVariablesWithTime(response.daily()),
+    hourly: parseVariablesWithTime(response.hourly())
+  };
 }
 
   
