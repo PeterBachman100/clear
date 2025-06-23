@@ -2,18 +2,18 @@ import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 
 export default function WeatherChart({ weatherData }) {
-    const { freezingLevelHeight, isDay, snowDepth, time, weatherCode, windDirection10m, ...rest } = weatherData.hourly;
+    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weatherData.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
     const [selectedParameter, setSelectedParameter] = useState({ 
         parameter: hourlyParams[0], 
-        data: weatherData.hourly[hourlyParams[0]] 
+        data: weatherData.hourly.weatherVariables[hourlyParams[0]]
     });
 
     useEffect(() => {
         setSelectedParameter(prev => ({
             parameter: prev.parameter,
-            data: weatherData.hourly[prev.parameter]
+            data: weatherData.hourly.weatherVariables[prev.parameter]
         }));
     }, [weatherData]);
 
@@ -24,7 +24,7 @@ export default function WeatherChart({ weatherData }) {
         value={selectedParameter.parameter}
         onChange={(e) => setSelectedParameter({
             parameter: e.target.value,
-            data: weatherData.hourly[e.target.value]
+            data: weatherData.hourly.weatherVariables[e.target.value]
         })}
     >
         {hourlyParams.map((param) => (
@@ -35,7 +35,7 @@ export default function WeatherChart({ weatherData }) {
 
     const series = [
         {
-            data: selectedParameter.data,
+            data: selectedParameter.data.values,
         }
     ];
     const xAxis = [
@@ -44,14 +44,14 @@ export default function WeatherChart({ weatherData }) {
             label: 'Time',
             data: weatherData.hourly.time,
             valueFormatter: (timestamp) => new Date(timestamp).toLocaleTimeString('en-US', {
-                weekday: 'short', hour: 'numeric', hour12: true, timeZone: weatherData.timezone
+                weekday: 'short', hour: 'numeric', hour12: true, timeZone: weatherData.location.timezone
             }),
             
         }
     ];
     const yAxis = [
         {
-            label: selectedParameter.parameter
+            label: selectedParameter.parameter + ' (' + selectedParameter.data.unit + ')'
         }
     ];
 

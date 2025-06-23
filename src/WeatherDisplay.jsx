@@ -29,8 +29,6 @@ export default function WeatherDisplay() {
         try {
             const weatherData = await fetchWeather({ location, units });
             setWeather(weatherData);
-            /* For Testing */
-            console.log(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
         } 
@@ -45,7 +43,7 @@ export default function WeatherDisplay() {
             {weather?.hourly ? (
                 <Box sx={{ overflowX: 'auto', width: '100%' }}>
                     {Array.from({ length: chartCount }).map((_, i) => (
-                        <Box key={i} sx={{ minWidth: '1200px', width: '100%' }}>
+                        <Box key={i} sx={{ minWidth: '4000px', width: '100%' }}>
                             <WeatherChart weatherData={weather} />
                         </Box>
                     ))}
