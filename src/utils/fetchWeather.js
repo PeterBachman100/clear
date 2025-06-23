@@ -1,7 +1,8 @@
 import { fetchWeatherApi } from "openmeteo";
 import parseWeather from "./parseWeather";
 
-export async function fetchWeather({ location, units }) {
+export async function fetchWeather({ location }) {
+    
     const params = {
         "latitude": location.latitude,
         "longitude": location.longitude,
@@ -10,9 +11,9 @@ export async function fetchWeather({ location, units }) {
         "current": ["temperature_2m", "relative_humidity_2m", "apparent_temperature", "precipitation", "rain", "showers", "snowfall", "weather_code", "cloud_cover", "surface_pressure", "wind_speed_10m", "wind_direction_10m", "wind_gusts_10m", "is_day"],
         "timezone": "auto",
         "forecast_days": 14,
-        "wind_speed_unit": units.windSpeed,
-        "temperature_unit": units.temperature,
-        "precipitation_unit": units.precipitation,
+        "wind_speed_unit": "mph",
+        "temperature_unit": "fahrenheit",
+        "precipitation_unit": "inch",
     };
 
     const url = "https://api.open-meteo.com/v1/forecast";

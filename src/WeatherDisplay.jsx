@@ -16,18 +16,12 @@ export default function WeatherDisplay() {
         longitude: -121.4001
     });
 
-    const [units, setUnits] = useState({
-        temperature: "fahrenheit",
-        windSpeed: "mph",
-        precipitation: "inch"
-    });
-
     const[chartCount, setChartCount] = useState(1);
     const addChart = () => setChartCount((prev) => prev + 1);
 
     const handleFetchWeather = async () => {
         try {
-            const weatherData = await fetchWeather({ location, units });
+            const weatherData = await fetchWeather({ location });
             setWeather(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
