@@ -44,9 +44,9 @@ export default function WeatherChart({ weatherData }) {
             label: 'Time',
             data: weatherData.hourly.time,
             valueFormatter: (timestamp) => new Date(timestamp).toLocaleTimeString('en-US', {
-                weekday: 'short', hour: 'numeric', hour12: true, timeZone: weatherData.location.timezone
+                weekday: 'short', month: 'short', day: 'numeric', hour12: true, timeZone: weatherData.location.timezone
             }),
-            
+            tickMinStep: 3600 * 1000 * 24
         }
     ];
     const yAxis = [
@@ -63,6 +63,7 @@ export default function WeatherChart({ weatherData }) {
                 xAxis={xAxis}
                 yAxis={yAxis}
                 height={300}
+                grid={{vertical:true, horizontal:false}}
             />
         </div>
     );
