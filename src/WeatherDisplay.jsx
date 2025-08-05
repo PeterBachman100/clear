@@ -7,18 +7,6 @@ import WeatherChart from "./components/WeatherChart";
 
 export default function WeatherDisplay() {
     const [weather, setWeather] = useState(null);
-
-    const [location, setLocation] = useState({
-        name: "Snoqualmie Pass",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 47.3923,
-        longitude: -121.4001
-    });
-
-    const[chartCount, setChartCount] = useState(1);
-    const addChart = () => setChartCount((prev) => prev + 1);
-
     const handleFetchWeather = async () => {
         try {
             const weatherData = await fetchWeather({ location });
@@ -28,6 +16,39 @@ export default function WeatherDisplay() {
         } 
     }
 
+    const [location, setLocation] = useState({
+        name: "Snoqualmie Pass",
+        admin1: "Washington",
+        country: "United States",
+        latitude: 47.3923,
+        longitude: -121.4001
+    });
+
+    const[charts, setCharts] = useState([
+        {
+            id: 1,
+            selectedParameter: "temperature",
+        },
+        {
+            id: 2,
+            selectedParameter: "precipitation",
+        }
+    ]);
+
+    const addChart = () => {
+        setCharts((prev) => [...prev, {id: Date.now(), selectedParameter: "temperature"}]);
+    };
+
+    const handleParameterChange = (chartIdToUpdate, newParameter) => {
+        setCharts(prevCharts =>
+            prevCharts.map(chart =>
+                chart.id === chartIdToUpdate
+                    ? { ...chart, selectedParameter: newParameter }
+                    : chart
+            )
+        );
+    };
+
     return (
         <div className="p-4 border">
             <LocationSearch onSelect={setLocation} />
@@ -35,16 +56,14 @@ export default function WeatherDisplay() {
             <LocationInput location={location} onChange={setLocation} />
             <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
             {weather?.hourly ? (
-                <Box sx={{ overflowX: 'auto', width: '100%' }}>
+                <Box>
                     <Typography>{Number(weather.location.latitude).toFixed(4)}, {Number(weather.location.longitude).toFixed(4)}</Typography>
-                    {Array.from({ length: chartCount }).map((_, i) => (
-                        <Box key={i} sx={{ minWidth: '4000px', width: '100%' }}>
-                            <WeatherChart weatherData={weather} />
-                        </Box>
+                    {charts.map((chart) => (
+                        <WeatherChart key={chart.id} chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} />
                     ))}
-                    <Button variant="contained" onClick={addChart}>Add chart</Button>
                 </Box>
             ) : (<p>No data loaded yet.</p>)}
+            <Button variant="contained" onClick={addChart}>Add Chart</Button>
         </div>
     );
 }

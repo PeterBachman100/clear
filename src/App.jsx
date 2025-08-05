@@ -16,7 +16,7 @@ function App() {
       </div>
        <div className="flex flex-wrap">
       {Array.from({ length: sections }, (_, i) => (
-        <div key={i} className="w-1/2">
+        <div key={i}>
           <WeatherDisplay />
         </div>
       ))}
