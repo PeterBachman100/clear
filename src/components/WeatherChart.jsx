@@ -30,12 +30,20 @@ export default function WeatherChart({ chartId, weatherData, selectedParameter, 
     ];
     const xAxis = [
         {
+            domainLimit: 'strict',
             scaleType: 'time',
             label: 'Time',
             data: weatherData.hourly.time,
-            valueFormatter: (timestamp) => new Date(timestamp).toLocaleTimeString('en-US', {
-                weekday: 'short', month: 'short', day: 'numeric', hour12: true, timeZone: weatherData.location.timezone
-            }),
+            valueFormatter: (timestamp, context) => {
+                if(context.location === 'tick') {
+                    return new Date(timestamp).toLocaleTimeString('en-US', {
+                        hour: 'numeric', hour12: true, timeZone: weatherData.location.timeZone
+                    });
+                }
+                return new Date(timestamp).toLocaleTimeString('en-US', {
+                        weekday: 'short', month: 'short', day: 'numeric', hour12: true, timeZone: weatherData.location.timezone
+                    });
+            },
         }
     ];
     const yAxis = [
