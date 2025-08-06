@@ -28,15 +28,14 @@ export default function LocationSection() {
         {
             id: 1,
             selectedParameter: "temperature",
-        },
-        {
-            id: 2,
-            selectedParameter: "precipitation",
         }
     ]);
 
     const addChart = () => {
         setCharts((prev) => [...prev, {id: Date.now(), selectedParameter: "temperature"}]);
+    };
+    const deleteChart = (chartId) => {
+        setCharts((prev) => prev.filter((chart) => chart.id !== chartId));
     };
 
     const handleParameterChange = (chartIdToUpdate, newParameter) => {
@@ -103,7 +102,7 @@ export default function LocationSection() {
                     <Box className="flex flex-col gap-4">
                         {charts.map((chart) => (
                             <Card key={chart.id}>
-                                <WeatherChart chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} />
+                                <WeatherChart chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} onDelete={deleteChart} />
                             </Card>
                         ))}
                     </Box>
