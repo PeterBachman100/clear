@@ -14,7 +14,7 @@ describe('Add location button', async () => {
     render(<App />);
     const addLocationButton = screen.getByText("Add Location Section");
     await userEvent.click(addLocationButton);
-    const latLonHeader = screen.getByText('Enter lat-long:');
-    expect(latLonHeader).toBeInTheDocument();
+    const setLocationButton = screen.getByText('Set Location');
+    expect(setLocationButton).toBeInTheDocument();
   })
 });
