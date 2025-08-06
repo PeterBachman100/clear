@@ -1,6 +1,6 @@
 import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
-import { Button, Box } from "@mui/material";
+import { Button, Box, Popover, Card } from "@mui/material";
 
 export default function WeatherChart({ chartId, weatherData, selectedParameter, onParameterChange, onDelete }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weatherData.hourly.weatherVariables;
@@ -22,6 +22,19 @@ export default function WeatherChart({ chartId, weatherData, selectedParameter, 
         ))}
     </select>
    );
+
+
+   //POPOVER
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleOpenPopover = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClosePopover = () => {
+        setAnchorEl(null);
+    };
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+    // end popover
 
     const series = [
         {
@@ -56,8 +69,23 @@ export default function WeatherChart({ chartId, weatherData, selectedParameter, 
     return (
         
         <div>
-            <Button onClick={() => {onDelete(chartId)}}>Delete</Button>
-            {optionsDropdown}
+            <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>Chart Settings</Button>
+            <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClosePopover}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+                }}
+            >
+                <Card sx={{ p: 2 }} className="flex gap-2">
+                    <Button onClick={() => {onDelete(chartId)}} color="error">Delete</Button>
+                    {optionsDropdown}
+                </Card>
+            </Popover>
+
             <Box sx={{ overflowX: 'scroll', width: '100vw' }}>
                 <Box sx={{ minWidth: '4000px', width: '100%' }}>
                     <LineChart
