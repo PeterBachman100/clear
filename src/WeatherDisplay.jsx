@@ -76,12 +76,19 @@ export default function WeatherDisplay() {
                     horizontal: 'left',
                     }}
                 >
-                    <div>
+                    <Card sx={{ p: 2 }} className="flex flex-col gap-2">
                         <LocationSearch onSelect={setLocation} />
-                        <p>or</p>
                         <LocationInput location={location} onChange={setLocation} />
-                        <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
-                    </div>
+                        <Button 
+                            variant="contained" 
+                            onClick={() => {
+                                handleFetchWeather();
+                                handleClosePopover();
+                                }}
+                        >
+                            Save Location
+                        </Button>
+                    </Card>
                 </Popover>
                 <Button variant="contained" onClick={addChart}>Add Chart</Button>
             </CardActions>
