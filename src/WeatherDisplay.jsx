@@ -1,7 +1,7 @@
 import { useState} from "react";
 import LocationInput from "./components/LocationInput";
 import { fetchWeather } from "./utils/fetchWeather";
-import { Button, Box, Typography } from "@mui/material";
+import { Button, Box, Typography, Popover } from "@mui/material";
 import LocationSearch from "./components/LocationSearch";
 import WeatherChart from "./components/WeatherChart";
 
@@ -49,12 +49,39 @@ export default function WeatherDisplay() {
         );
     };
 
+    //POPOVER
+    const [anchorEl, setAnchorEl] = useState(null);
+    const handleOpenPopover = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+    const handleClosePopover = () => {
+        setAnchorEl(null);
+    };
+    const open = Boolean(anchorEl);
+    const id = open ? 'simple-popover' : undefined;
+
     return (
-        <div className="p-4 border">
-            <LocationSearch onSelect={setLocation} />
-            <p>or</p>
-            <LocationInput location={location} onChange={setLocation} />
-            <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
+        <div>
+            <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>
+                Set Location
+            </Button>
+             <Popover
+                id={id}
+                open={open}
+                anchorEl={anchorEl}
+                onClose={handleClosePopover}
+                anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+                }}
+            >
+                <div>
+                    <LocationSearch onSelect={setLocation} />
+                    <p>or</p>
+                    <LocationInput location={location} onChange={setLocation} />
+                    <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
+                </div>
+            </Popover>
             {weather?.hourly ? (
                 <Box>
                     <Typography>{Number(weather.location.latitude).toFixed(4)}, {Number(weather.location.longitude).toFixed(4)}</Typography>

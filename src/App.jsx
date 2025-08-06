@@ -1,5 +1,5 @@
 import WeatherDisplay from "./WeatherDisplay";
-import { Button } from "@mui/material";
+import { AppBar, Button, Toolbar } from "@mui/material";
 import { useState } from "react";
 
 function App() {
@@ -11,8 +11,12 @@ function App() {
 
   return (
     <div>
-      <div className="border">
-        <Button onClick={addSection} variant="contained">Add Location Section</Button>
+      <div>
+        <AppBar className="sticky" position="static">
+          <Toolbar>
+            <Button onClick={addSection} variant="contained" className="bg-white">Add Location Section</Button>
+          </Toolbar>
+        </AppBar>
       </div>
        <div className="flex flex-wrap">
       {Array.from({ length: sections }, (_, i) => (

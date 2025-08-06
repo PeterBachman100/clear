@@ -26,6 +26,7 @@ export default function WeatherChart({ chartId, weatherData, selectedParameter, 
     const series = [
         {
             data: weatherData.hourly.weatherVariables[selectedParameter].values,
+            showMark: false,
         }
     ];
     const xAxis = [
