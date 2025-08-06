@@ -1,4 +1,4 @@
-import WeatherDisplay from "./WeatherDisplay";
+import LocationSection from "./components/LocationSection";
 import { Box, AppBar, Button, Toolbar, ThemeProvider, Card } from "@mui/material";
 import { useState } from "react";
 import { mainTheme } from "./utils/muiTheme";
@@ -20,7 +20,7 @@ function App() {
        <Box sx={{ p: 4 }} className="flex flex-col gap-16">
         {Array.from({ length: sections }, (_, i) => (
           <div key={i}>
-            <WeatherDisplay />          
+            <LocationSection />          
           </div>
         ))}
       </Box>

@@ -1,11 +1,11 @@
 import { useState} from "react";
-import LocationInput from "./components/LocationInput";
-import { fetchWeather } from "./utils/fetchWeather";
+import LocationInput from "./LocationInput";
+import { fetchWeather } from "../utils/fetchWeather";
 import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover } from "@mui/material";
-import LocationSearch from "./components/LocationSearch";
-import WeatherChart from "./components/WeatherChart";
+import LocationSearch from "./LocationSearch";
+import WeatherChart from "./WeatherChart";
 
-export default function WeatherDisplay() {
+export default function LocationSection() {
     const [weather, setWeather] = useState(null);
     const handleFetchWeather = async () => {
         try {
