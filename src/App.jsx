@@ -17,7 +17,7 @@ function App() {
           <Button onClick={addSection} variant="contained" color="secondary">Add Location Section</Button>
         </Toolbar>
       </AppBar>
-       <Box sx={{ p: 4 }} className="flex flex-col">
+       <Box sx={{ p: 4 }} className="flex flex-col gap-16">
         {Array.from({ length: sections }, (_, i) => (
           <div key={i}>
             <WeatherDisplay />          
