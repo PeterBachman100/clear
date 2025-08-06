@@ -1,7 +1,7 @@
 import { useState} from "react";
 import LocationInput from "./components/LocationInput";
 import { fetchWeather } from "./utils/fetchWeather";
-import { Button, Box, Typography, Popover } from "@mui/material";
+import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover } from "@mui/material";
 import LocationSearch from "./components/LocationSearch";
 import WeatherChart from "./components/WeatherChart";
 
@@ -61,37 +61,48 @@ export default function WeatherDisplay() {
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <div>
-            <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>
+        <Card sx={{ p: 2 }} variant="outlined">
+            <CardActions>
+                <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>
                 Set Location
-            </Button>
-             <Popover
-                id={id}
-                open={open}
-                anchorEl={anchorEl}
-                onClose={handleClosePopover}
-                anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-                }}
-            >
-                <div>
-                    <LocationSearch onSelect={setLocation} />
-                    <p>or</p>
-                    <LocationInput location={location} onChange={setLocation} />
-                    <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
-                </div>
-            </Popover>
-            {weather?.hourly ? (
-                <Box>
-                    <Typography>{Number(weather.location.latitude).toFixed(4)}, {Number(weather.location.longitude).toFixed(4)}</Typography>
-                    {charts.map((chart) => (
-                        <WeatherChart key={chart.id} chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} />
-                    ))}
-                </Box>
-            ) : (<p>No data loaded yet.</p>)}
-            <Button variant="contained" onClick={addChart}>Add Chart</Button>
-        </div>
+                </Button>
+                <Popover
+                    id={id}
+                    open={open}
+                    anchorEl={anchorEl}
+                    onClose={handleClosePopover}
+                    anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                    }}
+                >
+                    <div>
+                        <LocationSearch onSelect={setLocation} />
+                        <p>or</p>
+                        <LocationInput location={location} onChange={setLocation} />
+                        <Button variant="contained" onClick={handleFetchWeather}>Fetch Weather Data</Button>
+                    </div>
+                </Popover>
+                <Button variant="contained" onClick={addChart}>Add Chart</Button>
+            </CardActions>
+            <CardHeader title={
+                    weather ? 
+                    `${Number(weather.location.latitude).toFixed(4)}, ${Number(weather.location.longitude).toFixed(4)}` :
+                    'Please select a location'
+                }>
+            </CardHeader>
+            <CardContent>
+                {weather?.hourly ? (
+                    <Box className="flex flex-col gap-4">
+                        {charts.map((chart) => (
+                            <Card key={chart.id}>
+                                <WeatherChart chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} />
+                            </Card>
+                        ))}
+                    </Box>
+                ) : (<p>No data loaded yet.</p>)}
+            </CardContent>
+        </Card>
     );
 }
 

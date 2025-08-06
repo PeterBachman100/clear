@@ -1,6 +1,7 @@
 import WeatherDisplay from "./WeatherDisplay";
-import { AppBar, Button, Toolbar } from "@mui/material";
+import { Box, AppBar, Button, Toolbar, ThemeProvider, Card } from "@mui/material";
 import { useState } from "react";
+import { mainTheme } from "./utils/muiTheme";
 
 function App() {
   const [sections, setSections] = useState(0);
@@ -10,22 +11,20 @@ function App() {
   }
 
   return (
-    <div>
-      <div>
-        <AppBar className="sticky" position="static">
-          <Toolbar>
-            <Button onClick={addSection} variant="contained" className="bg-white">Add Location Section</Button>
-          </Toolbar>
-        </AppBar>
-      </div>
-       <div className="flex flex-wrap">
-      {Array.from({ length: sections }, (_, i) => (
-        <div key={i}>
-          <WeatherDisplay />
-        </div>
-      ))}
-    </div>
-    </div>
+    <ThemeProvider theme={mainTheme}>
+      <AppBar className="sticky" position="static" sx={{ mb: 2 }}>
+        <Toolbar>
+          <Button onClick={addSection} variant="contained" color="secondary">Add Location Section</Button>
+        </Toolbar>
+      </AppBar>
+       <Box sx={{ p: 4 }} className="flex flex-col">
+        {Array.from({ length: sections }, (_, i) => (
+          <div key={i}>
+            <WeatherDisplay />          
+          </div>
+        ))}
+      </Box>
+    </ThemeProvider>
   );
 }
 
