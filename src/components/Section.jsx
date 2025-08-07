@@ -3,9 +3,9 @@ import LocationInput from "./LocationInput";
 import { fetchWeather } from "../utils/fetchWeather";
 import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover } from "@mui/material";
 import LocationSearch from "./LocationSearch";
-import WeatherChart from "./WeatherChart";
+import WeatherCard from "./WeatherCard";
 
-export default function LocationSection() {
+export default function Section() {
     const [weather, setWeather] = useState(null);
     const handleFetchWeather = async () => {
         try {
@@ -60,7 +60,7 @@ export default function LocationSection() {
     const id = open ? 'simple-popover' : undefined;
 
     return (
-        <Card sx={{ p: 2 }} variant="outlined">
+        <Card sx={{ p: 2 }} variant="outlined" className="h-full w-full">
             <CardActions>
                 <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>
                 Set Location
@@ -102,7 +102,7 @@ export default function LocationSection() {
                     <Box className="flex flex-col gap-4">
                         {charts.map((chart) => (
                             <Card key={chart.id}>
-                                <WeatherChart chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} onDelete={deleteChart} />
+                                <WeatherCard chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} onDelete={deleteChart} />
                             </Card>
                         ))}
                     </Box>

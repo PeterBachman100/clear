@@ -2,7 +2,7 @@ import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card } from "@mui/material";
 
-export default function WeatherChart({ chartId, weatherData, selectedParameter, onParameterChange, onDelete }) {
+export default function WeatherCard({ chartId, weatherData, selectedParameter, onParameterChange, onDelete }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weatherData.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
