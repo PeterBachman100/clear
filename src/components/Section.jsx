@@ -4,109 +4,50 @@ import { fetchWeather } from "../utils/fetchWeather";
 import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover } from "@mui/material";
 import LocationSearch from "./LocationSearch";
 import WeatherCard from "./WeatherCard";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import "/node_modules/react-grid-layout/css/styles.css";
+import "/node_modules/react-resizable/css/styles.css";
 
-export default function Section() {
-    const [weather, setWeather] = useState(null);
-    const handleFetchWeather = async () => {
-        try {
-            const weatherData = await fetchWeather({ location });
-            setWeather(weatherData);
-        } catch(error) {
-            console.error("Failed to fetch weather data:", error);
-        } 
-    }
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-    const [location, setLocation] = useState({
-        name: "Snoqualmie Pass",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 47.3923,
-        longitude: -121.4001
-    });
+export default function Section({ pageId, section, deleteSection, onLayoutChange, addCard, deleteCard }) {
+   
 
-    const[charts, setCharts] = useState([
-        {
-            id: 1,
-            selectedParameter: "temperature",
-        }
-    ]);
+    const [layout, setLayout] = useState(section.layout);
 
-    const addChart = () => {
-        setCharts((prev) => [...prev, {id: Date.now(), selectedParameter: "temperature"}]);
-    };
-    const deleteChart = (chartId) => {
-        setCharts((prev) => prev.filter((chart) => chart.id !== chartId));
+    const handleLayoutChange = (newLayout) => {
+        onLayoutChange(section.pageId, section.id, newLayout);
     };
 
-    const handleParameterChange = (chartIdToUpdate, newParameter) => {
-        setCharts(prevCharts =>
-            prevCharts.map(chart =>
-                chart.id === chartIdToUpdate
-                    ? { ...chart, selectedParameter: newParameter }
-                    : chart
-            )
-        );
-    };
-
-    //POPOVER
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleOpenPopover = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleClosePopover = () => {
-        setAnchorEl(null);
-    };
-    const open = Boolean(anchorEl);
-    const id = open ? 'simple-popover' : undefined;
 
     return (
-        <Card sx={{ p: 2 }} variant="outlined" className="h-full w-full">
+        <Card sx={{ p: 2 }} variant="outlined" className="w-full" elevation={3}>
+            <CardHeader title={<Typography variant="h2" className='w-full'>{section.name}</Typography>}></CardHeader>
             <CardActions>
-                <Button aria-describedby={id} variant="contained" onClick={handleOpenPopover}>
-                Set Location
-                </Button>
-                <Popover
-                    id={id}
-                    open={open}
-                    anchorEl={anchorEl}
-                    onClose={handleClosePopover}
-                    anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                    }}
-                >
-                    <Card sx={{ p: 2 }} className="flex flex-col gap-2">
-                        <LocationSearch onSelect={setLocation} />
-                        <LocationInput location={location} onChange={setLocation} />
-                        <Button 
-                            variant="contained" 
-                            onClick={() => {
-                                handleFetchWeather();
-                                handleClosePopover();
-                                }}
-                        >
-                            Save Location
-                        </Button>
-                    </Card>
-                </Popover>
-                <Button variant="contained" onClick={addChart}>Add Chart</Button>
+                <Button onClick={() => {addCard(pageId, section.id)}}>Add Card</Button>
+                <Button onClick={() => {deleteSection(pageId, section.id)}}>Delete This Section</Button>
             </CardActions>
-            <CardHeader title={
-                    weather ? 
-                    `${Number(weather.location.latitude).toFixed(4)}, ${Number(weather.location.longitude).toFixed(4)}` :
-                    'Please select a location'
-                }>
-            </CardHeader>
             <CardContent>
-                {weather?.hourly ? (
-                    <Box className="flex flex-col gap-4">
-                        {charts.map((chart) => (
-                            <Card key={chart.id}>
-                                <WeatherCard chartId={chart.id} weatherData={weather} selectedParameter={chart.selectedParameter} onParameterChange={handleParameterChange} onDelete={deleteChart} />
-                            </Card>
-                        ))}
-                    </Box>
-                ) : (<p>No data loaded yet.</p>)}
+                 <ResponsiveReactGridLayout
+                    className="layout"
+                    layouts={{ lg: layout }}
+                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    rowHeight={100}
+                    isDraggable={true}
+                    isResizable={true}
+                    autoSize={true}
+                    resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
+                    onLayoutChange={onLayoutChange}
+                >
+                    {section.cards.map((card) => {
+                        return (
+                            <div key={card.id}>
+                                 <WeatherCard pageId={pageId} section={section} card={card} deleteCard={deleteCard} />
+                            </div>
+                        );
+                    })}
+                </ResponsiveReactGridLayout>
             </CardContent>
         </Card>
     );

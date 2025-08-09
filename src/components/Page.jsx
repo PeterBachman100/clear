@@ -1,39 +1,27 @@
-import { useState } from 'react';
 import Section from "./Section";
-import { Responsive, WidthProvider } from "react-grid-layout";
-import "/node_modules/react-grid-layout/css/styles.css";
-import "/node_modules/react-resizable/css/styles.css";
-
-
-
+import { Box, Typography, Divider, Button } from '@mui/material';
       
-export default function Page({ sections, editMode }) {
-
-    //React-Grid-Layout
-    const ResponsiveReactGridLayout = WidthProvider(Responsive);
-    const [layout, setLayout] = useState([]);
-    const handleLayoutChange = (newLayout) => {
-        setLayout(newLayout);
-    };
+export default function Page({ page, onLayoutChange, addSection, deleteSection, addCard, deleteCard }) {
 
     return (
-        <div>
-            <ResponsiveReactGridLayout
-                className="layout bg-black"
-                autoSize="true"
-                layouts={{ lg: layout }}
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-                isResizable={editMode}
-                isDraggable={editMode}
-                onLayoutChange={handleLayoutChange}
+        <div className='w-full min-h-screen'>
+            <Box 
+                sx={{
+                    p: 4
+                }}
+                className="w-full bg-gray-300"
                 >
-                {Array.from({ length: sections }, (_, i) => (
-                    <div key={i}>
-                    <Section />          
-                    </div>
-                ))}
-            </ResponsiveReactGridLayout>
+                <Typography variant="h1" className='w-full'>{page.name}</Typography>
+                <Button onClick={() => {addSection(page.id)}}>Add Section</Button>
+            </Box>
+            {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
+            <div className='flex flex-col bg-gray-50 h-full'>
+                {page.sections.map((section) => {
+                    return (
+                        <Section key={section.id} pageId={page.id} section={section} deleteSection={deleteSection} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                    );
+                })}
+            </div>
         </div>
     );
 }
