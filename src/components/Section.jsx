@@ -13,7 +13,7 @@ const ResponsiveReactGridLayout = WidthProvider(Responsive);
 export default function Section({ pageId, section, deleteSection, onLayoutChange, addCard, deleteCard }) {
    
 
-    const [layout, setLayout] = useState(section.layout);
+    
 
     const handleLayoutChange = (newLayout) => {
         onLayoutChange(section.pageId, section.id, newLayout);
@@ -30,7 +30,7 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
             <CardContent>
                  <ResponsiveReactGridLayout
                     className="layout"
-                    layouts={{ lg: layout }}
+                    layouts={{ lg: section.layout }}
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={100}
@@ -38,7 +38,7 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
                     isResizable={true}
                     autoSize={true}
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
-                    onLayoutChange={onLayoutChange}
+                    onLayoutChange={handleLayoutChange}
                 >
                     {section.cards.map((card) => {
                         return (
