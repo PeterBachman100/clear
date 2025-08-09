@@ -94,7 +94,7 @@ export default function Dashboard() {
       if (prevState.pages.length === 1) {
         return prevState;
       }
-      
+
       const updatedPages = prevState.pages.filter((page) => page.id !== pageId);
       
       let newActivePageId = prevState.activePageId;
@@ -191,19 +191,13 @@ export default function Dashboard() {
 
   const deleteCard = (pageId, sectionId, cardId) => {
     setDashboardState(prevState => {
-      // Use map to create an immutable copy of the pages array.
       const updatedPages = prevState.pages.map(page => {
-        // Find the page we want to update.
         if (page.id === pageId) {
-          // Create an immutable copy of the sections array for that page.
           const updatedSections = page.sections.map(section => {
-            // Find the section we want to update.
             if (section.id === sectionId) {
               return {
                 ...section,
-                // Use .filter() to create a new cards array without the deleted card.
                 cards: section.cards.filter(card => card.id !== cardId),
-                // Use .filter() to create a new layout array without the deleted item.
                 layout: section.layout.filter(item => item.i !== cardId),
               };
             }
@@ -218,7 +212,6 @@ export default function Dashboard() {
         return page;
       });
 
-      // Return the new state object with the updated pages array.
       return {
         ...prevState,
         pages: updatedPages,
@@ -226,20 +219,36 @@ export default function Dashboard() {
     });
   };
 
+ 
+
   const handleLayoutChange = (pageId, sectionId, newLayout) => {
     setDashboardState(prevState => {
-      // Create a deep copy of the state to avoid direct mutation
-      const newState = JSON.parse(JSON.stringify(prevState));
-      const pageToUpdate = newState.pages.find(page => page.id === pageId);
-      if (pageToUpdate) {
-        const sectionToUpdate = pageToUpdate.sections.find(section => section.id === sectionId);
-        if (sectionToUpdate) {
-          sectionToUpdate.layout = newLayout;
-        }
-      }
-      return newState;
+        
+        const pageIndex = prevState.pages.findIndex(page => page.id === pageId);
+        if (pageIndex === -1) return prevState;
+      
+        const updatedPage = { ...prevState.pages[pageIndex] };
+        
+        const sectionIndex = updatedPage.sections.findIndex(section => section.id === sectionId);
+        if (sectionIndex === -1) return prevState;
+
+        const updatedSection = { ...updatedPage.sections[sectionIndex] };
+        
+        updatedSection.layout = newLayout;
+        
+        const updatedSections = [...updatedPage.sections];
+        updatedSections[sectionIndex] = updatedSection;
+        updatedPage.sections = updatedSections;
+
+        const updatedPages = [...prevState.pages];
+        updatedPages[pageIndex] = updatedPage;
+
+        return {
+            ...prevState,
+            pages: updatedPages,
+        };
     });
-  };
+};
   
   const setActivePageId = (pageId) => {
     setDashboardState(prevState => ({
