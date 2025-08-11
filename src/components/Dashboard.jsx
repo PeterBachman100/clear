@@ -10,6 +10,7 @@ const initialDashboardState = {
     {
       id: 'page-1',
       name: 'Page 1',
+      editMode: false,
       sections: [
         {
           id: '1',
@@ -55,8 +56,9 @@ const initialDashboardState = {
       ],
     },
     {
-    id: 'page-2',
+      id: 'page-2',
       name: 'Page 2',
+      editMode: false,
       sections: [
         {
           id: '1',
@@ -73,18 +75,25 @@ const initialDashboardState = {
 
 export default function Dashboard() {
 
-    const [editMode, setEditMode] = useState(false);
-    const toggleEditMode = () => {
-        setEditMode(!editMode);
-    }
-
   const [dashboardState, setDashboardState] = useState(initialDashboardState);
+
+  const toggleEditMode = (pageId) => {
+    setDashboardState((prevState) => ({
+        ...prevState,
+        pages: prevState.pages.map((page) => ({
+            ...page,
+            editMode: page.id === pageId ? !page.editMode : false,
+        })),
+    }));
+  };
+
 
   const addPage = () => {
     const newId = uuidv4();
     const newPage = {
       id: newId,
       name: 'New Page',
+      editMode: false,
       sections: []
     }
 
@@ -255,12 +264,25 @@ export default function Dashboard() {
     });
 };
   
-  const setActivePageId = (pageId) => {
-    setDashboardState(prevState => ({
+
+const setActivePageId = (pageId) => {
+  setDashboardState((prevState) => {
+    const updatedPages = prevState.pages.map((page) => {
+      if (page.id === prevState.activePageId) {
+        return {...page, editMode: false};
+      } else {
+        return page;
+      }
+    });
+
+    return {
       ...prevState,
-      activePageId: pageId
-    }));
-  };
+      activePageId: pageId,
+      pages: updatedPages
+    };
+  });
+};
+
   const activePage = dashboardState.pages.find(
     (page) => page.id === dashboardState.activePageId
   );
@@ -269,7 +291,7 @@ export default function Dashboard() {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} editMode={editMode} toggleEditMode={toggleEditMode} onLayoutChange={handleLayoutChange} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );

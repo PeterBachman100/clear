@@ -13,7 +13,7 @@ export default function Page({ page, editMode, toggleEditMode, onLayoutChange, a
                 className="w-full bg-gray-300"
                 >
                 <Typography variant="h1" className='w-full'>{page.name}</Typography>
-                <Button onClick={toggleEditMode}>{editMode? 'Save Layout' : 'Edit Layout'}</Button>
+                <Button onClick={() => {toggleEditMode(page.id)}}>{editMode? 'Save Layout' : 'Edit Layout'}</Button>
                 <Button onClick={() => {addSection(page.id)}}>Add Section</Button>
             </Box>
             {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
