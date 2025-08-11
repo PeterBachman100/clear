@@ -291,7 +291,7 @@ const setActivePageId = (pageId) => {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );
