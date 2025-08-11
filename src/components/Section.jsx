@@ -10,13 +10,13 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, section, deleteSection, onLayoutChange, addCard, deleteCard }) {
+export default function Section({ pageId, section, deleteSection, onLayoutChange, editMode, addCard, deleteCard }) {
    
 
     
 
     const handleLayoutChange = (newLayout) => {
-        onLayoutChange(section.pageId, section.id, newLayout);
+        onLayoutChange(pageId, section.id, newLayout);
     };
 
 
@@ -34,8 +34,9 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
                     breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                     cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
                     rowHeight={100}
-                    isDraggable={true}
-                    isResizable={true}
+                    isDraggable={editMode}
+                    draggableHandle=".drag-handle"
+                    isResizable={editMode}
                     autoSize={true}
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
                     onLayoutChange={handleLayoutChange}
@@ -43,7 +44,7 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
                     {section.cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                 <WeatherCard pageId={pageId} section={section} card={card} deleteCard={deleteCard} />
+                                 <WeatherCard pageId={pageId} section={section} card={card} deleteCard={deleteCard} editMode={editMode} />
                             </div>
                         );
                     })}

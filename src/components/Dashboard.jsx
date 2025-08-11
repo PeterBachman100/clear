@@ -73,6 +73,11 @@ const initialDashboardState = {
 
 export default function Dashboard() {
 
+    const [editMode, setEditMode] = useState(false);
+    const toggleEditMode = () => {
+        setEditMode(!editMode);
+    }
+
   const [dashboardState, setDashboardState] = useState(initialDashboardState);
 
   const addPage = () => {
@@ -153,7 +158,7 @@ export default function Dashboard() {
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
     const newCard = { id: newId, name: 'Card Name' };
-    const newLayoutItem = { i: newId, x: 0, y: Infinity, w: 4, h: 4 };
+    const newLayoutItem = { i: newId, x: Infinity, y: Infinity, w: 4, h: 4 };
 
     setDashboardState(prevState => {
       const updatedPages = prevState.pages.map(page => {
@@ -264,7 +269,7 @@ export default function Dashboard() {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} onLayoutChange={handleLayoutChange} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} editMode={editMode} toggleEditMode={toggleEditMode} onLayoutChange={handleLayoutChange} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );
