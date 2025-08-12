@@ -44,20 +44,20 @@ export default function WeatherCard({ pageId, section, card, deleteCard, updateC
         <Card className="h-full" elevation={3}>
             <CardHeader 
                 title={
-                                    editingCardName ?
-                                        <div className="flex gap-4">
-                                            <TextField
-                                                label={"Page Name"}
-                                                variant="outlined"
-                                                value={cardName}
-                                                onChange={handleNameChange}
-                                            /> 
-                                            <Button onClick={handleCardNameChange} variant="outlined" color="success">Save</Button>
-                                            <Button onClick={() => {setEditingCardName(false)}} variant="outlined" color="error">Cancel</Button>
-                                            </div>
-                                        :
-                                        <Typography variant="h3">{card.name}</Typography>
-                                    }
+                        editingCardName ?
+                            <div className="flex gap-4">
+                                <TextField
+                                    label={"Page Name"}
+                                    variant="outlined"
+                                    value={cardName}
+                                    onChange={handleNameChange}
+                                /> 
+                                <Button onClick={handleCardNameChange} variant="outlined" color="success">Save</Button>
+                                <Button onClick={() => {setEditingCardName(false)}} variant="outlined" color="error">Cancel</Button>
+                                </div>
+                            :
+                            <Typography variant="h3">{card.name}</Typography>
+                        }
                 action={
                     <IconButton
                         aria-describedby={id} 

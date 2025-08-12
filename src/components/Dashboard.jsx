@@ -110,20 +110,14 @@ export default function Dashboard() {
       }
 
       const updatedPages = prevState.pages.filter((page) => page.id !== pageId);
-      
-      let newActivePageId = prevState.activePageId;
-
-      if (prevState.activePageId === pageId) {
-        newActivePageId = updatedPages.length > 0 ? updatedPages[0].id : null;
-      }
 
       return {
         ...prevState,
         pages: updatedPages,
-        activePageId: newActivePageId,
-      };
-    });
-  };
+        activePageId: updatedPages[0].id
+      }
+    })
+  }
 
   const updatePageName = (pageId, newPageName) => {
     setDashboardState((prevState) => {
