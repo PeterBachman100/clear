@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card, CardHeader, Typography, CardActions, IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
@@ -40,6 +41,12 @@ export default function WeatherCard({ pageId, section, card, deleteCard, updateC
         setEditingCardName(false);
     }
 
+    const [showName, setShowName] = useState(true);
+    const handleToggleNameVisibility = () => {
+        setShowName(!showName);
+        handleCloseMenu();
+    };
+
     return (
         <Card className="h-full" elevation={3}>
             <CardHeader 
@@ -56,7 +63,7 @@ export default function WeatherCard({ pageId, section, card, deleteCard, updateC
                                 <Button onClick={() => {setEditingCardName(false)}} variant="outlined" color="error">Cancel</Button>
                                 </div>
                             :
-                            <Typography variant="h3">{card.name}</Typography>
+                            <>{showName && <Typography variant="h3">{card.name}</Typography>}</>
                         }
                 action={
                     <IconButton
@@ -87,6 +94,9 @@ export default function WeatherCard({ pageId, section, card, deleteCard, updateC
                     }}>
                     <EditOutlinedIcon sx={{ mr: 1}} />
                     Update Card Name
+                </MenuItem>
+                <MenuItem onClick={handleToggleNameVisibility}>
+                    {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                 </MenuItem>
                 <MenuItem onClick={handleDelete}>
                     <DeleteIcon sx={{ mr: 1 }} color="error" />

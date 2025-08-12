@@ -7,6 +7,8 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
+import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 
 import LocationSearch from "./LocationSearch";
 import WeatherCard from "./WeatherCard";
@@ -51,8 +53,14 @@ export default function Section({ pageId, section, deleteSection, updateSectionN
         setEditingSectionName(false);
     }
 
+    const [showName, setShowName] = useState(true);
+    const handleToggleNameVisibility = () => {
+        setShowName(!showName);
+        handleCloseMenu();
+    };
+
     return (
-        <Card sx={{ p: 2, mb: 3 }} variant="outlined" className="w-full" elevation={3}>
+        <Card variant="outlined" className="w-full" elevation={3}>
             <CardHeader
                 title={
                     editingSectionName ?
@@ -67,7 +75,7 @@ export default function Section({ pageId, section, deleteSection, updateSectionN
                             <Button onClick={() => {setEditingSectionName(false)}} variant="outlined" color="error">Cancel</Button>
                             </div>
                         :
-                        <Typography variant="h2">{section.name}</Typography>
+                        <>{showName && <Typography variant="h2">{section.name}</Typography>}</>
                     }
                 action={
                     <IconButton
@@ -102,6 +110,9 @@ export default function Section({ pageId, section, deleteSection, updateSectionN
                     }}>
                     <EditOutlinedIcon sx={{ mr: 1}} />
                     Update Section Name
+                </MenuItem>
+                <MenuItem onClick={handleToggleNameVisibility}>
+                    {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                 </MenuItem>
                 <MenuItem onClick={handleDelete}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
