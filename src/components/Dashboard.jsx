@@ -125,6 +125,19 @@ export default function Dashboard() {
     });
   };
 
+  const updatePageName = (pageId, newPageName) => {
+    setDashboardState((prevState) => {
+      return {
+        ...prevState,
+        pages: prevState.pages.map((page) =>
+          page.id === pageId ? 
+            { ...page, name: newPageName } :
+            page
+        )
+      };
+    });
+  };
+
   const addSection = (pageId) => {
     const newId = uuidv4();
     const newSection = {
@@ -163,6 +176,31 @@ export default function Dashboard() {
       return {...prevState, pages: updatedPages};
     });
   }
+
+  const updateSectionName = (pageId, sectionId, newName) => {
+    setDashboardState(prevState => {
+      return {
+        ...prevState,
+        pages: prevState.pages.map((page) =>
+          page.id === pageId ?
+            {
+              ...page,
+              sections: page.sections.map((section) =>
+                section.id === sectionId ?
+                  {
+                    ...section,
+                    name: newName
+                  } :
+                  section
+              )
+            } :
+            page
+        )
+      };
+    });
+  };
+
+  
 
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
@@ -233,6 +271,37 @@ export default function Dashboard() {
     });
   };
 
+  const updateCardName = (pageId, sectionId, cardId, newName) => {
+    setDashboardState(prevState => {
+      return {
+        ...prevState,
+        pages: prevState.pages.map((page) =>
+          page.id === pageId ?
+            {
+              ...page,
+              sections: page.sections.map((section) =>
+                section.id === sectionId ?
+                  {
+                    ...section,
+                    // Go one level deeper to map over the cards
+                    cards: section.cards.map((card) =>
+                      card.id === cardId ?
+                        {
+                          ...card,
+                          name: newName
+                        } :
+                        card
+                    )
+                  } :
+                  section
+              )
+            } :
+            page
+        )
+      };
+    });
+  };
+
  
 
   const handleLayoutChange = (pageId, sectionId, newLayout) => {
@@ -291,7 +360,7 @@ const setActivePageId = (pageId) => {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );

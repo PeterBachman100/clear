@@ -1,11 +1,13 @@
 import { useState} from "react";
 import LocationInput from "./LocationInput";
 import { fetchWeather } from "../utils/fetchWeather";
-import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover, IconButton, Menu, MenuItem } from "@mui/material";
+import { Button, Box, Card, CardHeader, CardContent, CardActions, Typography, Popover, IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+
 import LocationSearch from "./LocationSearch";
 import WeatherCard from "./WeatherCard";
 import { Responsive, WidthProvider } from "react-grid-layout";
@@ -14,7 +16,7 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, section, deleteSection, onLayoutChange, editMode, addCard, deleteCard }) {
+export default function Section({ pageId, section, deleteSection, updateSectionName, updateCardName, onLayoutChange, editMode, addCard, deleteCard }) {
    
     const handleLayoutChange = (newLayout) => {
         onLayoutChange(pageId, section.id, newLayout);
@@ -36,10 +38,37 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
         handleCloseMenu();
     };
 
+    // Page Name
+    const [editingSectionName, setEditingSectionName] = useState(false);
+    const [sectionName, setSectionName] = useState(section.name);
+
+    const handleNameChange = (e) => {
+        setSectionName(e.target.value);
+    };
+
+    const handleSectionNameChange = () => {
+        updateSectionName(pageId, section.id, sectionName);
+        setEditingSectionName(false);
+    }
+
     return (
         <Card sx={{ p: 2, mb: 3 }} variant="outlined" className="w-full" elevation={3}>
             <CardHeader
-                title={<Typography variant="h2" className='w-full'>{section.name}</Typography>}
+                title={
+                    editingSectionName ?
+                        <div className="flex gap-4">
+                            <TextField
+                                label={"Page Name"}
+                                variant="outlined"
+                                value={sectionName}
+                                onChange={handleNameChange}
+                            /> 
+                            <Button onClick={handleSectionNameChange} variant="outlined" color="success">Save</Button>
+                            <Button onClick={() => {setEditingSectionName(false)}} variant="outlined" color="error">Cancel</Button>
+                            </div>
+                        :
+                        <Typography variant="h2">{section.name}</Typography>
+                    }
                 action={
                     <IconButton
                         aria-describedby={id} 
@@ -67,6 +96,13 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Card
                 </MenuItem>
+                <MenuItem onClick={() => {
+                    setEditingSectionName(true);
+                    handleCloseMenu();
+                    }}>
+                    <EditOutlinedIcon sx={{ mr: 1}} />
+                    Update Section Name
+                </MenuItem>
                 <MenuItem onClick={handleDelete}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                     Delete this Section
@@ -89,7 +125,7 @@ export default function Section({ pageId, section, deleteSection, onLayoutChange
                     {section.cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                <WeatherCard pageId={pageId} section={section} card={card} deleteCard={deleteCard} editMode={editMode} />
+                                <WeatherCard pageId={pageId} section={section} card={card} updateCardName={updateCardName} deleteCard={deleteCard} editMode={editMode} />
                             </div>
                         );
                     })}
