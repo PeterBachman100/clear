@@ -9,7 +9,14 @@ const initialDashboardState = {
   pages: [
     {
       id: 'page-1',
-      name: 'Page 1',
+      name: 'Snoqualmie Pass',
+      location: {
+        name: "Snoqualmie Pass",
+        admin1: "Washington",
+        country: "United States",
+        latitude: 47.3923,
+        longitude: -121.4001
+      },
       editMode: false,
       sections: [
         {
@@ -40,33 +47,25 @@ const initialDashboardState = {
             }
           ],
         },
-        {
-          id: '2',
-          name: 'Section 2',
-          layout: [
-            {i: '1', x: 0, y: 0, h: 1, w: 1},
-          ],
-          cards: [
-            {
-              id: '1',
-              name: "Card 1",
-            },
-          ],
-        }
       ],
     },
     {
       id: 'page-2',
-      name: 'Page 2',
+      name: 'Mountain Loop Highway',
       editMode: false,
+      location: {
+        name: "Mount Dickerman",
+        admin1: "Washington",
+        country: "United States",
+        latitude: 48.06872,
+        longitude: 121.47039
+      },
       sections: [
         {
           id: '1',
           name: 'Section 1',
           layout: [],
-          cards: [
-            
-          ],
+          cards: [],
         },
       ],
     }
@@ -76,6 +75,20 @@ const initialDashboardState = {
 export default function Dashboard() {
 
   const [dashboardState, setDashboardState] = useState(initialDashboardState);
+
+  //LOCATION
+  const setLocation = (pageId, location) => {
+    setDashboardState((prevState) => {
+      return {
+        ...prevState,
+        pages: prevState.pages.map((page) =>
+          page.id === pageId ?
+            { ...page, location: location } :
+            page
+        )
+      };
+    });
+  };
 
   const toggleEditMode = (pageId) => {
     setDashboardState((prevState) => ({
@@ -87,13 +100,13 @@ export default function Dashboard() {
     }));
   };
 
-
   const addPage = () => {
     const newId = uuidv4();
     const newPage = {
       id: newId,
       name: 'New Page',
       editMode: false,
+      location: [],
       sections: []
     }
 
@@ -194,8 +207,6 @@ export default function Dashboard() {
     });
   };
 
-  
-
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
     const newCard = { id: newId, name: 'Card Name' };
@@ -233,7 +244,6 @@ export default function Dashboard() {
       };
     });
   };
-
 
   const deleteCard = (pageId, sectionId, cardId) => {
     setDashboardState(prevState => {
@@ -296,8 +306,6 @@ export default function Dashboard() {
     });
   };
 
- 
-
   const handleLayoutChange = (pageId, sectionId, newLayout) => {
     setDashboardState(prevState => {
         
@@ -325,26 +333,25 @@ export default function Dashboard() {
             pages: updatedPages,
         };
     });
-};
-  
+  };
 
-const setActivePageId = (pageId) => {
-  setDashboardState((prevState) => {
-    const updatedPages = prevState.pages.map((page) => {
-      if (page.id === prevState.activePageId) {
-        return {...page, editMode: false};
-      } else {
-        return page;
-      }
+  const setActivePageId = (pageId) => {
+    setDashboardState((prevState) => {
+      const updatedPages = prevState.pages.map((page) => {
+        if (page.id === prevState.activePageId) {
+          return {...page, editMode: false};
+        } else {
+          return page;
+        }
+      });
+
+      return {
+        ...prevState,
+        activePageId: pageId,
+        pages: updatedPages
+      };
     });
-
-    return {
-      ...prevState,
-      activePageId: pageId,
-      pages: updatedPages
-    };
-  });
-};
+  };
 
   const activePage = dashboardState.pages.find(
     (page) => page.id === dashboardState.activePageId
@@ -354,7 +361,7 @@ const setActivePageId = (pageId) => {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} setLocation={setLocation} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );

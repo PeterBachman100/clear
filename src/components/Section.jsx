@@ -60,7 +60,7 @@ export default function Section({ pageId, weather, section, deleteSection, updat
     };
 
     return (
-        <Card variant="outlined" className="w-full" elevation={3}>
+        <Card variant="contained" className="w-full" elevation={3} sx={{borderRadius: 0}}>
             <CardHeader
                 title={
                     editingSectionName ?

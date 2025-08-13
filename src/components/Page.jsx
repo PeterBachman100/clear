@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Section from "./Section";
 import LocationInput from "./LocationInput";
 import LocationSearch from "./LocationSearch";
@@ -13,7 +13,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
       
-export default function Page({ page, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
+export default function Page({ page, setLocation, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
 
     // Page Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -50,27 +50,23 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
         handleCloseMenu();
     };
 
-    // Location
-    const [location, setLocation] = useState({
-        name: "Snoqualmie Pass",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 47.3923,
-        longitude: -121.4001
-    });
 
     // Weather
     const [weather, setWeather] = useState(null);
     const handleFetchWeather = async () => {
         try {
-            const weatherData = await fetchWeather({ location });
+            const weatherData = await fetchWeather(page.location);
             setWeather(weatherData);
         } catch(error) {
             console.error("Failed to fetch weather data:", error);
         } 
     }
+    useEffect(() => {
+        handleFetchWeather();
+    }, []);
 
-    // Dialog
+
+    // Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
     const handleOpenDialog = () => {
         setDialogOpen(true);
@@ -105,6 +101,7 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                         <MoreVertIcon />
                     </IconButton>
                 }
+                sx={{p:1, textAlign: 'center'}}
             />
             <Menu
                 id={id}
@@ -150,7 +147,7 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                     Delete this Page
                 </MenuItem>
             </Menu>
-            <CardContent>
+            <CardContent sx={{p:0}}>
                 {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
                 <div className='flex flex-col bg-gray-50 h-full'>
                 {page.sections.map((section) => {
@@ -172,7 +169,7 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                     {"Set Location"}
                 </DialogTitle>
                 <DialogContent>
-                    <LocationSearch onSelect={setLocation} />
+                    <LocationSearch page={page} onSelect={setLocation} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} variant="outlined" color="error">

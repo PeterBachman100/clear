@@ -1,7 +1,7 @@
 import { fetchWeatherApi } from "openmeteo";
 import parseWeather from "./parseWeather";
 
-export async function fetchWeather({ location }) {
+export async function fetchWeather(location) {
     
     const params = {
         "latitude": location.latitude,
