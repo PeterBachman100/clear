@@ -15,7 +15,7 @@ export default function Graph({ weather }) {
 
    const optionsDropdown = (
     <select
-        className="border p-2 m-2"
+        className="border p-1 mb-2"
         value={selectedParameter}
         onChange={handleParameterChange}
     >

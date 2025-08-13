@@ -75,7 +75,7 @@ export default function Section({ pageId, weather, section, deleteSection, updat
                             <Button onClick={() => {setEditingSectionName(false)}} variant="outlined" color="error">Cancel</Button>
                             </div>
                         :
-                        <>{showName && <Typography variant="h2">{section.name}</Typography>}</>
+                        <>{showName && <Typography variant="subtitle">{section.name}</Typography>}</>
                     }
                 action={
                     <IconButton
@@ -85,6 +85,7 @@ export default function Section({ pageId, weather, section, deleteSection, updat
                         <MoreVertIcon />
                     </IconButton>
                 }
+                sx={{p: 1, flexDirection: 'row-reverse'}}
             />
             <Menu
                 id={id}
@@ -119,7 +120,7 @@ export default function Section({ pageId, weather, section, deleteSection, updat
                     Delete this Section
                 </MenuItem>
             </Menu>
-            <CardContent>
+            <CardContent sx={{p:0}}>
                 <ResponsiveReactGridLayout
                     className="layout"
                     layouts={{ lg: section.layout }}

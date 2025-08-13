@@ -101,7 +101,7 @@ export default function Page({ page, setLocation, updatePageName, updateSectionN
                         <MoreVertIcon />
                     </IconButton>
                 }
-                sx={{p:1, textAlign: 'center'}}
+                sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse'}}
             />
             <Menu
                 id={id}

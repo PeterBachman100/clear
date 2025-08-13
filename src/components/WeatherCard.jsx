@@ -64,7 +64,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                                 <Button onClick={() => {setEditingCardName(false)}} variant="outlined" color="error">Cancel</Button>
                                 </div>
                             :
-                            <>{showName && <Typography variant="h3">{card.name}</Typography>}</>
+                            <>{showName && <Typography variant="overline">{card.name}</Typography>}</>
                         }
                 action={
                     <IconButton
@@ -74,6 +74,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                         <MoreVertIcon />
                     </IconButton>
                 }
+                sx={{flexDirection: 'row-reverse', p:1}}
             ></CardHeader>    
             <Menu
                 id={id}
@@ -104,7 +105,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                     Delete this card
                 </MenuItem>
             </Menu>
-            <CardContent className="grow">
+            <CardContent className="grow" sx={{ p:1, '&:last-child': { paddingBottom: 1 } }}>
                 {weather? 
                     <Graph weather={weather} /> :
                     <div>No Weather Data</div>
