@@ -6,10 +6,9 @@ import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import OpenWithIcon from '@mui/icons-material/OpenWith';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function WeatherCard({ pageId, weather, section, card, deleteCard, updateCardName, editMode }) {
+export default function WeatherCard({ pageId, weather, setSelectedParameter, section, card, deleteCard, updateCardName, editMode }) {
 
     
 
@@ -48,6 +47,13 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
         handleCloseMenu();
     };
 
+    //Graph Parameters
+    const [parametersVisible, setParametersVisible] = useState(false);
+    const handleToggleParameterVisbility = () => {
+        setParametersVisible(!parametersVisible);
+        handleCloseMenu();
+    }
+
     return (
         <Card className="h-full flex flex-col" elevation={3}>
             <CardHeader 
@@ -75,7 +81,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                     </IconButton>
                 }
                 sx={{flexDirection: 'row-reverse', p:1}}
-            ></CardHeader>    
+            ></CardHeader> 
             <Menu
                 id={id}
                 anchorEl={anchorEl}
@@ -100,6 +106,9 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                 <MenuItem onClick={handleToggleNameVisibility}>
                     {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                 </MenuItem>
+                <MenuItem onClick={handleToggleParameterVisbility}>
+                    {parametersVisible ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide Parameters</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show Parameters</>}
+                </MenuItem>
                 <MenuItem onClick={handleDelete}>
                     <DeleteIcon sx={{ mr: 1 }} color="error" />
                     Delete this card
@@ -107,7 +116,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
             </Menu>
             <CardContent className="grow" sx={{ p:1, '&:last-child': { paddingBottom: 1 } }}>
                 {weather? 
-                    <Graph weather={weather} /> :
+                    <Graph weather={weather} selectedParameter={card.selectedParameter} setSelectedParameter={setSelectedParameter} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
                     <div>No Weather Data</div>
                 }
             </CardContent>

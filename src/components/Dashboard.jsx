@@ -23,52 +23,36 @@ const initialDashboardState = {
           id: '1',
           name: 'Section 1',
           layout: [
-            {i: '1', x: 0, y: 0, h: 4, w: 6},
-            {i: '2', x: 6, y: 0, h: 2, w: 6},
-            {i: '3', x: 6, y: 2, h: 2, w: 3},
-            {i: '4', x: 9, y: 2, h: 2, w: 3}
+            {i: '1', x: 0, y: 0, h: 2, w: 12},
+            {i: '2', x: 0, y: 2, h: 2, w: 12},
+            {i: '3', x: 0, y: 4, h: 2, w: 12},
+            {i: '4', x: 0, y: 6, h: 2, w: 12}
           ],
           cards: [
             {
               id: '1',
               name: "Card 1",
+              selectedParameter: 'temperature'
             },
             {
               id: '2',
               name: "Card 2",
+              selectedParameter: 'precipitation_probability'
             },
             {
               id: '3',
               name: 'Card 3',
+              selectedParameter: 'precipitation'
             },
             {
               id: '4',
-              name: 'Card 4'
+              name: 'Card 4',
+              selectedParameter: 'cloud_cover'
             }
           ],
         },
       ],
     },
-    {
-      id: 'page-2',
-      name: 'Mountain Loop Highway',
-      editMode: false,
-      location: {
-        name: "Mount Dickerman",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 48.06872,
-        longitude: 121.47039
-      },
-      sections: [
-        {
-          id: '1',
-          name: 'Section 1',
-          layout: [],
-          cards: [],
-        },
-      ],
-    }
   ],
 };
 
@@ -86,6 +70,40 @@ export default function Dashboard() {
             { ...page, location: location } :
             page
         )
+      };
+    });
+  };
+
+  //PARAMETER
+  const setSelectedParameter = (pageId, sectionId, cardId, newParameter) => {
+    setDashboardState((prevState) => {
+      return {
+        ...prevState,
+        pages: prevState.pages.map((page) => {
+          if (page.id === pageId) {
+            return {
+              ...page,
+              sections: page.sections.map((section) => {
+                if (section.id === sectionId) {
+                  return {
+                    ...section,
+                    cards: section.cards.map((card) => {
+                      if (card.id === cardId) {
+                        return {
+                          ...card,
+                          selectedParameter: newParameter,
+                        };
+                      }
+                      return card;
+                    }),
+                  };
+                }
+                return section;
+              }),
+            };
+          }
+          return page;
+        }),
       };
     });
   };
@@ -361,7 +379,7 @@ export default function Dashboard() {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} setLocation={setLocation} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} setLocation={setLocation} setSelectedParameter={setSelectedParameter} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
       </div>
     </div>
   );

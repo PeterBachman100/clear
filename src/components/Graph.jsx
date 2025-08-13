@@ -2,14 +2,14 @@ import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card } from "@mui/material";
 
-export default function Graph({ weather }) {
+export default function Graph({ weather, parametersVisible, selectedParameter, setSelectedParameter, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
-    const [selectedParameter, setSelectedParameter] = useState('temperature');
+    // const [selectedParameter, setSelectedParameter] = useState('temperature');
 
     const handleParameterChange = (e) => {
-        setSelectedParameter(e.target.value);
+        setSelectedParameter(pageId, section.id, card.id, e.target.value);
     };
 
 
@@ -58,7 +58,7 @@ export default function Graph({ weather }) {
     return (
         
         <div className='flex flex-col h-full'>    
-            {optionsDropdown}
+            {parametersVisible && optionsDropdown}
             <Box sx={{ overflowX: 'scroll', width: '100vw', height: '100%' }}>
                 <Box sx={{ minWidth: '4000px', width: '100%', height: '100%' }}>
                     <LineChart

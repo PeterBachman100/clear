@@ -13,7 +13,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
       
-export default function Page({ page, setLocation, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
+export default function Page({ page, setLocation, setSelectedParameter, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
 
     // Page Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -147,15 +147,22 @@ export default function Page({ page, setLocation, updatePageName, updateSectionN
                     Delete this Page
                 </MenuItem>
             </Menu>
-            <CardContent sx={{p:0}}>
+            <CardContent sx={{p:0, display: 'flex', flexDirection: 'column'}}>
                 {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
-                <div className='flex flex-col bg-gray-50 h-full'>
-                {page.sections.map((section) => {
-                    return (
-                        <Section key={section.id} weather={weather} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
-                    );
-                })}
-            </div>
+                {editMode && <Button variant="outlined" color="success" onClick={() => {
+                        toggleEditMode(page.id);
+                        handleCloseMenu();
+                    }}>
+                        Save Layout
+                    </Button>
+                }
+                <div>
+                    {page.sections.map((section) => {
+                        return (
+                            <Section key={section.id} weather={weather} setSelectedParameter={setSelectedParameter} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                        );
+                    })}
+                </div>
             </CardContent>
         </Card>
         <Dialog
