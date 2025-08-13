@@ -18,7 +18,7 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, section, deleteSection, updateSectionName, updateCardName, onLayoutChange, editMode, addCard, deleteCard }) {
+export default function Section({ pageId, weather, section, deleteSection, updateSectionName, updateCardName, onLayoutChange, editMode, addCard, deleteCard }) {
    
     const handleLayoutChange = (newLayout) => {
         onLayoutChange(pageId, section.id, newLayout);
@@ -136,7 +136,7 @@ export default function Section({ pageId, section, deleteSection, updateSectionN
                     {section.cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                <WeatherCard pageId={pageId} section={section} card={card} updateCardName={updateCardName} deleteCard={deleteCard} editMode={editMode} />
+                                <WeatherCard pageId={pageId} weather={weather} section={section} card={card} updateCardName={updateCardName} deleteCard={deleteCard} editMode={editMode} />
                             </div>
                         );
                     })}

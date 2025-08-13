@@ -1,6 +1,7 @@
 import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
-import { Button, Box, Popover, Card, CardHeader, Typography, CardActions, IconButton, Menu, MenuItem, TextField } from "@mui/material";
+import Graph from './Graph';
+import { Button, Box, Popover, Card, CardHeader, Typography, CardActions, IconButton, Menu, MenuItem, TextField, CardContent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
@@ -8,7 +9,7 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function WeatherCard({ pageId, section, card, deleteCard, updateCardName, editMode }) {
+export default function WeatherCard({ pageId, weather, section, card, deleteCard, updateCardName, editMode }) {
 
     
 
@@ -103,6 +104,12 @@ export default function WeatherCard({ pageId, section, card, deleteCard, updateC
                     Delete this card
                 </MenuItem>
             </Menu>
+            <CardContent>
+                {weather? 
+                    <Graph weather={weather} /> :
+                    <div>No Weather Data</div>
+                }
+            </CardContent>
         </Card>
     );
 }

@@ -1,6 +1,9 @@
 import { useState } from "react";
 import Section from "./Section";
-import { Box, Typography, Divider, Button, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField } from '@mui/material';
+import LocationInput from "./LocationInput";
+import LocationSearch from "./LocationSearch";
+import { fetchWeather } from "../utils/fetchWeather";
+import { Box, Typography, Divider, Button, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import ViewComfyIcon from '@mui/icons-material/ViewComfy';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
@@ -8,6 +11,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
       
 export default function Page({ page, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
 
@@ -46,8 +50,36 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
         handleCloseMenu();
     };
 
+    // Location
+    const [location, setLocation] = useState({
+        name: "Snoqualmie Pass",
+        admin1: "Washington",
+        country: "United States",
+        latitude: 47.3923,
+        longitude: -121.4001
+    });
+
+    // Weather
+    const [weather, setWeather] = useState(null);
+    const handleFetchWeather = async () => {
+        try {
+            const weatherData = await fetchWeather({ location });
+            setWeather(weatherData);
+        } catch(error) {
+            console.error("Failed to fetch weather data:", error);
+        } 
+    }
+
+    // Dialog
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+        handleCloseMenu();
+    };
+    const handleCloseDialog = () => {setDialogOpen(false)};
+
     return (
-        
+        <>
         <Card className='w-full min-h-screen'>
             <CardHeader
                 title={
@@ -88,6 +120,10 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                     horizontal: 'left',
                 }}
             >
+                <MenuItem onClick={() => {handleOpenDialog()}}>
+                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
+                    Set Location
+                </MenuItem>
                 <MenuItem onClick={() => addSection(page.id)}>
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Section
@@ -116,11 +152,41 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                 <div className='flex flex-col bg-gray-50 h-full'>
                 {page.sections.map((section) => {
                     return (
-                        <Section key={section.id} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                        <Section key={section.id} weather={weather} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
                     );
                 })}
             </div>
             </CardContent>
         </Card>
+        <Dialog
+                open={dialogOpen}
+                onClose={handleCloseDialog}
+                aria-labelledby="dialog-title"
+                fullWidth 
+                maxWidth="lg"
+            >
+                <DialogTitle id="dialog-title">
+                    {"Set Location"}
+                </DialogTitle>
+                <DialogContent>
+                    <LocationSearch onSelect={setLocation} />
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={handleCloseDialog} variant="outlined" color="error">
+                        Cancel
+                    </Button>
+                    <Button 
+                        variant="outlined" 
+                        color="secondary"
+                        onClick={() => {
+                            handleFetchWeather();
+                            handleCloseDialog();
+                            }}
+                    >
+                        Save Location
+                    </Button>
+                </DialogActions>
+            </Dialog>
+        </>
     );
 }
