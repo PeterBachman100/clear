@@ -128,7 +128,10 @@ export default function Page({ page, updatePageName, updateSectionName, updateCa
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Section
                 </MenuItem>
-                <MenuItem onClick={() => toggleEditMode(page.id)}>
+                <MenuItem onClick={() => {
+                    toggleEditMode(page.id);
+                    handleCloseMenu();
+                }}>
                     <ViewComfyIcon sx={{ mr: 1}} />
                     {editMode ? 'Save Layout' : 'Edit Layout'}
                 </MenuItem>

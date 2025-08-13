@@ -49,7 +49,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
     };
 
     return (
-        <Card className="h-full" elevation={3}>
+        <Card className="h-full flex flex-col" elevation={3}>
             <CardHeader 
                 title={
                         editingCardName ?
@@ -104,7 +104,7 @@ export default function WeatherCard({ pageId, weather, section, card, deleteCard
                     Delete this card
                 </MenuItem>
             </Menu>
-            <CardContent>
+            <CardContent className="grow">
                 {weather? 
                     <Graph weather={weather} /> :
                     <div>No Weather Data</div>

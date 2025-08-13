@@ -57,15 +57,14 @@ export default function Graph({ weather }) {
 
     return (
         
-        <div>    
+        <div className='flex flex-col h-full'>    
             {optionsDropdown}
-            <Box sx={{ overflowX: 'scroll', width: '100vw' }}>
-                <Box sx={{ minWidth: '4000px', width: '100%' }}>
+            <Box sx={{ overflowX: 'scroll', width: '100vw', height: '100%' }}>
+                <Box sx={{ minWidth: '4000px', width: '100%', height: '100%' }}>
                     <LineChart
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
-                        height={300}
                         grid={{vertical:true, horizontal:true}}
                     />        
                 </Box>
