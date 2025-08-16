@@ -1,12 +1,11 @@
 import { LineChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card } from "@mui/material";
+import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 
 export default function Graph({ weather, parametersVisible, selectedParameter, setSelectedParameter, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
-
-    // const [selectedParameter, setSelectedParameter] = useState('temperature');
 
     const handleParameterChange = (e) => {
         setSelectedParameter(pageId, section.id, card.id, e.target.value);
@@ -20,15 +19,20 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
         onChange={handleParameterChange}
     >
         {hourlyParams.map((param) => (
-            <option key={param} value={param}>{param}</option>
+            <option key={param} value={param}>{param.replace(/_/g, ' ').replace(/(^\w|\s\w)/g, (match) => match.toUpperCase())}</option>
         ))}
     </select>
    );
 
+   // Visibility: convert feet to miles
+   const seriesData = selectedParameter === 'visibility'
+        ? weather.hourly.weatherVariables[selectedParameter].values.map(feet => feet / 5280) // Convert ft to miles
+        : weather.hourly.weatherVariables[selectedParameter].values;
+
     const series = [
         {
-            data: weather.hourly.weatherVariables[selectedParameter].values,
-            showMark: false,
+            data: seriesData,
+            showMark: false
         }
     ];
     const xAxis = [
@@ -49,9 +53,18 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
             },
         }
     ];
-    const yAxis = [
+
+    // Conditional logic for yAxis label
+    const yAxisLabel = selectedParameter === 'visibility'
+        ? 'Visibility (mi)' // Custom label for visibility
+        : selectedParameter.replace(/_/g, ' ').replace(/(^\w|\s\w)/g, (match) => match.toUpperCase()) + ' ' + getUnitAbbreviation(weather.hourly.weatherVariables[selectedParameter].unit);
+    
+        const yAxis = [
         {
-            label: selectedParameter + ' (' + weather.hourly.weatherVariables[selectedParameter].unit + ')'
+            label: yAxisLabel,
+            labelStyle: {
+                fontSize: 12,
+            },
         }
     ];
 
