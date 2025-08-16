@@ -26,8 +26,8 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
 
    // Visibility: convert feet to miles
    const seriesData = selectedParameter === 'visibility'
-        ? weather.hourly.weatherVariables[selectedParameter].values.map(feet => feet / 5280) // Convert ft to miles
-        : weather.hourly.weatherVariables[selectedParameter].values;
+        ? weather?.hourly.weatherVariables[selectedParameter].values.map(feet => feet / 5280) // Convert ft to miles
+        : weather?.hourly.weatherVariables[selectedParameter].values;
 
     const series = [
         {
@@ -59,13 +59,13 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
         ? 'Visibility (mi)' // Custom label for visibility
         : selectedParameter.replace(/_/g, ' ').replace(/(^\w|\s\w)/g, (match) => match.toUpperCase()) + ' ' + getUnitAbbreviation(weather.hourly.weatherVariables[selectedParameter].unit);
     
-        const yAxis = [
-        {
-            label: yAxisLabel,
-            labelStyle: {
-                fontSize: 12,
-            },
-        }
+    const yAxis = [
+    {
+        label: yAxisLabel,
+        labelStyle: {
+            fontSize: 12,
+        },
+    }
     ];
 
     return (
@@ -78,7 +78,7 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
-                        grid={{vertical:true, horizontal:true}}
+                        
                     />        
                 </Box>
             </Box>

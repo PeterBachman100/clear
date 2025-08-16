@@ -1,6 +1,7 @@
 import Sidebar from "./Sidebar";
 import Page from "./Page";
 import { useState } from "react";
+import useLocalStorage from "use-local-storage";
 import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
@@ -58,7 +59,8 @@ const initialDashboardState = {
 
 export default function Dashboard() {
 
-  const [dashboardState, setDashboardState] = useState(initialDashboardState);
+  // const [dashboardState, setDashboardState] = useState(initialDashboardState);
+  const [dashboardState, setDashboardState] = useLocalStorage("dashboard", initialDashboardState);
 
   //LOCATION
   const setLocation = (pageId, location) => {
@@ -227,7 +229,7 @@ export default function Dashboard() {
 
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
-    const newCard = { id: newId, name: 'Card Name' };
+    const newCard = { id: newId, name: 'Card Name', selectedParameter: 'temperature' };
     const newLayoutItem = { i: newId, x: Infinity, y: Infinity, w: 4, h: 4 };
 
     setDashboardState(prevState => {
