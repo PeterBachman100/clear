@@ -35,6 +35,7 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
             showMark: false
         }
     ];
+   
     const xAxis = [
         {
             domainLimit: 'strict',
@@ -73,12 +74,12 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
         <div className='flex flex-col h-full'>    
             {parametersVisible && optionsDropdown}
             <Box sx={{ overflowX: 'scroll', width: '100vw', height: '100%' }}>
-                <Box sx={{ minWidth: '4000px', width: '100%', height: '100%' }}>
+                <Box sx={{ minWidth: '10000px', width: '100%', height: '100%' }}>
                     <LineChart
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
-                        
+                        margin={{top: 0, right: 0, left: 0, bottom: -20}}
                     />        
                 </Box>
             </Box>

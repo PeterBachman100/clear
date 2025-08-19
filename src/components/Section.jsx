@@ -123,9 +123,9 @@ export default function Section({ pageId, weather, setSelectedParameter, section
             <CardContent sx={{p:0}}>
                 <ResponsiveReactGridLayout
                     className="layout"
-                    layouts={{ lg: section.layout }}
-                    breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
-                    cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                    layouts={{ lg: section.layout, md: section.layout, sm: section.layout, xs: section.layout, xxs: section.layout }}
+                    breakpoints={{ lg: 1200, md: 1000, sm: 600, xs: 400, xxs: 0 }}
+                    cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
                     rowHeight={100}
                     isDraggable={editMode}
                     isResizable={editMode}
