@@ -1,4 +1,4 @@
-import { LineChart } from "@mui/x-charts";
+import { ChartContainer, ChartsXAxis, ChartsYAxis, LineChart, LinePlot } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card } from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
@@ -32,13 +32,14 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
     const series = [
         {
             data: seriesData,
+            type: 'line',
             showMark: false
         }
     ];
    
     const xAxis = [
         {
-            domainLimit: 'strict',
+            // domainLimit: 'strict',
             scaleType: 'time',
             label: 'Time',
             data: weather.hourly.time,
@@ -75,12 +76,16 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
             {parametersVisible && optionsDropdown}
             <Box sx={{ overflowX: 'scroll', width: '100vw', height: '100%' }}>
                 <Box sx={{ minWidth: '10000px', width: '100%', height: '100%' }}>
-                    <LineChart
+                    <ChartContainer
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
                         margin={{top: 0, right: 0, left: 0, bottom: -20}}
-                    />        
+                    >
+                        <LinePlot />
+                        <ChartsXAxis />
+                        <ChartsYAxis />
+                    </ChartContainer>     
                 </Box>
             </Box>
         </div>
