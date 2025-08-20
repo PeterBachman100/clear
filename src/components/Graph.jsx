@@ -1,4 +1,4 @@
-import { ChartContainer, ChartsXAxis, ChartsYAxis, LineChart, LinePlot } from "@mui/x-charts";
+import { ChartContainer, ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, LineChart, LinePlot } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Button, Box, Popover, Card } from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
@@ -33,8 +33,9 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
         {
             data: seriesData,
             type: 'line',
-            showMark: false
-        }
+            label: selectedParameter,
+            showMark: false,
+        },
     ];
    
     const xAxis = [
@@ -62,12 +63,10 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
         : selectedParameter.replace(/_/g, ' ').replace(/(^\w|\s\w)/g, (match) => match.toUpperCase()) + ' ' + getUnitAbbreviation(weather.hourly.weatherVariables[selectedParameter].unit);
     
     const yAxis = [
-    {
-        label: yAxisLabel,
-        labelStyle: {
-            fontSize: 12,
-        },
-    }
+        {
+            label: yAxisLabel,
+            labelStyle: {fontSize: 12},
+        }
     ];
 
     return (
@@ -76,16 +75,22 @@ export default function Graph({ weather, parametersVisible, selectedParameter, s
             {parametersVisible && optionsDropdown}
             <Box sx={{ overflowX: 'scroll', width: '100vw', height: '100%' }}>
                 <Box sx={{ minWidth: '10000px', width: '100%', height: '100%' }}>
-                    <ChartContainer
+                    <ChartDataProvider
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
-                        margin={{top: 0, right: 0, left: 0, bottom: -20}}
                     >
-                        <LinePlot />
-                        <ChartsXAxis />
-                        <ChartsYAxis />
-                    </ChartContainer>     
+                        
+                            <ChartsSurface sx={{width:'100%', height:'80%'}}>
+                                <LinePlot />
+                                <ChartsXAxis />
+                                <ChartsYAxis />
+                            </ChartsSurface>
+                            
+                            <ChartsLegend />
+                        
+                        
+                    </ChartDataProvider>    
                 </Box>
             </Box>
         </div>
