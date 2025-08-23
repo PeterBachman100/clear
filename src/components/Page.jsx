@@ -13,7 +13,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
       
-export default function Page({ page, setLocation, setSelectedParameter, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
+export default function Page({ page, setLocation, setSelectedParameters, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
 
     // Page Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -159,7 +159,7 @@ export default function Page({ page, setLocation, setSelectedParameter, updatePa
                 <div>
                     {page.sections.map((section) => {
                         return (
-                            <Section key={section.id} weather={weather} setSelectedParameter={setSelectedParameter} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                            <Section key={section.id} weather={weather} setSelectedParameters={setSelectedParameters} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
                         );
                     })}
                 </div>

@@ -24,31 +24,31 @@ const initialDashboardState = {
           id: '1',
           name: 'Section 1',
           layout: [
-            {i: '1', x: 0, y: 0, h: 2, w: 12},
-            {i: '2', x: 0, y: 2, h: 2, w: 12},
-            {i: '3', x: 0, y: 4, h: 2, w: 12},
-            {i: '4', x: 0, y: 6, h: 2, w: 12}
+            {i: '1', x: 0, y: 0, h: 4, w: 12},
+            {i: '2', x: 0, y: 4, h: 4, w: 12},
+            {i: '3', x: 0, y: 8, h: 4, w: 12},
+            {i: '4', x: 0, y: 12, h: 4, w: 12}
           ],
           cards: [
             {
               id: '1',
               name: "Card 1",
-              selectedParameter: 'temperature'
+              selectedParameters: ['cloud_cover_high', 'cloud_cover_mid', 'cloud_cover_low']
             },
             {
               id: '2',
               name: "Card 2",
-              selectedParameter: 'precipitation_probability'
+              selectedParameters: ['temperature', 'apparent_temperature']
             },
             {
               id: '3',
               name: 'Card 3',
-              selectedParameter: 'precipitation'
+              selectedParameters: ['precipitation_probability', 'precipitation']
             },
             {
               id: '4',
               name: 'Card 4',
-              selectedParameter: 'cloud_cover'
+              selectedParameters: ['wind_speed', 'wind_gusts']
             }
           ],
         },
@@ -59,7 +59,6 @@ const initialDashboardState = {
 
 export default function Dashboard() {
 
-  // const [dashboardState, setDashboardState] = useState(initialDashboardState);
   const [dashboardState, setDashboardState] = useLocalStorage("dashboard", initialDashboardState);
 
   //LOCATION
@@ -76,48 +75,27 @@ export default function Dashboard() {
     });
   };
 
-  //PARAMETER
-  const setSelectedParameter = (pageId, sectionId, cardId, newParameter) => {
+  //PAGE
+  const activePage = dashboardState.pages.find(
+    (page) => page.id === dashboardState.activePageId
+  );
+
+  const setActivePageId = (pageId) => {
     setDashboardState((prevState) => {
+      const updatedPages = prevState.pages.map((page) => {
+        if (page.id === prevState.activePageId) {
+          return {...page, editMode: false};
+        } else {
+          return page;
+        }
+      });
+
       return {
         ...prevState,
-        pages: prevState.pages.map((page) => {
-          if (page.id === pageId) {
-            return {
-              ...page,
-              sections: page.sections.map((section) => {
-                if (section.id === sectionId) {
-                  return {
-                    ...section,
-                    cards: section.cards.map((card) => {
-                      if (card.id === cardId) {
-                        return {
-                          ...card,
-                          selectedParameter: newParameter,
-                        };
-                      }
-                      return card;
-                    }),
-                  };
-                }
-                return section;
-              }),
-            };
-          }
-          return page;
-        }),
+        activePageId: pageId,
+        pages: updatedPages
       };
     });
-  };
-
-  const toggleEditMode = (pageId) => {
-    setDashboardState((prevState) => ({
-        ...prevState,
-        pages: prevState.pages.map((page) => ({
-            ...page,
-            editMode: page.id === pageId ? !page.editMode : false,
-        })),
-    }));
   };
 
   const addPage = () => {
@@ -164,6 +142,49 @@ export default function Dashboard() {
       };
     });
   };
+
+  //LAYOUT
+  const toggleEditMode = (pageId) => {
+    setDashboardState((prevState) => ({
+        ...prevState,
+        pages: prevState.pages.map((page) => ({
+            ...page,
+            editMode: page.id === pageId ? !page.editMode : false,
+        })),
+    }));
+  };
+
+  const handleLayoutChange = (pageId, sectionId, newLayout) => {
+    setDashboardState(prevState => {
+        
+        const pageIndex = prevState.pages.findIndex(page => page.id === pageId);
+        if (pageIndex === -1) return prevState;
+      
+        const updatedPage = { ...prevState.pages[pageIndex] };
+        
+        const sectionIndex = updatedPage.sections.findIndex(section => section.id === sectionId);
+        if (sectionIndex === -1) return prevState;
+
+        const updatedSection = { ...updatedPage.sections[sectionIndex] };
+        
+        updatedSection.layout = newLayout;
+        
+        const updatedSections = [...updatedPage.sections];
+        updatedSections[sectionIndex] = updatedSection;
+        updatedPage.sections = updatedSections;
+
+        const updatedPages = [...prevState.pages];
+        updatedPages[pageIndex] = updatedPage;
+
+        return {
+            ...prevState,
+            pages: updatedPages,
+        };
+    });
+  };
+
+  
+  //SECTION
 
   const addSection = (pageId) => {
     const newId = uuidv4();
@@ -227,9 +248,10 @@ export default function Dashboard() {
     });
   };
 
+  //CARD
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
-    const newCard = { id: newId, name: 'Card Name', selectedParameter: 'temperature' };
+    const newCard = { id: newId, name: 'Card Name', selectedParameters: ['temperature'] };
     const newLayoutItem = { i: newId, x: Infinity, y: Infinity, w: 4, h: 4 };
 
     setDashboardState(prevState => {
@@ -326,62 +348,46 @@ export default function Dashboard() {
     });
   };
 
-  const handleLayoutChange = (pageId, sectionId, newLayout) => {
-    setDashboardState(prevState => {
-        
-        const pageIndex = prevState.pages.findIndex(page => page.id === pageId);
-        if (pageIndex === -1) return prevState;
-      
-        const updatedPage = { ...prevState.pages[pageIndex] };
-        
-        const sectionIndex = updatedPage.sections.findIndex(section => section.id === sectionId);
-        if (sectionIndex === -1) return prevState;
-
-        const updatedSection = { ...updatedPage.sections[sectionIndex] };
-        
-        updatedSection.layout = newLayout;
-        
-        const updatedSections = [...updatedPage.sections];
-        updatedSections[sectionIndex] = updatedSection;
-        updatedPage.sections = updatedSections;
-
-        const updatedPages = [...prevState.pages];
-        updatedPages[pageIndex] = updatedPage;
-
-        return {
-            ...prevState,
-            pages: updatedPages,
-        };
-    });
-  };
-
-  const setActivePageId = (pageId) => {
+  //PARAMETERS
+  const setSelectedParameters = (pageId, sectionId, cardId, selectedParameters) => {
     setDashboardState((prevState) => {
-      const updatedPages = prevState.pages.map((page) => {
-        if (page.id === prevState.activePageId) {
-          return {...page, editMode: false};
-        } else {
-          return page;
-        }
-      });
-
       return {
         ...prevState,
-        activePageId: pageId,
-        pages: updatedPages
+        pages: prevState.pages.map((page) => {
+          if (page.id === pageId) {
+            return {
+              ...page,
+              sections: page.sections.map((section) => {
+                if (section.id === sectionId) {
+                  return {
+                    ...section,
+                    cards: section.cards.map((card) => {
+                      if (card.id === cardId) {
+                        return {
+                          ...card,
+                          selectedParameters: selectedParameters,
+                        };
+                      }
+                      return card;
+                    }),
+                  };
+                }
+                return section;
+              }),
+            };
+          }
+          return page;
+        }),
       };
     });
   };
 
-  const activePage = dashboardState.pages.find(
-    (page) => page.id === dashboardState.activePageId
-  );
-    
+  
   return (
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} setLocation={setLocation} setSelectedParameter={setSelectedParameter} updatePageName={updatePageName} updateSectionName={updateSectionName} updateCardName={updateCardName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} deletePage={deletePage} addSection={addSection} deleteSection={deleteSection} addCard={addCard} deleteCard={deleteCard} />
+        <Page page={activePage} deletePage={deletePage} updatePageName={updatePageName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} setLocation={setLocation} addSection={addSection} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName}   addCard={addCard} deleteCard={deleteCard} setSelectedParameters={setSelectedParameters}    />
       </div>
     </div>
   );

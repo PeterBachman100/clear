@@ -8,7 +8,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 
-export default function WeatherCard({ pageId, weather, setSelectedParameter, section, card, deleteCard, updateCardName, editMode }) {
+export default function WeatherCard({ pageId, weather, setSelectedParameters, section, card, deleteCard, updateCardName, editMode }) {
 
     
 
@@ -47,12 +47,13 @@ export default function WeatherCard({ pageId, weather, setSelectedParameter, sec
         handleCloseMenu();
     };
 
-    //Graph Parameters
+    //Graph Parameter Visibility
     const [parametersVisible, setParametersVisible] = useState(false);
     const handleToggleParameterVisbility = () => {
         setParametersVisible(!parametersVisible);
         handleCloseMenu();
     }
+
 
     return (
         <Card className="h-full flex flex-col" elevation={3}>
@@ -116,7 +117,7 @@ export default function WeatherCard({ pageId, weather, setSelectedParameter, sec
             </Menu>
             <CardContent className="grow" sx={{ p:1, '&:last-child': { paddingBottom: 1 } }}>
                 {weather? 
-                    <Graph weather={weather} selectedParameter={card.selectedParameter} setSelectedParameter={setSelectedParameter} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
+                    <Graph weather={weather} selectedParameters={card.selectedParameters} setSelectedParameters={setSelectedParameters} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
                     <div>No Weather Data</div>
                 }
             </CardContent>
