@@ -18,7 +18,7 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, weather, setSelectedParameters, section, deleteSection, updateSectionName, updateCardName, onLayoutChange, editMode, addCard, deleteCard }) {
+export default function Section({ pageId, weather, setSelectedParameters, section, deleteSection, updateSectionName, onLayoutChange, editMode, addCard, deleteCard }) {
    
     const handleLayoutChange = (newLayout) => {
         onLayoutChange(pageId, section.id, newLayout);
@@ -101,7 +101,10 @@ export default function Section({ pageId, weather, setSelectedParameters, sectio
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => {addCard(pageId, section.id)}}>
+                <MenuItem onClick={() => {
+                    addCard(pageId, section.id);
+                    handleCloseMenu();
+                }}>
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Card
                 </MenuItem>
@@ -136,7 +139,7 @@ export default function Section({ pageId, weather, setSelectedParameters, sectio
                     {section.cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                <WeatherCard pageId={pageId} weather={weather} setSelectedParameters={setSelectedParameters} section={section} card={card} updateCardName={updateCardName} deleteCard={deleteCard} editMode={editMode} />
+                                <WeatherCard pageId={pageId} weather={weather} setSelectedParameters={setSelectedParameters} section={section} card={card} deleteCard={deleteCard} editMode={editMode} />
                             </div>
                         );
                     })}

@@ -32,12 +32,10 @@ const initialDashboardState = {
           cards: [
             {
               id: '1',
-              name: "Card 1",
               selectedParameters: ['cloud_cover_high', 'cloud_cover_mid', 'cloud_cover_low']
             },
             {
               id: '2',
-              name: "Card 2",
               selectedParameters: ['temperature', 'apparent_temperature']
             },
             {
@@ -47,7 +45,6 @@ const initialDashboardState = {
             },
             {
               id: '4',
-              name: 'Card 4',
               selectedParameters: ['wind_speed', 'wind_gusts']
             }
           ],
@@ -59,7 +56,8 @@ const initialDashboardState = {
 
 export default function Dashboard() {
 
-  const [dashboardState, setDashboardState] = useLocalStorage("dashboard", initialDashboardState);
+  // const [dashboardState, setDashboardState] = useLocalStorage("dashboard", initialDashboardState);
+  const [dashboardState, setDashboardState] = useState(initialDashboardState);
 
   //LOCATION
   const setLocation = (pageId, location) => {
@@ -251,8 +249,8 @@ export default function Dashboard() {
   //CARD
   const addCard = (pageId, sectionId) => {
     const newId = uuidv4();
-    const newCard = { id: newId, name: 'Card Name', selectedParameters: ['temperature'] };
-    const newLayoutItem = { i: newId, x: Infinity, y: Infinity, w: 4, h: 4 };
+    const newCard = { id: newId, selectedParameters: ['temperature'] };
+    const newLayoutItem = { i: newId, x: 0, y: Infinity, w: 4, h: 4 };
 
     setDashboardState(prevState => {
       const updatedPages = prevState.pages.map(page => {
@@ -317,37 +315,6 @@ export default function Dashboard() {
     });
   };
 
-  const updateCardName = (pageId, sectionId, cardId, newName) => {
-    setDashboardState(prevState => {
-      return {
-        ...prevState,
-        pages: prevState.pages.map((page) =>
-          page.id === pageId ?
-            {
-              ...page,
-              sections: page.sections.map((section) =>
-                section.id === sectionId ?
-                  {
-                    ...section,
-                    // Go one level deeper to map over the cards
-                    cards: section.cards.map((card) =>
-                      card.id === cardId ?
-                        {
-                          ...card,
-                          name: newName
-                        } :
-                        card
-                    )
-                  } :
-                  section
-              )
-            } :
-            page
-        )
-      };
-    });
-  };
-
   //PARAMETERS
   const setSelectedParameters = (pageId, sectionId, cardId, selectedParameters) => {
     setDashboardState((prevState) => {
@@ -387,7 +354,7 @@ export default function Dashboard() {
     <div>
       <div className='flex min-h-screen min-w-screen'>
         <Sidebar pages={dashboardState.pages} setActivePageId={setActivePageId} addPage={addPage} deletePage={deletePage} />
-        <Page page={activePage} deletePage={deletePage} updatePageName={updatePageName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} setLocation={setLocation} addSection={addSection} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName}   addCard={addCard} deleteCard={deleteCard} setSelectedParameters={setSelectedParameters}    />
+        <Page page={activePage} deletePage={deletePage} updatePageName={updatePageName} toggleEditMode={toggleEditMode} editMode={activePage.editMode} onLayoutChange={handleLayoutChange} setLocation={setLocation} addSection={addSection} deleteSection={deleteSection} updateSectionName={updateSectionName} addCard={addCard} deleteCard={deleteCard} setSelectedParameters={setSelectedParameters}    />
       </div>
     </div>
   );

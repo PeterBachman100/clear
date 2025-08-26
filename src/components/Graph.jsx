@@ -102,19 +102,21 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         yAxis={yAxis}
                     >                    
                         {selectedParameters.length > 0 ? (
-                            <div className="w-full h-full">
-                                <ChartsLegend />
-                                <ChartsSurface sx={{width:'100%', height:'90%'}}>
-                                    <LinePlot />
-                                    <AreaPlot />
-                                    <ChartsXAxis />
-                                    {yAxis.map((axis) => (
-                                        <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
-                                    ))}
-                                    <ChartsTooltip 
-                                        slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
-                                    />
-                                </ChartsSurface>
+                            <div className="w-full h-full flex flex-col">
+                                <ChartsLegend sx={{flexShrink: 0}} />
+                                <div className="flex-grow">
+                                    <ChartsSurface sx={{height: '100%'}}>
+                                        <LinePlot />
+                                        <AreaPlot />
+                                        <ChartsXAxis />
+                                        {yAxis.map((axis) => (
+                                            <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
+                                        ))}
+                                        <ChartsTooltip 
+                                            slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
+                                        />
+                                    </ChartsSurface>
+                                </div>
                             </div>
                         ) : (
                             <div className="flex justify-center items-center h-full">

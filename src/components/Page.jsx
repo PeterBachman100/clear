@@ -13,7 +13,7 @@ import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
       
-export default function Page({ page, setLocation, setSelectedParameters, updatePageName, updateSectionName, updateCardName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
+export default function Page({ page, setLocation, setSelectedParameters, updatePageName, updateSectionName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
 
     // Page Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -121,7 +121,10 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                     <EditLocationOutlinedIcon sx={{ mr: 1 }} />
                     Set Location
                 </MenuItem>
-                <MenuItem onClick={() => addSection(page.id)}>
+                <MenuItem onClick={() => {
+                    addSection(page.id);
+                    handleCloseMenu();
+                }}>
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Section
                 </MenuItem>
@@ -159,7 +162,7 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                 <div>
                     {page.sections.map((section) => {
                         return (
-                            <Section key={section.id} weather={weather} setSelectedParameters={setSelectedParameters} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} updateCardName={updateCardName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                            <Section key={section.id} weather={weather} setSelectedParameters={setSelectedParameters} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
                         );
                     })}
                 </div>
