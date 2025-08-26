@@ -33,7 +33,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         yAxes.push({
             id: unit,
             position: index % 2 === 0 ? 'left' : 'right',
-            label: `${unit} ${getUnitAbbreviation(unit)}`, 
+            label: getUnitAbbreviation(unit), 
             labelStyle: { fontSize: 12 },
         });
 
