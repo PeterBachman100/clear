@@ -1,6 +1,5 @@
 import { ChartContainer, ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot } from "@mui/x-charts";
-import { useEffect, useState } from "react";
-import { Button, Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Chip } from "@mui/material";
+import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
@@ -14,18 +13,17 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         setSelectedParameters(pageId, section.id, card.id, newParams);
     }
 
-    //TESTING
-    // Step 1: Group parameters by their unit
+    // Group parameters by their unit
     const parametersByUnit = {};
     selectedParameters.forEach(param => {
         const unit = weather.hourly.weatherVariables[param].unit;
         if (!parametersByUnit[unit]) {
-            parametersByUnit[unit] = [];
+            parametersByUnit[unit] = []; 
         }
         parametersByUnit[unit].push(param);
     });
 
-    // Step 2 & 3: Generate axes and series based on the grouped data
+    // Generate axes and series based on the grouped data
     const yAxes = [];
     const series = [];
     const uniqueUnits = Object.keys(parametersByUnit);
@@ -34,8 +32,8 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         // Generate a single yAxis for the unit
         yAxes.push({
             id: unit,
-            position: index % 2 === 0 ? 'left' : 'right',
-            label: `${unit} ${getUnitAbbreviation(unit)}`, // Use a function for abbreviations if available
+            position: 'left',
+            label: `${unit} ${getUnitAbbreviation(unit)}`, 
             labelStyle: { fontSize: 12 },
         });
 
@@ -43,7 +41,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         parametersByUnit[unit].forEach(param => {
             series.push({
                 data: weather.hourly.weatherVariables[param].values,
-                yAxisId: unit, // Correctly link series to the unit's y-axis
+                yAxisId: unit, 
                 type: 'line',
                 label: param,
                 showMark: false,
@@ -51,27 +49,6 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         });
     });
 
-    //END TESTING
-
-
-    // const yAxes = selectedParameters.map((param) => {
-    //     return {
-    //         id: param,
-    //         position: 'left',
-    //         label: param + ' ' + '(' + weather?.hourly.weatherVariables[param].unit + ')',
-    //         labelStyle: {fontSize: 12},
-    //     }
-    // });
-
-    // const series = selectedParameters.map((param) => {
-    //     return {
-    //         data: weather?.hourly.weatherVariables[param].values,
-    //         yAxisId: param,
-    //         type: 'line',
-    //         label: param,
-    //         showMark: false,
-    //     }
-    // })
 
     const xAxis = [
         {
@@ -116,29 +93,33 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             </FormControl>
             <Box sx={{ overflowX: 'scroll', width: '100%', height: '100%' }}>
                 <Box sx={{ width: '100%', height: '100%' }}>
-                    {}
                     <ChartDataProvider
+                        key={uniqueUnits.length}
                         series={series}
                         xAxis={xAxis}
                         yAxis={yAxis}
-                    >
-                        
-                            <ChartsSurface sx={{width:'100%', height:'80%'}}>
-                                <LinePlot />
-                                <AreaPlot />
-                                <ChartsXAxis />
-                                {yAxes.map((axis) => (
-                                    <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
-                                ))}
-                                <ChartsTooltip 
-                                    slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
-                                />
-                            </ChartsSurface>
-                            
-                            <ChartsLegend />
-                        
-                        
-                    </ChartDataProvider>    
+                    >                    
+                        {selectedParameters.length > 0 ? (
+                            <div className="w-full h-full">
+                                <ChartsLegend />
+                                <ChartsSurface sx={{width:'100%', height:'90%'}}>
+                                    <LinePlot />
+                                    <AreaPlot />
+                                    <ChartsXAxis />
+                                    {yAxis.map((axis) => (
+                                        <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
+                                    ))}
+                                    <ChartsTooltip 
+                                        slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
+                                    />
+                                </ChartsSurface>
+                            </div>
+                        ) : (
+                            <div className="flex justify-center items-center h-full">
+                                <p>Select one or more parameters to display the graph.</p>
+                            </div>
+                        )}                  
+                    </ChartDataProvider>
                 </Box>
             </Box>
         </div>
