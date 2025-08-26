@@ -32,7 +32,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         // Generate a single yAxis for the unit
         yAxes.push({
             id: unit,
-            position: 'left',
+            position: index % 2 === 0 ? 'left' : 'right',
             label: `${unit} ${getUnitAbbreviation(unit)}`, 
             labelStyle: { fontSize: 12 },
         });
@@ -73,24 +73,26 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
     return (
         <div className='flex flex-col h-full'>  
-            <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel id="multiple-select-label">Parameters</InputLabel>
-                <Select
-                    labelId="multiple-select-label"
-                    id="multiple-select"
-                    multiple
-                    value={selectedParameters}
-                    onChange={handleSelectedParametersChange}
-                    renderValue={(selectedParameters) => selectedParameters.join(', ')}
-                >
-                    {hourlyParams.map((param) => (
-                        <MenuItem key={param} value={param}>
-                            <Checkbox checked={selectedParameters.includes(param)} />
-                            <ListItemText primary={param} />
-                        </MenuItem>
-                    ))}
-                </Select>
+            {parametersVisible && 
+                <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="multiple-select-label">Parameters</InputLabel>
+                    <Select
+                        labelId="multiple-select-label"
+                        id="multiple-select"
+                        multiple
+                        value={selectedParameters}
+                        onChange={handleSelectedParametersChange}
+                        renderValue={(selectedParameters) => selectedParameters.join(', ')}
+                    >
+                        {hourlyParams.map((param) => (
+                            <MenuItem key={param} value={param}>
+                                <Checkbox checked={selectedParameters.includes(param)} />
+                                <ListItemText primary={param} />
+                            </MenuItem>
+                        ))}
+                    </Select>
             </FormControl>
+            }
             <Box sx={{ overflowX: 'scroll', width: '100%', height: '100%' }}>
                 <Box sx={{ width: '100%', height: '100%' }}>
                     <ChartDataProvider
