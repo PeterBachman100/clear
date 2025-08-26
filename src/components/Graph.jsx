@@ -1,10 +1,17 @@
-import { ChartContainer, ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot } from "@mui/x-charts";
-import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText} from "@mui/material";
+import { useState } from "react";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot } from "@mui/x-charts";
+import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
+
+    //Slider
+    const [visibleDataRange, setVisibleDataRange] = useState([0, 72]);
+    const handleRangeChange = (event, newValue) => {
+        setVisibleDataRange(newValue);
+    };
 
     //Parameters
     const handleSelectedParametersChange = (event) => {
@@ -40,7 +47,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         // Generate a series for each parameter within this unit group
         parametersByUnit[unit].forEach(param => {
             series.push({
-                data: weather.hourly.weatherVariables[param].values,
+                data: weather.hourly.weatherVariables[param].values.slice(visibleDataRange[0], visibleDataRange[1]),
                 yAxisId: unit, 
                 type: 'line',
                 label: param,
@@ -52,10 +59,8 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
     const xAxis = [
         {
-            // domainLimit: 'strict',
             scaleType: 'time',
-            label: 'Time',
-            data: weather.hourly.time,
+            data: weather.hourly.time.slice(visibleDataRange[0], visibleDataRange[1]),
             valueFormatter: (timestamp, context) => {
                 if(context.location === 'tick') {
                     return new Date(timestamp).toLocaleTimeString('en-US', {
@@ -91,9 +96,9 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             </MenuItem>
                         ))}
                     </Select>
-            </FormControl>
+                </FormControl>
             }
-            <Box sx={{ overflowX: 'scroll', width: '100%', height: '100%' }}>
+            <Box sx={{ width: '100%', height: '100%' }}>
                 <Box sx={{ width: '100%', height: '100%' }}>
                     <ChartDataProvider
                         key={uniqueUnits.length}
@@ -103,7 +108,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     >                    
                         {selectedParameters.length > 0 ? (
                             <div className="w-full h-full flex flex-col">
-                                <ChartsLegend sx={{flexShrink: 0}} />
+                                <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
                                 <div className="flex-grow">
                                     <ChartsSurface sx={{height: '100%'}}>
                                         <LinePlot />
@@ -126,6 +131,13 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     </ChartDataProvider>
                 </Box>
             </Box>
+            <Slider
+                value={visibleDataRange}
+                onChange={handleRangeChange}
+                min={0}
+                max={336}
+                step={24}
+            />
         </div>
     );
 }

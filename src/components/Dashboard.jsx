@@ -103,21 +103,7 @@ export default function Dashboard() {
       name: 'New Page',
       editMode: false,
       location: [],
-      sections: [
-        {
-          id: '1',
-          name: 'Section 1',
-          layout: [
-            {i: '1', x: 0, y: 0, h: 4, w: 4},
-          ],
-          cards: [
-            {
-              id: '1',
-              selectedParameters: ['temperature']
-            },
-          ],
-        },
-      ]
+      sections: []
     }
 
     setDashboardState((prevState) => {
@@ -203,11 +189,8 @@ export default function Dashboard() {
     const newSection = {
       id: newId,
       name: 'Section Name',
-      layout: [{i: '1', x: 0, y: 0, h: 4, w: 4},],
-      cards: [{
-              id: '1',
-              selectedParameters: ['temperature']
-            },],
+      layout: [],
+      cards: [],
     }
     setDashboardState(prevState => {
       const pageIndex = prevState.pages.findIndex(page => page.id === pageId);
