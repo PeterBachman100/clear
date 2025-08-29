@@ -12,6 +12,9 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
     const handleRangeChange = (event, newValue) => {
         setVisibleDataRange(newValue);
     };
+    const getVisibleRange = (fullDataset) => {
+        return fullDataset.slice(visibleDataRange[0], visibleDataRange[1]);
+    }
 
     //Parameters
     const handleSelectedParametersChange = (event) => {
@@ -32,7 +35,9 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
     // Generate axes and series based on the grouped data
     const yAxes = [];
+    const yAxesFullRange = [];
     const series = [];
+    const seriesFullRange = [];
     const uniqueUnits = Object.keys(parametersByUnit);
 
     uniqueUnits.forEach((unit, index) => {
@@ -44,23 +49,34 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             labelStyle: { fontSize: 12 },
         });
 
+        yAxesFullRange.push({
+            id: unit,
+            position: 'none',
+        });
+
         // Generate a series for each parameter within this unit group
         parametersByUnit[unit].forEach(param => {
-            series.push({
-                data: weather.hourly.weatherVariables[param].values.slice(visibleDataRange[0], visibleDataRange[1]),
+            const seriesItem = {
+                data: getVisibleRange(weather.hourly.weatherVariables[param].values),
                 yAxisId: unit, 
                 type: 'line',
                 label: param,
                 showMark: false,
-            });
+            };
+            series.push(seriesItem);
+            
+            const seriesItemFullRange = {
+                ...seriesItem,
+                data: weather.hourly.weatherVariables[param].values,
+            }
+            seriesFullRange.push(seriesItemFullRange);
         });
     });
-
 
     const xAxis = [
         {
             scaleType: 'time',
-            data: weather.hourly.time.slice(visibleDataRange[0], visibleDataRange[1]),
+            data: getVisibleRange(weather.hourly.time),
             valueFormatter: (timestamp, context) => {
                 if(context.location === 'tick') {
                     return new Date(timestamp).toLocaleTimeString('en-US', {
@@ -73,8 +89,14 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             },
         }
     ];
+    const xAxisFullRange = [
+        {
+            ...xAxis[0],
+            data: weather.hourly.time,
+            position: 'none'
+        }
+    ]
     
-    const yAxis = yAxes;
 
     return (
         <div className='flex flex-col h-full'>  
@@ -98,46 +120,92 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     </Select>
                 </FormControl>
             }
-            <Box sx={{ width: '100%', height: '100%' }}>
-                <Box sx={{ width: '100%', height: '100%' }}>
-                    <ChartDataProvider
-                        key={uniqueUnits.length}
-                        series={series}
-                        xAxis={xAxis}
-                        yAxis={yAxis}
-                    >                    
-                        {selectedParameters.length > 0 ? (
-                            <div className="w-full h-full flex flex-col">
-                                <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
-                                <div className="flex-grow">
-                                    <ChartsSurface sx={{height: '100%'}}>
-                                        <LinePlot />
-                                        <AreaPlot />
-                                        <ChartsXAxis />
-                                        {yAxis.map((axis) => (
-                                            <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
-                                        ))}
-                                        <ChartsTooltip 
-                                            slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
-                                        />
-                                    </ChartsSurface>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="flex justify-center items-center h-full">
-                                <p>Select one or more parameters to display the graph.</p>
-                            </div>
-                        )}                  
-                    </ChartDataProvider>
-                </Box>
-            </Box>
-            <Slider
-                value={visibleDataRange}
-                onChange={handleRangeChange}
-                min={0}
-                max={336}
-                step={24}
-            />
+            {selectedParameters.length > 0 ? 
+                (
+                    <>
+                    <Box sx={{ width: '100%', height: '90%' }}>
+                        <Box sx={{ width: '100%', height: '100%' }}>
+                            <ChartDataProvider
+                                key={uniqueUnits.length}
+                                series={series}
+                                xAxis={xAxis}
+                                yAxis={yAxes}
+                            >                    
+                                <div className="w-full h-full flex flex-col">
+                                        <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
+                                        <div className="flex-grow">
+                                            <ChartsSurface sx={{height: '100%'}}>
+                                                <LinePlot />
+                                                <AreaPlot />
+                                                <ChartsXAxis />
+                                                {yAxes.map((axis) => (
+                                                    <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
+                                                ))}
+                                                <ChartsTooltip 
+                                                    slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
+                                                />
+                                            </ChartsSurface>
+                                        </div>
+                                    </div>               
+                            </ChartDataProvider>
+                        </Box>
+                    </Box>
+                    
+                    <Box sx={{position: 'relative', height: '50px', marginInline: '10px'}}>
+                        <Slider
+                            value={visibleDataRange}
+                            onChange={handleRangeChange}
+                            min={0}
+                            max={336}
+                            step={24}
+                            sx={{
+                                position: 'absolute', 
+                                bottom: 0, 
+                                left: 0, 
+                                zIndex: 1, 
+                                width: '100%', 
+                                height: '100%',
+                                padding: '0 !important',
+                                '& .MuiSlider-thumb': {
+                                    height: '50%', 
+                                    borderRadius: '5px',
+                                    color: '#fff'
+                                },
+
+                                '& .MuiSlider-track': {
+                                    border: '1px solid gray',
+                                    color: '#ffffff00',
+                                    backdropFilter: 'brightness(1.2)',
+                                    height: '101%'
+                                },
+                                '& .MuiSlider-rail': {
+                                    border: '0.5px solid black',
+                                    color: '#ffffff00',
+                                    backdropFilter: 'brightness(0.5)',
+                                },
+                            }}
+                        />
+                        <ChartDataProvider
+                            key={uniqueUnits.length}
+                            series={seriesFullRange}
+                            xAxis={xAxisFullRange}
+                            yAxis={yAxesFullRange}
+                        >                    
+                            <ChartsSurface sx={{height: '100%', margin: '0 !important'}}>
+                                <LinePlot strokeWidth={1}  />
+                                <AreaPlot strokeWidth={1}/>
+                            </ChartsSurface>           
+                        </ChartDataProvider>
+                    </Box>
+                </>
+                ) :
+                (
+                    <div className="flex justify-center items-center h-full">
+                        <p>Select one or more parameters to display the graph.</p>
+                    </div>
+                )
+            }
+            
         </div>
     );
 }
