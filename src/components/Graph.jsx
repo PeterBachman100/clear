@@ -151,7 +151,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         </Box>
                     </Box>
                     
-                    <Box sx={{position: 'relative', height: '50px', marginInline: '10px'}}>
+                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px'}}>
                         <Slider
                             value={visibleDataRange}
                             onChange={handleRangeChange}
@@ -167,19 +167,22 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                 height: '100%',
                                 padding: '0 !important',
                                 '& .MuiSlider-thumb': {
-                                    height: '50%', 
-                                    borderRadius: '5px',
-                                    color: '#fff'
+                                    height: '100%', 
+                                    borderRadius: 0,
+                                    width: '8px',
+                                    color: '#000'
                                 },
 
                                 '& .MuiSlider-track': {
                                     border: '1px solid gray',
                                     color: '#ffffff00',
                                     backdropFilter: 'brightness(1.2)',
-                                    height: '101%'
+                                    borderRadius: 0,
+                                    height: '100%'
                                 },
                                 '& .MuiSlider-rail': {
                                     border: '0.5px solid black',
+                                    borderRadius: 0,
                                     color: '#ffffff00',
                                     backdropFilter: 'brightness(0.5)',
                                 },
@@ -190,10 +193,11 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             series={seriesFullRange}
                             xAxis={xAxisFullRange}
                             yAxis={yAxesFullRange}
+                            margin={{top: 3, bottom: 0, left: 5, right: 5}}
                         >                    
-                            <ChartsSurface sx={{height: '100%', margin: '0 !important'}}>
+                            <ChartsSurface sx={{height: '100%'}}>
                                 <LinePlot strokeWidth={1}  />
-                                <AreaPlot strokeWidth={1}/>
+                                <AreaPlot strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
                     </Box>
