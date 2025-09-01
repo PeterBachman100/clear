@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 
@@ -45,8 +45,11 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         yAxes.push({
             id: unit,
             position: index % 2 === 0 ? 'left' : 'right',
+            disableLine: true,
+            disableTicks: true,
             label: getUnitAbbreviation(unit), 
-            labelStyle: { fontSize: 12 },
+            labelStyle: { fontSize: 16 },
+            tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
         });
 
         yAxesFullRange.push({
@@ -75,18 +78,40 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
     const xAxis = [
         {
+            id: 'hours',
             scaleType: 'time',
+            position: 'bottom',
+            disableLine: true,
+            disableTicks: true,
+            tickLabelStyle: {fontWeight: 300, fontSize: '10px'},
             data: getVisibleRange(weather.hourly.time),
-            valueFormatter: (timestamp, context) => {
-                if(context.location === 'tick') {
-                    return new Date(timestamp).toLocaleTimeString('en-US', {
-                        hour: 'numeric', hour12: true, timeZone: weather.location.timeZone
-                    });
-                }
+            valueFormatter: (timestamp) => {
                 return new Date(timestamp).toLocaleTimeString('en-US', {
-                        weekday: 'short', month: 'short', day: 'numeric', hour12: true, timeZone: weather.location.timezone
-                    });
+                    weekday: undefined, month: undefined, day: undefined, hour: 'numeric', minute: undefined, second: undefined, hour12: true, timeZone: weather.location.timezone
+                });
             },
+        },
+        {
+            id: 'days',
+            scaleType: 'band', 
+            disableTicks: true,
+            disableLine: true,
+            position: 'bottom',
+            data: getVisibleRange(weather.hourly.time),
+            valueFormatter: (timestamp) => {
+                return new Date(timestamp).toLocaleDateString('en-US', {
+                    weekday: 'short'
+                });
+            },
+            tickLabelInterval: (value, index) => {
+                if (index === 0) {
+                    return true; 
+                }
+                const prevDate = new Date(getVisibleRange(weather.hourly.time)[index - 1]);
+                const currentDate = new Date(value);
+                return prevDate.getDate() !== currentDate.getDate();
+            },
+            labelStyle: { fontSize: 22 },
         }
     ];
     const xAxisFullRange = [
@@ -97,6 +122,21 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         }
     ]
     
+    // REFERENCE LINES
+    const getDailyLinePositions = (timestamps) => {
+        const dailyTimestamps = [];
+        let prevDate = null;
+
+        timestamps.forEach(timestamp => {
+            const currentDate = new Date(timestamp);
+            if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
+                dailyTimestamps.push(timestamp);
+            }
+            prevDate = currentDate;
+        });
+
+        return dailyTimestamps;
+    };
 
     return (
         <div className='flex flex-col h-full'>  
@@ -135,9 +175,19 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                         <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
                                         <div className="flex-grow">
                                             <ChartsSurface sx={{height: '100%'}}>
+                                                {getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
+                                                    <ChartsReferenceLine
+                                                        key={index}
+                                                        x={timestamp}
+                                                        lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                                                        disableTooltips={true}
+                                                    />
+                                                ))}
                                                 <LinePlot />
                                                 <AreaPlot />
-                                                <ChartsXAxis />
+                                                {xAxis.map((axis) => (
+                                                    <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />
+                                                ))}
                                                 {yAxes.map((axis) => (
                                                     <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
                                                 ))}
@@ -157,7 +207,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             onChange={handleRangeChange}
                             min={0}
                             max={336}
-                            step={24}
+                            step={3}
                             sx={{
                                 position: 'absolute', 
                                 bottom: 0, 
