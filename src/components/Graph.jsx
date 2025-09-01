@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 
@@ -191,8 +191,9 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                 {yAxes.map((axis) => (
                                                     <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
                                                 ))}
+                                                <ChartsAxisHighlight x='line' />
                                                 <ChartsTooltip 
-                                                    slotProps={{tooltip: {axis: {x: {highlight: true,}, y: {highlight: true,},},},}}
+                                                    
                                                 />
                                             </ChartsSurface>
                                         </div>
