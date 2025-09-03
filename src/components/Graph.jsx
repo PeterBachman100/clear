@@ -3,7 +3,7 @@ import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxi
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
-import { interpolateRdYlBu } from "d3-scale-chromatic";
+import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
@@ -48,6 +48,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             id: unit,
             position: index % 2 === 0 ? 'left' : 'right',
             disableLine: true,
+            disableTicks: true,
             ...((unit === 'fahrenheit' && {
                 colorMap: {
                     type: 'continuous',
@@ -55,6 +56,14 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     max: 110,
                     color: (t) => interpolateRdYlBu(1 - t),
                 },
+            })),
+            ...((unit === 'dimensionless' && {
+                colorMap: {
+                    type: 'continuous',
+                    min: 0,
+                    max: 11, // Standard UV index scale
+                    color: (t) => interpolateRdYlGn(1 - t),
+                }
             })),
             label: getUnitAbbreviation(unit), 
             labelStyle: { fontSize: 16 },
