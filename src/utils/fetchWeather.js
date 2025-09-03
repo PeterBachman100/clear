@@ -20,6 +20,22 @@ export async function fetchWeather(location) {
     const responses = await fetchWeatherApi(url, params);
     const response = responses[0];
     const weatherData = parseWeather(response);
+    const visibilityConvertedWeatherData = {
+        ...weatherData,
+        hourly: {
+            ...weatherData.hourly,
+            weatherVariables: {
+                ...weatherData.hourly.weatherVariables,
+                'visibility': {
+                    ...weatherData.hourly.weatherVariables['visibility'],
+                    unit: 'miles',
+                    values: weatherData.hourly.weatherVariables['visibility'].values.map((value) => {
+                        return (value / 5280);
+                    })
+                }
+            }
+        }
+    }
 
-    return weatherData;
+    return visibilityConvertedWeatherData;
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
+import { getDomainLimitByUnit } from "../utils/chartUtils";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
@@ -50,6 +51,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             label: getUnitAbbreviation(unit), 
             labelStyle: { fontSize: 16 },
             tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
+            domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
         });
 
         yAxesFullRange.push({
