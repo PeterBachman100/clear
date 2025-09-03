@@ -4,7 +4,7 @@ export const getDomainLimitByUnit = (minValue, maxValue, unit) => {
 
     const defaultDomains = {
         'fahrenheit': { min: 32, max: 100 },
-        'percentage': { min: 0, max: 100 },
+        'percentage': { min: 0, max: 105 },
         'feet': { min: 0, max: 160000 }, 
         'miles_per_hour': { min: 0, max: 25 },
         'miles': { min: 0, max: 30 },

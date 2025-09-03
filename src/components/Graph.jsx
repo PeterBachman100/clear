@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, LineElement } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
+import { interpolateRdYlBu } from "d3-scale-chromatic";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
@@ -47,7 +48,14 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             id: unit,
             position: index % 2 === 0 ? 'left' : 'right',
             disableLine: true,
-            disableTicks: true,
+            ...((unit === 'fahrenheit' && {
+                colorMap: {
+                    type: 'continuous',
+                    min: 0,
+                    max: 110,
+                    color: (t) => interpolateRdYlBu(1 - t),
+                },
+            })),
             label: getUnitAbbreviation(unit), 
             labelStyle: { fontSize: 16 },
             tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
@@ -64,10 +72,15 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             const seriesItem = {
                 data: getVisibleRange(weather.hourly.weatherVariables[param].values),
                 yAxisId: unit, 
+                xAxisId: 'hours',
                 type: 'line',
                 label: param,
+                id: param,
                 showMark: false,
+                strokeDasharray: '5 5',
+                customProperty: 'yes'
             };
+            
             series.push(seriesItem);
             
             const seriesItemFullRange = {
@@ -124,7 +137,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         }
     ]
     
-    // REFERENCE LINES
+    // DAY REFERENCE LINES
     const getDailyLinePositions = (timestamps) => {
         const dailyTimestamps = [];
         let prevDate = null;
@@ -185,8 +198,20 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                         disableTooltips={true}
                                                     />
                                                 ))}
-                                                <LinePlot />
-                                                <AreaPlot />
+
+                                                
+                                                <LinePlot 
+                                                    slotProps={{
+                                                        line: (ownerState) => {
+                                                            if (ownerState.id === 'apparent_temperature') {
+                                                                return {
+                                                                    strokeDasharray: '10 10'
+                                                                }
+                                                            }
+                                                        }
+                                                    }}
+                                                />
+                                                
                                                 {xAxis.map((axis) => (
                                                     <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />
                                                 ))}
@@ -250,7 +275,6 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         >                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <LinePlot strokeWidth={1}  />
-                                <AreaPlot strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
                     </Box>
