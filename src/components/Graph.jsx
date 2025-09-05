@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, LineElement } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, LineElement, BarPlot } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
@@ -43,8 +43,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
     const uniqueUnits = Object.keys(parametersByUnit);
 
     uniqueUnits.forEach((unit, index) => {
-        // Generate a single yAxis for the unit
-        yAxes.push({
+        const axis = {
             id: unit,
             position: index % 2 === 0 ? 'left' : 'right',
             disableLine: true,
@@ -69,10 +68,12 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             labelStyle: { fontSize: 16 },
             tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
             domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
-        });
+        };
+
+        yAxes.push(axis);
 
         yAxesFullRange.push({
-            id: unit,
+            ...axis,
             position: 'none',
         });
 
@@ -90,6 +91,15 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                 customProperty: 'yes'
             };
             
+            if(param === 'precipitation') {
+                seriesItem.type = 'bar';
+                seriesItem.color = '#0018FF';
+                seriesItem.xAxisId = 'hours-band';
+            }
+            if(param === 'temperature' || param === 'apparent_temperature') {
+                seriesItem.color = (t) => interpolateRdYlBu(1 - t);
+            }
+
             series.push(seriesItem);
             
             const seriesItemFullRange = {
@@ -116,6 +126,12 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             },
         },
         {
+            id: 'hours-band',
+            scaleType: 'band',
+            position: 'none',
+            data: getVisibleRange(weather.hourly.time),
+        },
+        {
             id: 'days',
             scaleType: 'band', 
             disableTicks: true,
@@ -138,13 +154,14 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             labelStyle: { fontSize: 22 },
         }
     ];
-    const xAxisFullRange = [
-        {
-            ...xAxis[0],
+ 
+    const xAxisFullRange = xAxis.map((axis) => {
+        return {
+            ...axis,
             data: weather.hourly.time,
             position: 'none'
         }
-    ]
+    })
     
     // DAY REFERENCE LINES
     const getDailyLinePositions = (timestamps) => {
@@ -220,7 +237,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                         }
                                                     }}
                                                 />
-                                                
+                                                <BarPlot />
                                                 {xAxis.map((axis) => (
                                                     <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />
                                                 ))}
@@ -284,6 +301,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         >                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <LinePlot strokeWidth={1}  />
+                                <BarPlot strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
                     </Box>
