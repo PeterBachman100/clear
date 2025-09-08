@@ -6,7 +6,7 @@ import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
-    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
+    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, surface_pressure, rain, showers, snowfall, relative_humidity, cloud_cover_mid, cloud_cover_high, dew_point, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
     //Slider
@@ -96,30 +96,29 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             }
             if (param === 'precipitation_probability') {
                 seriesItem.area = 'true';
-                seriesItem.color = '#aeebfc';
+                seriesItem.color = 'rgba(155, 223, 250, 1)';
             }
             if(param === 'temperature' || param === 'apparent_temperature') {
                 seriesItem.color = (t) => interpolateRdYlBu(1 - t);
             }
             if (param === 'cloud_cover') {
                 seriesItem.area = 'true';
-                seriesItem.color = 'rgba(208, 212, 217, 0.3)';
-            }
-            if (param === 'cloud_cover_high') {
-                seriesItem.area = 'true';
-                seriesItem.color = 'rgba(213, 219, 227, 0.3)'
-            }
-            if (param === 'cloud_cover_mid') {
-                seriesItem.area = 'true';
-                seriesItem.color = 'rgba(148, 148, 166, 0.3)';
+                seriesItem.color = '#c9c9c9';
             }
             if (param === 'cloud_cover_low') {
                 seriesItem.area = 'true';
-                seriesItem.color = 'rgba(95, 95, 133, 0.3)';
+                seriesItem.color = '#b8b8b8';
             }
             if (param === 'visibility') {
                 seriesItem.color = '#000';
             }
+            if (param === 'wind_speed') {
+                seriesItem.color = '#f202fa';
+            }
+            if (param === 'wind_gusts') {
+                seriesItem.color = '#f202fa';
+            }
+            
 
             series.push(seriesItem);
             
@@ -246,18 +245,47 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                     />
                                                 ))}
 
-                                                <AreaPlot />
+                                                <AreaPlot
+                                                    
+                                                />
                                                 <LinePlot 
                                                     slotProps={{
                                                         line: (ownerState) => {
+                                                            if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
+                                                                return {
+                                                                    strokeWidth: '0px'
+                                                                }
+                                                            }
+                                                            if (ownerState.id === 'precipitation_probability') {
+                                                                return {
+                                                                    strokeWidth: '0px'
+                                                                }
+                                                            }
                                                             if (ownerState.id === 'apparent_temperature') {
                                                                 return {
-                                                                    strokeDasharray: '10 10'
+                                                                    strokeDasharray: '10 10',
+                                                                    strokeWidth: '3px'
+
                                                                 }
                                                             } 
+                                                            if (ownerState.id === 'temperature') {
+                                                                return {
+                                                                    strokeWidth: '3px'
+                                                                }
+                                                            }
                                                             if (ownerState.id === 'visibility') {
                                                                 return {
                                                                     strokeDasharray: '1 5'
+                                                                }
+                                                            }
+                                                            if (ownerState.id === 'wind_speed') {
+                                                                return {
+                                                                    strokeWidth: '1px'
+                                                                }
+                                                            }
+                                                            if (ownerState.id === 'wind_gusts') {
+                                                                return {
+                                                                    strokeDasharray: '1 2'
                                                                 }
                                                             }
                                                         }
