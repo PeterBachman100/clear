@@ -96,6 +96,10 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                 seriesItem.color = '#0018FF';
                 seriesItem.xAxisId = 'hours-band';
             }
+            if (param === 'precipitation_probability') {
+                seriesItem.area = 'true';
+                seriesItem.color = '#aeebfc';
+            }
             if(param === 'temperature' || param === 'apparent_temperature') {
                 seriesItem.color = (t) => interpolateRdYlBu(1 - t);
             }
@@ -225,7 +229,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                     />
                                                 ))}
 
-                                                
+                                                <AreaPlot />
                                                 <LinePlot 
                                                     slotProps={{
                                                         line: (ownerState) => {
@@ -300,6 +304,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             margin={{top: 3, bottom: 0, left: 5, right: 5}}
                         >                    
                             <ChartsSurface sx={{height: '100%'}}>
+                                <AreaPlot />
                                 <LinePlot strokeWidth={1}  />
                                 <BarPlot strokeWidth={1} />
                             </ChartsSurface>           
