@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, LineElement, BarPlot } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
@@ -87,8 +87,6 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                 label: param,
                 id: param,
                 showMark: false,
-                strokeDasharray: '5 5',
-                customProperty: 'yes'
             };
             
             if(param === 'precipitation') {
@@ -102,6 +100,25 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             }
             if(param === 'temperature' || param === 'apparent_temperature') {
                 seriesItem.color = (t) => interpolateRdYlBu(1 - t);
+            }
+            if (param === 'cloud_cover') {
+                seriesItem.area = 'true';
+                seriesItem.color = 'rgba(208, 212, 217, 0.3)';
+            }
+            if (param === 'cloud_cover_high') {
+                seriesItem.area = 'true';
+                seriesItem.color = 'rgba(213, 219, 227, 0.3)'
+            }
+            if (param === 'cloud_cover_mid') {
+                seriesItem.area = 'true';
+                seriesItem.color = 'rgba(148, 148, 166, 0.3)';
+            }
+            if (param === 'cloud_cover_low') {
+                seriesItem.area = 'true';
+                seriesItem.color = 'rgba(95, 95, 133, 0.3)';
+            }
+            if (param === 'visibility') {
+                seriesItem.color = '#000';
             }
 
             series.push(seriesItem);
@@ -237,6 +254,11 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                                                                 return {
                                                                     strokeDasharray: '10 10'
                                                                 }
+                                                            } 
+                                                            if (ownerState.id === 'visibility') {
+                                                                return {
+                                                                    strokeDasharray: '1 5'
+                                                                }
                                                             }
                                                         }
                                                     }}
@@ -305,7 +327,23 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         >                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <AreaPlot />
-                                <LinePlot strokeWidth={1}  />
+                                <LinePlot 
+                                    strokeWidth={1}
+                                    slotProps={{
+                                                        line: (ownerState) => {
+                                                            if (ownerState.id === 'apparent_temperature') {
+                                                                return {
+                                                                    strokeDasharray: '10 10'
+                                                                }
+                                                            } 
+                                                            if (ownerState.id === 'visibility') {
+                                                                return {
+                                                                    strokeDasharray: '1 5'
+                                                                }
+                                                            }
+                                                        }
+                                                    }}
+                                />
                                 <BarPlot strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
