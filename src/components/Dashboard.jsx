@@ -25,28 +25,12 @@ const initialDashboardState = {
           name: 'Section 1',
           layout: [
             {i: '1', x: 0, y: 0, h: 4, w: 12},
-            {i: '2', x: 0, y: 4, h: 4, w: 12},
-            {i: '3', x: 0, y: 8, h: 4, w: 12},
-            {i: '4', x: 0, y: 12, h: 4, w: 12}
           ],
           cards: [
             {
               id: '1',
-              selectedParameters: ['cloud_cover_high', 'cloud_cover_mid', 'cloud_cover_low']
+              selectedParameters: ['cloud_cover', 'cloud_cover_low', 'precipitation_probability', 'precipitation', 'visibility', 'temperature', 'uv_index', 'wind_speed', 'wind_gusts']
             },
-            {
-              id: '2',
-              selectedParameters: ['temperature', 'apparent_temperature']
-            },
-            {
-              id: '3',
-              name: 'Card 3',
-              selectedParameters: ['precipitation_probability', 'precipitation']
-            },
-            {
-              id: '4',
-              selectedParameters: ['wind_speed', 'wind_gusts']
-            }
           ],
         },
       ],

@@ -1,11 +1,12 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ContinuousColorLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
+import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 
 export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
-    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, ...rest } = weather.hourly.weatherVariables;
+    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, surface_pressure, rain, showers, snowfall, relative_humidity, cloud_cover_mid, cloud_cover_high, dew_point, apparent_temperature, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
     //Slider
@@ -24,9 +25,23 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         setSelectedParameters(pageId, section.id, card.id, newParams);
     }
 
+    // Drawing Order
+    const parameterDrawingOrder = [
+        'cloud_cover', 
+        'cloud_cover_low',
+        'precipitation_probability',
+        'precipitation',
+        'temperature',
+        'wind_speed',
+        'wind_gusts',
+        'visibility',
+        'uv_index'
+    ];
+    const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedParameters.includes(param));
+
     // Group parameters by their unit
     const parametersByUnit = {};
-    selectedParameters.forEach(param => {
+    orderedSelectedParameters.forEach(param => {
         const unit = weather.hourly.weatherVariables[param].unit;
         if (!parametersByUnit[unit]) {
             parametersByUnit[unit] = []; 
@@ -42,20 +57,42 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
     const uniqueUnits = Object.keys(parametersByUnit);
 
     uniqueUnits.forEach((unit, index) => {
-        // Generate a single yAxis for the unit
-        yAxes.push({
+        const axis = {
             id: unit,
-            position: index % 2 === 0 ? 'left' : 'right',
+            position:'none',
             disableLine: true,
             disableTicks: true,
+            ...((unit === 'fahrenheit' && {
+                colorMap: {
+                    type: 'continuous',
+                    min: 0,
+                    max: 110,
+                    color: (t) => interpolateRdYlBu(1 - t),
+                },
+            })),
+            ...((unit === 'dimensionless' && {
+                colorMap: {
+                    type: 'continuous',
+                    min: 0,
+                    max: 12, 
+                    color: (t) => interpolateRdYlGn(1 - t),
+                }
+            })),
             label: getUnitAbbreviation(unit), 
             labelStyle: { fontSize: 16 },
             tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
             domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
-        });
+            
+        };
+        if (unit === 'dimensionless') {
+            axis.reverse = 'true';
+            axis.position = 'none';
+        }
+
+        yAxes.push(axis);
 
         yAxesFullRange.push({
-            id: unit,
+            ...axis,
             position: 'none',
         });
 
@@ -64,10 +101,50 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             const seriesItem = {
                 data: getVisibleRange(weather.hourly.weatherVariables[param].values),
                 yAxisId: unit, 
+                xAxisId: 'hours',
                 type: 'line',
-                label: param,
+                label: `${param} (${getUnitAbbreviation(unit)})`,
+                id: param,
                 showMark: false,
+                
             };
+            
+            if(param === 'precipitation') {
+                seriesItem.type = 'bar';
+                seriesItem.color = '#0018FF';
+                seriesItem.xAxisId = 'hours-band';
+            }
+            if (param === 'precipitation_probability') {
+                seriesItem.area = 'true';
+                seriesItem.color = 'rgba(155, 223, 250, 0.6)';
+            }
+            if (param === 'uv_index') {
+                seriesItem.type = 'bar';
+                seriesItem.xAxisId = 'uv-band';
+                seriesItem.color = '#036837';
+            }
+            if(param === 'temperature') {
+                seriesItem.color = '#fce400';
+            }
+            if (param === 'cloud_cover') {
+                seriesItem.area = 'true';
+                seriesItem.color = '#C9C9C9';
+            }
+            if (param === 'cloud_cover_low') {
+                seriesItem.area = 'true';
+                seriesItem.color = '#b8b8b8';
+            }
+            if (param === 'visibility') {
+                seriesItem.color = '#000';
+            }
+            if (param === 'wind_speed') {
+                seriesItem.color = '#900000';
+            }
+            if (param === 'wind_gusts') {
+                seriesItem.color = '#690000';
+            }
+            
+
             series.push(seriesItem);
             
             const seriesItemFullRange = {
@@ -94,6 +171,19 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             },
         },
         {
+            id: 'uv-band',
+            scaleType: 'band',
+            position:'none',
+            data: getVisibleRange(weather.hourly.time),
+            barGapRatio: '-1',
+        },
+        {
+            id: 'hours-band',
+            scaleType: 'band',
+            position: 'none',
+            data: getVisibleRange(weather.hourly.time),
+        },
+        {
             id: 'days',
             scaleType: 'band', 
             disableTicks: true,
@@ -116,15 +206,16 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             labelStyle: { fontSize: 22 },
         }
     ];
-    const xAxisFullRange = [
-        {
-            ...xAxis[0],
+ 
+    const xAxisFullRange = xAxis.map((axis) => {
+        return {
+            ...axis,
             data: weather.hourly.time,
             position: 'none'
         }
-    ]
+    })
     
-    // REFERENCE LINES
+    // DAY REFERENCE LINES
     const getDailyLinePositions = (timestamps) => {
         const dailyTimestamps = [];
         let prevDate = null;
@@ -139,6 +230,73 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
         return dailyTimestamps;
     };
+    const renderedDayReferenceLines = getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
+        <ChartsReferenceLine
+            key={index}
+            x={timestamp}
+            lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+            disableTooltips={true}
+        />
+    ))
+
+    // LINE PLOT SLOT PROPS
+    const linePlotSlotProps = {
+        line: (ownerState) => {
+            if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
+                return {
+                    strokeWidth: '0px'
+                }
+            }
+            if (ownerState.id === 'precipitation_probability') {
+                return {
+                    strokeWidth: '1px'
+                }
+            }
+            if (ownerState.id === 'apparent_temperature') {
+                return {
+                    strokeDasharray: '10 10',
+                    strokeWidth: '3px'
+
+                }
+            } 
+            if (ownerState.id === 'temperature') {
+                return {
+                    strokeWidth: '3px'
+                }
+            }
+            if (ownerState.id === 'visibility') {
+                return {
+                    strokeWidth: '1px',
+                    strokeDasharray: '1 5'
+                }
+            }
+            if (ownerState.id === 'wind_speed') {
+                return {
+                    strokeWidth: '0.5px'
+                }
+            }
+            if (ownerState.id === 'wind_gusts') {
+                return {
+                    strokeWidth: '0.5px',
+                    strokeDasharray: '4 12'
+                }
+            }
+        }
+    }
+
+    // BAR PLOT SLOT PROPS
+    const barPlotSlotProps = {
+        bar: (ownerState) => {
+            if (ownerState.id === 'uv_index') {
+                return {
+                    height: 5,
+                    style: {
+                        transform: 'translateY(-10px)'
+                    }                                                                 
+                }
+            }
+        }
+    }
 
     return (
         <div className='flex flex-col h-full'>  
@@ -167,36 +325,19 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     <>
                     <Box sx={{ width: '100%', height: '90%' }}>
                         <Box sx={{ width: '100%', height: '100%' }}>
-                            <ChartDataProvider
-                                key={uniqueUnits.length}
-                                series={series}
-                                xAxis={xAxis}
-                                yAxis={yAxes}
-                            >                    
+                            <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>                  
                                 <div className="w-full h-full flex flex-col">
                                         <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
                                         <div className="flex-grow">
                                             <ChartsSurface sx={{height: '100%'}}>
-                                                {getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
-                                                    <ChartsReferenceLine
-                                                        key={index}
-                                                        x={timestamp}
-                                                        lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
-                                                        disableTooltips={true}
-                                                    />
-                                                ))}
-                                                <LinePlot />
                                                 <AreaPlot />
-                                                {xAxis.map((axis) => (
-                                                    <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />
-                                                ))}
-                                                {yAxes.map((axis) => (
-                                                    <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
-                                                ))}
+                                                {renderedDayReferenceLines}
+                                                <LinePlot slotProps={linePlotSlotProps} />
+                                                <BarPlot slotProps={barPlotSlotProps} />
+                                                {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
+                                                {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                                                 <ChartsAxisHighlight x='line' />
-                                                <ChartsTooltip 
-                                                    
-                                                />
+                                                <ChartsTooltip />
                                             </ChartsSurface>
                                         </div>
                                     </div>               
@@ -212,57 +353,26 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             max={336}
                             step={3}
                             sx={{
-                                position: 'absolute', 
-                                bottom: 0, 
-                                left: 0, 
-                                zIndex: 1, 
-                                width: '100%', 
-                                height: '100%',
-                                padding: '0 !important',
-                                '& .MuiSlider-thumb': {
-                                    height: '100%', 
-                                    borderRadius: 0,
-                                    width: '8px',
-                                    color: '#000'
-                                },
-
-                                '& .MuiSlider-track': {
-                                    border: '1px solid gray',
-                                    color: '#ffffff00',
-                                    backdropFilter: 'brightness(1.2)',
-                                    borderRadius: 0,
-                                    height: '100%'
-                                },
-                                '& .MuiSlider-rail': {
-                                    border: '0.5px solid black',
-                                    borderRadius: 0,
-                                    color: '#ffffff00',
-                                    backdropFilter: 'brightness(0.5)',
-                                },
+                                position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
+                                '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
+                                '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
+                                '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
                             }}
                         />
-                        <ChartDataProvider
-                            key={uniqueUnits.length}
-                            series={seriesFullRange}
-                            xAxis={xAxisFullRange}
-                            yAxis={yAxesFullRange}
-                            margin={{top: 3, bottom: 0, left: 5, right: 5}}
-                        >                    
+                        <ChartDataProvider key={uniqueUnits.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                             <ChartsSurface sx={{height: '100%'}}>
-                                <LinePlot strokeWidth={1}  />
-                                <AreaPlot strokeWidth={1} />
+                                <AreaPlot />
+                                <LinePlot slotProps={linePlotSlotProps} strokeWidth={1}/>
+                                <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
                     </Box>
                 </>
                 ) :
-                (
-                    <div className="flex justify-center items-center h-full">
-                        <p>Select one or more parameters to display the graph.</p>
-                    </div>
-                )
+                (<div className="flex justify-center items-center h-full">
+                    <p>Select one or more parameters to display the graph.</p>
+                </div>)
             }
-            
         </div>
     );
 }

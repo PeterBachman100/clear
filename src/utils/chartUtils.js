@@ -4,13 +4,13 @@ export const getDomainLimitByUnit = (minValue, maxValue, unit) => {
 
     const defaultDomains = {
         'fahrenheit': { min: 32, max: 100 },
-        'percentage': { min: 0, max: 100 },
+        'percentage': { min: 0, max: 105 },
         'feet': { min: 0, max: 160000 }, 
         'miles_per_hour': { min: 0, max: 25 },
-        'miles': { min: 0, max: 30 },
+        'miles': { min: 0, max: 15 },
         'inch': { min: 0, max: 0.3 },
         'hectopascal': { min: 950, max: 1050 },
-        'index': { min: 0, max: 12 },
+        'dimensionless': { min: 0, max: 12 },
     };
 
     const domain = defaultDomains[unit];
