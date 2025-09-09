@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, MarkPlot } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ContinuousColorLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
@@ -25,9 +25,23 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         setSelectedParameters(pageId, section.id, card.id, newParams);
     }
 
+    // Drawing Order
+    const parameterDrawingOrder = [
+        'cloud_cover', 
+        'cloud_cover_low',
+        'precipitation_probability',
+        'precipitation',
+        'temperature',
+        'wind_speed',
+        'wind_gusts',
+        'visibility',
+        'uv_index'
+    ];
+    const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedParameters.includes(param));
+
     // Group parameters by their unit
     const parametersByUnit = {};
-    selectedParameters.forEach(param => {
+    orderedSelectedParameters.forEach(param => {
         const unit = weather.hourly.weatherVariables[param].unit;
         if (!parametersByUnit[unit]) {
             parametersByUnit[unit] = []; 
@@ -45,7 +59,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
     uniqueUnits.forEach((unit, index) => {
         const axis = {
             id: unit,
-            position: index % 2 === 0 ? 'left' : 'right',
+            position:'none',
             disableLine: true,
             disableTicks: true,
             ...((unit === 'fahrenheit' && {
@@ -60,7 +74,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                 colorMap: {
                     type: 'continuous',
                     min: 0,
-                    max: 11, // Standard UV index scale
+                    max: 12, 
                     color: (t) => interpolateRdYlGn(1 - t),
                 }
             })),
@@ -68,6 +82,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             labelStyle: { fontSize: 16 },
             tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
             domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
+            
         };
         if (unit === 'dimensionless') {
             axis.reverse = 'true';
@@ -101,14 +116,15 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             }
             if (param === 'precipitation_probability') {
                 seriesItem.area = 'true';
-                seriesItem.color = 'rgba(155, 223, 250, 0.3)';
+                seriesItem.color = 'rgba(155, 223, 250, 0.6)';
             }
             if (param === 'uv_index') {
                 seriesItem.type = 'bar';
-                seriesItem.xAxisId = 'uv-band'
+                seriesItem.xAxisId = 'uv-band';
+                seriesItem.color = '#036837';
             }
             if(param === 'temperature') {
-                seriesItem.color = (t) => interpolateRdYlBu(1 - t);
+                seriesItem.color = '#fce400';
             }
             if (param === 'cloud_cover') {
                 seriesItem.area = 'true';
@@ -122,10 +138,10 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                 seriesItem.color = '#000';
             }
             if (param === 'wind_speed') {
-                seriesItem.color = '#f202fa';
+                seriesItem.color = '#900000';
             }
             if (param === 'wind_gusts') {
-                seriesItem.color = '#f202fa';
+                seriesItem.color = '#690000';
             }
             
 
@@ -159,6 +175,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
             scaleType: 'band',
             position:'none',
             data: getVisibleRange(weather.hourly.time),
+            barGapRatio: '-1',
         },
         {
             id: 'hours-band',
@@ -213,6 +230,73 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
 
         return dailyTimestamps;
     };
+    const renderedDayReferenceLines = getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
+        <ChartsReferenceLine
+            key={index}
+            x={timestamp}
+            lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+            disableTooltips={true}
+        />
+    ))
+
+    // LINE PLOT SLOT PROPS
+    const linePlotSlotProps = {
+        line: (ownerState) => {
+            if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
+                return {
+                    strokeWidth: '0px'
+                }
+            }
+            if (ownerState.id === 'precipitation_probability') {
+                return {
+                    strokeWidth: '1px'
+                }
+            }
+            if (ownerState.id === 'apparent_temperature') {
+                return {
+                    strokeDasharray: '10 10',
+                    strokeWidth: '3px'
+
+                }
+            } 
+            if (ownerState.id === 'temperature') {
+                return {
+                    strokeWidth: '3px'
+                }
+            }
+            if (ownerState.id === 'visibility') {
+                return {
+                    strokeWidth: '1px',
+                    strokeDasharray: '1 5'
+                }
+            }
+            if (ownerState.id === 'wind_speed') {
+                return {
+                    strokeWidth: '0.5px'
+                }
+            }
+            if (ownerState.id === 'wind_gusts') {
+                return {
+                    strokeWidth: '0.5px',
+                    strokeDasharray: '4 12'
+                }
+            }
+        }
+    }
+
+    // BAR PLOT SLOT PROPS
+    const barPlotSlotProps = {
+        bar: (ownerState) => {
+            if (ownerState.id === 'uv_index') {
+                return {
+                    height: 5,
+                    style: {
+                        transform: 'translateY(-10px)'
+                    }                                                                 
+                }
+            }
+        }
+    }
 
     return (
         <div className='flex flex-col h-full'>  
@@ -241,93 +325,19 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                     <>
                     <Box sx={{ width: '100%', height: '90%' }}>
                         <Box sx={{ width: '100%', height: '100%' }}>
-                            <ChartDataProvider
-                                key={uniqueUnits.length}
-                                series={series}
-                                xAxis={xAxis}
-                                yAxis={yAxes}
-                            >                    
+                            <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>                  
                                 <div className="w-full h-full flex flex-col">
                                         <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />
                                         <div className="flex-grow">
                                             <ChartsSurface sx={{height: '100%'}}>
                                                 <AreaPlot />
-                                                {getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
-                                                    <ChartsReferenceLine
-                                                        key={index}
-                                                        x={timestamp}
-                                                        lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
-                                                        disableTooltips={true}
-                                                    />
-                                                ))}
-                                                <LinePlot 
-                                                    slotProps={{
-                                                        line: (ownerState) => {
-                                                            if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
-                                                                return {
-                                                                    strokeWidth: '0px'
-                                                                }
-                                                            }
-                                                            if (ownerState.id === 'precipitation_probability') {
-                                                                return {
-                                                                    strokeWidth: '1px'
-                                                                }
-                                                            }
-                                                            if (ownerState.id === 'apparent_temperature') {
-                                                                return {
-                                                                    strokeDasharray: '10 10',
-                                                                    strokeWidth: '3px'
-
-                                                                }
-                                                            } 
-                                                            if (ownerState.id === 'temperature') {
-                                                                return {
-                                                                    strokeWidth: '3px'
-                                                                }
-                                                            }
-                                                            if (ownerState.id === 'visibility') {
-                                                                return {
-                                                                    strokeDasharray: '1 5'
-                                                                }
-                                                            }
-                                                            if (ownerState.id === 'wind_speed') {
-                                                                return {
-                                                                    strokeWidth: '1px'
-                                                                }
-                                                            }
-                                                            if (ownerState.id === 'wind_gusts') {
-                                                                return {
-                                                                    strokeDasharray: '1 2'
-                                                                }
-                                                            }
-                                                        }
-                                                    }}
-                                                    
-                                                />
-                                                <BarPlot
-                                                    slotProps={{
-                                                        bar: (ownerState) => {
-                                                            if (ownerState.id === 'uv_index') {
-                                                                return {
-                                                                    height: 5,
-                                                                    style: {
-                                                                        clipPath: 'circle(50% at 50% 50%)'
-                                                                    }
-                                                                }
-                                                            }
-                                                        }
-                                                    }}
-                                                    />
-                                                {xAxis.map((axis) => (
-                                                    <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />
-                                                ))}
-                                                {yAxes.map((axis) => (
-                                                    <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />
-                                                ))}
+                                                {renderedDayReferenceLines}
+                                                <LinePlot slotProps={linePlotSlotProps} />
+                                                <BarPlot slotProps={barPlotSlotProps} />
+                                                {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
+                                                {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                                                 <ChartsAxisHighlight x='line' />
-                                                <ChartsTooltip 
-                                                    trigger="axis"
-                                                />
+                                                <ChartsTooltip />
                                             </ChartsSurface>
                                         </div>
                                     </div>               
@@ -343,74 +353,26 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                             max={336}
                             step={3}
                             sx={{
-                                position: 'absolute', 
-                                bottom: 0, 
-                                left: 0, 
-                                zIndex: 1, 
-                                width: '100%', 
-                                height: '100%',
-                                padding: '0 !important',
-                                '& .MuiSlider-thumb': {
-                                    height: '100%', 
-                                    borderRadius: 0,
-                                    width: '8px',
-                                    color: '#000'
-                                },
-
-                                '& .MuiSlider-track': {
-                                    border: '1px solid gray',
-                                    color: '#ffffff00',
-                                    backdropFilter: 'brightness(1.2)',
-                                    borderRadius: 0,
-                                    height: '100%'
-                                },
-                                '& .MuiSlider-rail': {
-                                    border: '0.5px solid black',
-                                    borderRadius: 0,
-                                    color: '#ffffff00',
-                                    backdropFilter: 'brightness(0.5)',
-                                },
+                                position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
+                                '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
+                                '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
+                                '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
                             }}
                         />
-                        <ChartDataProvider
-                            key={uniqueUnits.length}
-                            series={seriesFullRange}
-                            xAxis={xAxisFullRange}
-                            yAxis={yAxesFullRange}
-                            margin={{top: 3, bottom: 0, left: 5, right: 5}}
-                        >                    
+                        <ChartDataProvider key={uniqueUnits.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <AreaPlot />
-                                <LinePlot 
-                                    strokeWidth={1}
-                                    slotProps={{
-                                                        line: (ownerState) => {
-                                                            if (ownerState.id === 'apparent_temperature') {
-                                                                return {
-                                                                    strokeDasharray: '10 10'
-                                                                }
-                                                            } 
-                                                            if (ownerState.id === 'visibility') {
-                                                                return {
-                                                                    strokeDasharray: '1 5'
-                                                                }
-                                                            }
-                                                        }
-                                                    }}
-                                />
-                                <BarPlot strokeWidth={1} />
+                                <LinePlot slotProps={linePlotSlotProps} strokeWidth={1}/>
+                                <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} />
                             </ChartsSurface>           
                         </ChartDataProvider>
                     </Box>
                 </>
                 ) :
-                (
-                    <div className="flex justify-center items-center h-full">
-                        <p>Select one or more parameters to display the graph.</p>
-                    </div>
-                )
+                (<div className="flex justify-center items-center h-full">
+                    <p>Select one or more parameters to display the graph.</p>
+                </div>)
             }
-            
         </div>
     );
 }

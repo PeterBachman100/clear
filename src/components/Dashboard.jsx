@@ -24,17 +24,12 @@ const initialDashboardState = {
           id: '1',
           name: 'Section 1',
           layout: [
-            {i: '1', x: 0, y: 0, h: 3, w: 12},
-            {i: '2', x: 0, y: 3, h: 2, w: 12},
+            {i: '1', x: 0, y: 0, h: 4, w: 12},
           ],
           cards: [
             {
               id: '1',
-              selectedParameters: ['cloud_cover', 'cloud_cover_low', 'visibility']
-            },
-            {
-              id: '2',
-              selectedParameters: ['precipitation_probability', 'precipitation',  'temperature', 'uv_index']
+              selectedParameters: ['cloud_cover', 'cloud_cover_low', 'precipitation_probability', 'precipitation', 'visibility', 'temperature', 'uv_index', 'wind_speed', 'wind_gusts']
             },
           ],
         },
