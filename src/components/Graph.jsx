@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
@@ -6,6 +6,80 @@ import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setParameters } from "./DashboardSlice";
+import { selectCardParameters } from "../utils/selectors";
+
+// Drawing Order
+const parameterDrawingOrder = [
+    'cloud_cover', 
+    'cloud_cover_low',
+    'precipitation_probability',
+    'precipitation',
+    'temperature',
+    'wind_speed',
+    'wind_gusts',
+    'visibility',
+    'uv_index'
+];
+
+// LINE PLOT SLOT PROPS
+const linePlotSlotProps = {
+    line: (ownerState) => {
+        if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
+            return {
+                strokeWidth: '0px'
+            }
+        }
+        if (ownerState.id === 'precipitation_probability') {
+            return {
+                strokeWidth: '1px'
+            }
+        }
+        if (ownerState.id === 'apparent_temperature') {
+            return {
+                strokeDasharray: '10 10',
+                strokeWidth: '3px'
+
+            }
+        } 
+        if (ownerState.id === 'temperature') {
+            return {
+                strokeWidth: '3px'
+            }
+        }
+        if (ownerState.id === 'visibility') {
+            return {
+                strokeWidth: '1px',
+                strokeDasharray: '1 5'
+            }
+        }
+        if (ownerState.id === 'wind_speed') {
+            return {
+                strokeWidth: '0.5px'
+            }
+        }
+        if (ownerState.id === 'wind_gusts') {
+            return {
+                strokeWidth: '0.5px',
+                strokeDasharray: '4 12'
+            }
+        }
+    }
+}
+
+// BAR PLOT SLOT PROPS
+const barPlotSlotProps = {
+    bar: (ownerState) => {
+        if (ownerState.id === 'uv_index') {
+            return {
+                height: 5,
+                style: {
+                    transform: 'translateY(-10px)'
+                }                                                                 
+            }
+        }
+    }
+}
+
 
 export default function Graph({ weather, parametersVisible, pageId, section, card }) {
 
@@ -24,25 +98,16 @@ export default function Graph({ weather, parametersVisible, pageId, section, car
     }
 
     //PARAMETERS
-    const selectedParameters = useSelector(state => state.dashboard.pages.find(page => page.id === pageId).sections.find(section => section.id === section.id).cards.find(card => card.id === card.id).selectedParameters);
+    const selectedParameters = useSelector(state => 
+    selectCardParameters(state, pageId, section.id, card.id)
+    );
+    
     const handleSetParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
         dispatch(setParameters({pageId, sectionId: section.id, cardId: card.id, selectedParameters: newParams}));
     }
 
-    // Drawing Order
-    const parameterDrawingOrder = [
-        'cloud_cover', 
-        'cloud_cover_low',
-        'precipitation_probability',
-        'precipitation',
-        'temperature',
-        'wind_speed',
-        'wind_gusts',
-        'visibility',
-        'uv_index'
-    ];
     const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedParameters.includes(param));
 
     // Group parameters by their unit
@@ -62,7 +127,7 @@ export default function Graph({ weather, parametersVisible, pageId, section, car
     const seriesFullRange = [];
     const uniqueUnits = Object.keys(parametersByUnit);
 
-    uniqueUnits.forEach((unit, index) => {
+    uniqueUnits.forEach((unit) => {
         const axis = {
             id: unit,
             position:'none',
@@ -222,87 +287,32 @@ export default function Graph({ weather, parametersVisible, pageId, section, car
     })
     
     // DAY REFERENCE LINES
-    const getDailyLinePositions = (timestamps) => {
-        const dailyTimestamps = [];
-        let prevDate = null;
+    const renderedDayReferenceLines = useMemo(() => {
+    
+        const getDailyLinePositions = (timestamps) => {
+            const dailyTimestamps = [];
+            let prevDate = null;
+            timestamps.forEach(timestamp => {
+                const currentDate = new Date(timestamp);
+                if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
+                    dailyTimestamps.push(timestamp);
+                }
+                prevDate = currentDate;
+            });
+            return dailyTimestamps;
+        };
+        
+        return getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
+            <ChartsReferenceLine
+                key={index}
+                x={timestamp}
+                lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                disableTooltips={true}
+            />
+        ));
+    }, [weather.hourly.time, visibleDataRange]);
 
-        timestamps.forEach(timestamp => {
-            const currentDate = new Date(timestamp);
-            if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
-                dailyTimestamps.push(timestamp);
-            }
-            prevDate = currentDate;
-        });
 
-        return dailyTimestamps;
-    };
-    const renderedDayReferenceLines = getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
-        <ChartsReferenceLine
-            key={index}
-            x={timestamp}
-            lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
-            disableTooltips={true}
-        />
-    ))
-
-    // LINE PLOT SLOT PROPS
-    const linePlotSlotProps = {
-        line: (ownerState) => {
-            if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
-                return {
-                    strokeWidth: '0px'
-                }
-            }
-            if (ownerState.id === 'precipitation_probability') {
-                return {
-                    strokeWidth: '1px'
-                }
-            }
-            if (ownerState.id === 'apparent_temperature') {
-                return {
-                    strokeDasharray: '10 10',
-                    strokeWidth: '3px'
-
-                }
-            } 
-            if (ownerState.id === 'temperature') {
-                return {
-                    strokeWidth: '3px'
-                }
-            }
-            if (ownerState.id === 'visibility') {
-                return {
-                    strokeWidth: '1px',
-                    strokeDasharray: '1 5'
-                }
-            }
-            if (ownerState.id === 'wind_speed') {
-                return {
-                    strokeWidth: '0.5px'
-                }
-            }
-            if (ownerState.id === 'wind_gusts') {
-                return {
-                    strokeWidth: '0.5px',
-                    strokeDasharray: '4 12'
-                }
-            }
-        }
-    }
-
-    // BAR PLOT SLOT PROPS
-    const barPlotSlotProps = {
-        bar: (ownerState) => {
-            if (ownerState.id === 'uv_index') {
-                return {
-                    height: 5,
-                    style: {
-                        transform: 'translateY(-10px)'
-                    }                                                                 
-                }
-            }
-        }
-    }
 
     return (
         <div className='flex flex-col h-full'>  
