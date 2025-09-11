@@ -1,11 +1,16 @@
 import { useState } from "react";
-import { ChartDataProvider, ChartsLegend, ContinuousColorLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
+import { useDispatch, useSelector } from "react-redux";
+import { setParameters } from "./DashboardSlice";
 
-export default function Graph({ weather, parametersVisible, selectedParameters, setSelectedParameters, pageId, section, card }) {
+export default function Graph({ weather, parametersVisible, pageId, section, card }) {
+
+    const dispatch = useDispatch();
+
     const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, surface_pressure, rain, showers, snowfall, relative_humidity, cloud_cover_mid, cloud_cover_high, dew_point, apparent_temperature, ...rest } = weather.hourly.weatherVariables;
     const hourlyParams = Object.keys(rest);
 
@@ -18,11 +23,12 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
         return fullDataset.slice(visibleDataRange[0], visibleDataRange[1]);
     }
 
-    //Parameters
-    const handleSelectedParametersChange = (event) => {
+    //PARAMETERS
+    const selectedParameters = useSelector(state => state.dashboard.pages.find(page => page.id === pageId).sections.find(section => section.id === section.id).cards.find(card => card.id === card.id).selectedParameters);
+    const handleSetParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
-        setSelectedParameters(pageId, section.id, card.id, newParams);
+        dispatch(setParameters({pageId, sectionId: section.id, cardId: card.id, selectedParameters: newParams}));
     }
 
     // Drawing Order
@@ -308,7 +314,7 @@ export default function Graph({ weather, parametersVisible, selectedParameters, 
                         id="multiple-select"
                         multiple
                         value={selectedParameters}
-                        onChange={handleSelectedParametersChange}
+                        onChange={handleSetParameters}
                         renderValue={(selectedParameters) => selectedParameters.join(', ')}
                     >
                         {hourlyParams.map((param) => (

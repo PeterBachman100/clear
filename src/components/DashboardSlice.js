@@ -136,7 +136,7 @@ export const dashboardSlice = createSlice({
       const page = state.pages.find(page => page.id === pageId);
       const section = page.sections.find(section => section.id === sectionId);
       section.cards = section.cards.filter(card => card.id !== cardId);
-      section.layout = section.layout.filter(item => item.id !== cardId);
+      section.layout = section.layout.filter(item => item.i !== cardId);
     },
 
 

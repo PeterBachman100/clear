@@ -1,6 +1,19 @@
-import { Drawer, List, Button, Typography, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { Drawer, List, Button, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { useSelector, useDispatch } from 'react-redux'
+import { addPage, setActivePage } from "./DashboardSlice";
 
-export default function Sidebar({ pages, setActivePage, addPage, deletePage }) {
+export default function Sidebar() {
+
+    const dispatch = useDispatch();
+    const pages = useSelector(state => state.dashboard.pages);
+
+    const handleAddPage = () => {
+        dispatch(addPage());
+    }
+    const handleSetActivePage = (pageId) => {
+        dispatch(setActivePage({pageId}));
+    }
+
     return (
         <Drawer
             sx={{
@@ -15,14 +28,14 @@ export default function Sidebar({ pages, setActivePage, addPage, deletePage }) {
                 {pages.map((page) => {
                     return (
                         <ListItem key={page.id} >
-                            <ListItemButton onClick={() => setActivePage(page.id)}>
+                            <ListItemButton onClick={() => handleSetActivePage(page.id)}>
                                 <ListItemText primary={page.name}></ListItemText>
                             </ListItemButton>
                         </ListItem>
                     );
                 })}
                 <ListItem>
-                    <Button onClick={addPage} variant="outlined" color="secondary">Add Page</Button>
+                    <Button onClick={handleAddPage} variant="outlined" color="secondary">Add Page</Button>
                 </ListItem>
             </List>
                                 

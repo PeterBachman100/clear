@@ -1,19 +1,22 @@
 import { useState, useEffect } from "react";
 import Section from "./Section";
-import LocationInput from "./LocationInput";
 import LocationSearch from "./LocationSearch";
 import { fetchWeather } from "../utils/fetchWeather";
-import { Box, Typography, Divider, Button, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import ViewComfyIcon from '@mui/icons-material/ViewComfy';
-import MoreVertIcon from '@mui/icons-material/MoreVert';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
-import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import EditLocationOutlinedIcon from '@mui/icons-material/EditLocationOutlined';
+import { Typography, Button, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux'
+import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } from "./DashboardSlice";
       
-export default function Page({ page, setLocation, setSelectedParameters, updatePageName, updateSectionName, editMode, toggleEditMode, onLayoutChange, deletePage, addSection, deleteSection, addCard, deleteCard }) {
+export default function Page() {
+
+    const dispatch = useDispatch();
+    const page = useSelector(state => state.dashboard.pages.find(page => page.id === state.dashboard.activePageId));
+    const editMode = page.editMode;
+
+    //SECTIONS
+    const handleAddSection = () => {
+        dispatch(addSection({pageId: page.id}));
+    }
 
     // Page Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -26,21 +29,20 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
     const open = Boolean(anchorEl);
     const id = open ? 'section-menu' : undefined;
 
-    const handleDelete = () => {
-        deletePage(page.id);
+    const handleDeletePage = () => {
+        dispatch(deletePage({pageId: page.id}));
         handleCloseMenu();
-    };
+    }
+    
 
     // Page Name
     const [editingPageName, setEditingPageName] = useState(false);
-    const [pageName, setPageName] = useState(page.name);
-
+    const [pageNameInput, setPageNameInput] = useState(page.name);
     const handleNameChange = (e) => {
-        setPageName(e.target.value);
-    };
-
-    const handlePageNameChange = () => {
-        updatePageName(page.id, pageName);
+            setPageNameInput(e.target.value);
+        };
+    const handleUpdatePageName = () => {
+        dispatch(updatePageName({pageId: page.id, newPageName: pageNameInput}));
         setEditingPageName(false);
     }
 
@@ -50,6 +52,16 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
         handleCloseMenu();
     };
 
+    // LOCATION
+    const handleSetLocation = (pageId, newLocation) => {
+        dispatch(setLocation({ pageId: pageId, location: newLocation }));
+    };
+
+    // LAYOUT
+    const handleToggleEditMode = (pageId) => {
+        dispatch(toggleEditMode({pageId: pageId}));
+    }
+    
 
     // Weather
     const [weather, setWeather] = useState(null);
@@ -84,10 +96,10 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                             <TextField
                                 label={"Page Name"}
                                 variant="outlined"
-                                value={pageName}
+                                value={pageNameInput}
                                 onChange={handleNameChange}
                             /> 
-                            <Button onClick={handlePageNameChange} variant="outlined" color="success">Save</Button>
+                            <Button onClick={handleUpdatePageName} variant="outlined" color="success">Save</Button>
                             <Button onClick={() => {setEditingPageName(false)}} variant="outlined" color="error">Cancel</Button>
                          </div>
                         :
@@ -122,14 +134,14 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                     Set Location
                 </MenuItem>
                 <MenuItem onClick={() => {
-                    addSection(page.id);
+                    handleAddSection();
                     handleCloseMenu();
                 }}>
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Section
                 </MenuItem>
                 <MenuItem onClick={() => {
-                    toggleEditMode(page.id);
+                    handleToggleEditMode(page.id);
                     handleCloseMenu();
                 }}>
                     <ViewComfyIcon sx={{ mr: 1}} />
@@ -145,7 +157,7 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                 <MenuItem onClick={handleToggleNameVisibility}>
                     {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                 </MenuItem>
-                <MenuItem onClick={handleDelete}>
+                <MenuItem onClick={handleDeletePage}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                     Delete this Page
                 </MenuItem>
@@ -153,7 +165,7 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
             <CardContent sx={{p:0, display: 'flex', flexDirection: 'column'}}>
                 {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
                 {editMode && <Button variant="outlined" color="success" onClick={() => {
-                        toggleEditMode(page.id);
+                        handleToggleEditMode(page.id);
                         handleCloseMenu();
                     }}>
                         Save Layout
@@ -162,7 +174,7 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                 <div>
                     {page.sections.map((section) => {
                         return (
-                            <Section key={section.id} weather={weather} setSelectedParameters={setSelectedParameters} pageId={page.id} section={section} deleteSection={deleteSection} updateSectionName={updateSectionName} editMode={editMode} onLayoutChange={onLayoutChange} addCard={addCard} deleteCard={deleteCard} />
+                            <Section key={section.id} weather={weather} pageId={page.id} section={section} />
                         );
                     })}
                 </div>
@@ -179,7 +191,7 @@ export default function Page({ page, setLocation, setSelectedParameters, updateP
                     {"Set Location"}
                 </DialogTitle>
                 <DialogContent>
-                    <LocationSearch page={page} onSelect={setLocation} />
+                    <LocationSearch page={page} onSelect={handleSetLocation} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} variant="outlined" color="error">

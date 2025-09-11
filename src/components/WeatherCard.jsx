@@ -1,16 +1,22 @@
-import { LineChart } from "@mui/x-charts";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Graph from './Graph';
-import { Button, Box, Popover, Card, CardHeader, Typography, CardActions, IconButton, Menu, MenuItem, TextField, CardContent } from "@mui/material";
+import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { deleteCard } from "./DashboardSlice";
+import { useDispatch } from "react-redux";
 
-export default function WeatherCard({ pageId, weather, setSelectedParameters, section, card, deleteCard, editMode }) {
+export default function WeatherCard({ pageId, weather, section, card }) {
 
-    
+    const dispatch = useDispatch();
+
+    //CARD
+    const handleDeleteCard = () => {
+        dispatch(deleteCard({pageId, sectionId: section.id, cardId: card.id}));
+        handleCloseMenu();
+    }
 
     // Card Menu
     const [anchorEl, setAnchorEl] = useState(null);
@@ -22,11 +28,6 @@ export default function WeatherCard({ pageId, weather, setSelectedParameters, se
     };
     const open = Boolean(anchorEl);
     const id = open ? 'card-menu' : undefined;
-
-    const handleDelete = () => {
-        deleteCard(pageId, section.id, card.id);
-        handleCloseMenu();
-    };
 
     //Graph Parameter Visibility
     const [parametersVisible, setParametersVisible] = useState(false);
@@ -66,14 +67,14 @@ export default function WeatherCard({ pageId, weather, setSelectedParameters, se
                 <MenuItem onClick={handleToggleParameterVisbility}>
                     {parametersVisible ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide Parameters</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Select Parameters</>}
                 </MenuItem>
-                <MenuItem onClick={handleDelete}>
+                <MenuItem onClick={handleDeleteCard}>
                     <DeleteIcon sx={{ mr: 1 }} color="error" />
                     Delete this card
                 </MenuItem>
             </Menu>
             <CardContent className="grow" sx={{ p:1, '&:last-child': { paddingBottom: 1 } }}>
                 {weather? 
-                    <Graph weather={weather} selectedParameters={card.selectedParameters} setSelectedParameters={setSelectedParameters} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
+                    <Graph weather={weather} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
                     <div>No Weather Data</div>
                 }
             </CardContent>
