@@ -1,6 +1,6 @@
 import { Drawer, List, Button, Typography, ListItem, ListItemButton, ListItemText } from "@mui/material";
 
-export default function Sidebar({ pages, setActivePageId, addPage, deletePage }) {
+export default function Sidebar({ pages, setActivePage, addPage, deletePage }) {
     return (
         <Drawer
             sx={{
@@ -15,7 +15,7 @@ export default function Sidebar({ pages, setActivePageId, addPage, deletePage })
                 {pages.map((page) => {
                     return (
                         <ListItem key={page.id} >
-                            <ListItemButton onClick={() => setActivePageId(page.id)}>
+                            <ListItemButton onClick={() => setActivePage(page.id)}>
                                 <ListItemText primary={page.name}></ListItemText>
                             </ListItemButton>
                         </ListItem>
