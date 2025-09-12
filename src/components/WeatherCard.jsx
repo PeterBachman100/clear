@@ -8,7 +8,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { deleteCard } from "./DashboardSlice";
 import { useDispatch } from "react-redux";
 
-export default function WeatherCard({ pageId, weather, section, card }) {
+export default function WeatherCard({ pageId, weather, section, card, editMode }) {
 
     const dispatch = useDispatch();
 
@@ -72,11 +72,13 @@ export default function WeatherCard({ pageId, weather, section, card }) {
                     Delete this card
                 </MenuItem>
             </Menu>
-            <CardContent className="grow" sx={{ p:1, '&:last-child': { paddingBottom: 1 } }}>
-                {weather? 
-                    <Graph weather={weather} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} /> :
-                    <div>No Weather Data</div>
-                }
+            <CardContent className="p-1 h-full">
+                <div className='w-full h-full'>
+                    {weather? 
+                        <Graph weather={weather} parametersVisible={parametersVisible} pageId={pageId} section={section} card={card} editMode={editMode} /> :
+                        <div>No Weather Data</div>
+                    }
+                </div>
             </CardContent>
         </Card>
     );
