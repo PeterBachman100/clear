@@ -7,13 +7,13 @@ const initialDashboardState = {
   pages: [
     {
       id: 'page-1',
-      name: 'Snoqualmie Pass',
+      name: 'Kirkland',
       location: {
-        name: "Snoqualmie Pass",
+        name: "Kirkland",
         admin1: "Washington",
         country: "United States",
-        latitude: 47.3923,
-        longitude: -121.4001
+        latitude: 47.6751,
+        longitude: -122.1930
       },
       editMode: false,
       sections: [
@@ -26,7 +26,7 @@ const initialDashboardState = {
           cards: [
             {
               id: '1',
-              selectedParameters: ['temperature']
+              selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index']
             },
           ],
         },

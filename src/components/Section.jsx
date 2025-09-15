@@ -147,7 +147,7 @@ export default function Section({ pageId, weather, section, deleteCard }) {
                     {section.cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                <WeatherCard pageId={pageId} weather={weather} section={section} card={card} deleteCard={deleteCard} editMode={editMode} />
+                                <WeatherCard weather={weather} pageId={pageId} sectionId={section.id} card={card} deleteCard={deleteCard} editMode={editMode} />
                             </div>
                         );
                     })}

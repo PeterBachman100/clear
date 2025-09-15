@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer  } from "@mui/x-charts";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
@@ -81,7 +81,7 @@ const barPlotSlotProps = {
 }
 
 
-export default function Graph({ weather, parametersVisible, pageId, section, card, editMode }) {
+export default function Graph({ weather, parametersVisible, pageId, sectionId, cardId, editMode }) {
 
     const dispatch = useDispatch();
     
@@ -100,13 +100,13 @@ export default function Graph({ weather, parametersVisible, pageId, section, car
 
     //PARAMETERS
     const selectedParameters = useSelector(state => 
-        selectCardParameters(state, pageId, section.id, card.id)
+        selectCardParameters(state, pageId, sectionId, cardId)
     );
     
     const handleSetParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
-        dispatch(setParameters({pageId, sectionId: section.id, cardId: card.id, selectedParameters: newParams}));
+        dispatch(setParameters({pageId, sectionId: sectionId, cardId: cardId, selectedParameters: newParams}));
     }
 
 
@@ -177,7 +177,7 @@ export default function Graph({ weather, parametersVisible, pageId, section, car
                     type: 'line',
                     label: `${param} (${getUnitAbbreviation(unit)})`,
                     id: param,
-                    showMark: false,
+                    showMark: true,
                     
                 };
                 
