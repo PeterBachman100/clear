@@ -10,7 +10,7 @@ import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } f
 export default function Page() {
 
     const dispatch = useDispatch();
-    const page = useSelector(state => state.dashboard.pages.find(page => page.id === state.dashboard.activePageId));
+    const page = useSelector(state => state.dashboard.pages[state.dashboard.activePageId]);
     const editMode = page.editMode;
 
     //SECTIONS
@@ -163,7 +163,7 @@ export default function Page() {
                 </MenuItem>
             </Menu>
             <CardContent sx={{p:0, display: 'flex', flexDirection: 'column'}}>
-                {page.sections.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
+                {page.sectionIds.length === 0 ? <p>This page is empty. Edit the layout to add a section!</p> : ''}
                 {editMode && <Button variant="outlined" color="success" onClick={() => {
                         handleToggleEditMode(page.id);
                         handleCloseMenu();
@@ -172,9 +172,9 @@ export default function Page() {
                     </Button>
                 }
                 <div>
-                    {page.sections.map((section) => {
+                    {page.sectionIds.map((sectionId) => {
                         return (
-                            <Section key={section.id} weather={weather} pageId={page.id} section={section} />
+                            <Section key={sectionId} weather={weather} pageId={page.id} editMode={editMode} sectionId={sectionId} />
                         );
                     })}
                 </div>

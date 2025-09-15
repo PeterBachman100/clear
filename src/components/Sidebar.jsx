@@ -25,21 +25,19 @@ export default function Sidebar() {
             variant="permanent"
         >
             <List className="w-full h-full">
-                {pages.map((page) => {
+                {Object.values(pages).map((page) => {
                     return (
-                        <ListItem key={page.id} >
-                            <ListItemButton onClick={() => handleSetActivePage(page.id)}>
-                                <ListItemText primary={page.name}></ListItemText>
-                            </ListItemButton>
-                        </ListItem>
+                    <ListItem key={page.id}>
+                        <ListItemButton onClick={() => handleSetActivePage(page.id)}>
+                            <ListItemText primary={page.name}></ListItemText>
+                        </ListItemButton>
+                    </ListItem>
                     );
                 })}
                 <ListItem>
                     <Button onClick={handleAddPage} variant="outlined" color="secondary">Add Page</Button>
                 </ListItem>
-            </List>
-                                
-
+            </List>               
         </Drawer>
     );
 }

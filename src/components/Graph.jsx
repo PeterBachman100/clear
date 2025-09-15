@@ -6,7 +6,6 @@ import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setParameters } from "./DashboardSlice";
-import { selectCardParameters } from "../utils/selectors";
 
 // Drawing Order
 const parameterDrawingOrder = [
@@ -81,7 +80,7 @@ const barPlotSlotProps = {
 }
 
 
-export default function Graph({ weather, parametersVisible, pageId, sectionId, cardId, editMode }) {
+export default function Graph({ weather, parametersVisible, cardId, editMode }) {
 
     const dispatch = useDispatch();
     
@@ -99,14 +98,11 @@ export default function Graph({ weather, parametersVisible, pageId, sectionId, c
     }
 
     //PARAMETERS
-    const selectedParameters = useSelector(state => 
-        selectCardParameters(state, pageId, sectionId, cardId)
-    );
-    
+    const selectedParameters = useSelector(state => state.dashboard.cards[cardId].selectedParameters);
     const handleSetParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
-        dispatch(setParameters({pageId, sectionId: sectionId, cardId: cardId, selectedParameters: newParams}));
+        dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
     }
 
 

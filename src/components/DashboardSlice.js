@@ -3,9 +3,8 @@ import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
   activePageId: 'page-1',
-
-  pages: [
-    {
+  pages: {
+    'page-1': {
       id: 'page-1',
       name: 'Kirkland',
       location: {
@@ -16,23 +15,27 @@ const initialDashboardState = {
         longitude: -122.1930
       },
       editMode: false,
-      sections: [
-        {
-          id: '1',
-          name: 'Section 1',
-          layout: [
-            {i: '1', x: 0, y: 0, h: 4, w: 12},
-          ],
-          cards: [
-            {
-              id: '1',
-              selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index']
-            },
-          ],
-        },
-      ],
+      sectionIds: ['1'],
     },
-  ],
+  },
+  sections: {
+    '1': {
+      id: '1',
+      name: 'Section 1',
+      pageId: 'page-1',
+      layout: [
+        {i: '1', x: 0, y: 0, h: 4, w: 12},
+      ],
+      cardIds: ['1'],
+    },
+  },
+  cards: {
+    '1': {
+      id: '1',
+      sectionId: '1',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index']
+    },
+  },
 };
 
 export const dashboardSlice = createSlice({
@@ -43,9 +46,8 @@ export const dashboardSlice = createSlice({
     // LOCATION
     setLocation: (state, action) => {
       const { pageId, location } = action.payload;
-      const page = state.pages.find(p => p.id === pageId);
-      if (page) {
-        page.location = location;
+      if (state.pages[pageId]) {
+        state.pages[pageId].location = location;
       }
     },
 
@@ -58,95 +60,89 @@ export const dashboardSlice = createSlice({
 
     addPage: (state) => {
       const newId = uuidv4();
-      const newPage = {id: newId, name: 'New Page', editMode: false, location: [], sections: []}
-      state.pages.push(newPage);
+      state.pages[newId] = {
+        id: newId,
+        name: 'New Page',
+        editMode: false,
+        location: null, 
+        sectionIds: []
+      };
       state.activePageId = newId;
     },
 
     deletePage: (state, action) => {
       const {pageId} = action.payload;
-      if (state.pages.length === 1) {
-        return; 
+      const pageIds = Object.keys(state.pages);
+      if (pageIds.length === 1) {
+          return;
       }
-      const updatedPages = state.pages.filter((page) => page.id !== pageId);
-      state.pages = updatedPages;
-      state.activePageId = updatedPages[0].id; 
+      delete state.pages[pageId];
+      const remainingPageIds = Object.keys(state.pages);
+      state.activePageId = remainingPageIds[0];
     },
 
     updatePageName: (state, action) => {
       const {pageId, newPageName} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      page.name = newPageName;
+      state.pages[pageId].name = newPageName;
     },
 
 
     // LAYOUT
     toggleEditMode: (state, action) => {
       const {pageId} = action.payload;
-      state.pages.forEach((page) => {
-        page.editMode = page.id === pageId ? !page.editMode : false;
-      });
+      state.pages[pageId].editMode = !state.pages[pageId].editMode;
     },
 
     updateLayout: (state, action) => {
-      const {pageId, sectionId, newLayout} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      const section = page.sections.find(s => s.id === sectionId);
-      section.layout = newLayout; 
+      const {sectionId, newLayout} = action.payload;
+      state.sections[sectionId].layout = newLayout; 
     },
 
 
     // SECTION
     addSection: (state, action) => {
       const {pageId} = action.payload;
-      const newId = uuidv4();
-      const newSection = {id: newId, name: 'Section Name', layout: [], cards: []}
-      const page = state.pages.find(page => page.id === pageId);
-      page.sections.push(newSection);
+      const newSectionId = uuidv4();
+      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, layout: [], cardIds: []}
+      state.pages[pageId].sectionIds.push(newSectionId);
+      state.sections[newSectionId] = newSection;
     },
 
     deleteSection: (state, action) => {
       const {pageId, sectionId} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      page.sections = page.sections.filter(section => section.id !== sectionId);
+      state.pages[pageId].sectionIds = state.pages[pageId].sectionIds.filter(id => id !== sectionId);
+      delete state.sections[sectionId];
     },
 
     updateSectionName: (state, action) => {
-      const {pageId, sectionId, newName} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      const section = page.sections.find(section => section.id === sectionId);
-      section.name = newName;
+      const {sectionId, newName} = action.payload;
+      state.sections[sectionId].name = newName;
     },
 
 
     // CARD
     addCard: (state, action) => {
-      const {pageId, sectionId} = action.payload;
-      const newId = uuidv4();
-      const newCard = { id: newId, selectedParameters: ['temperature'] };
-      const newLayoutItem = { i: newId, x: 0, y: Infinity, w: 4, h: 4 };
-      const page = state.pages.find(page => page.id === pageId);
-      const section = page.sections.find(section => section.id === sectionId);
-      section.layout.push(newLayoutItem);
-      section.cards.push(newCard);
+      const {sectionId} = action.payload;
+      const newCardId = uuidv4();
+      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'] };
+      const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
+      state.sections[sectionId].layout.push(newLayoutItem);
+      state.sections[sectionId].cardIds.push(newCardId);
+      state.cards[newCardId] = newCard;
     },
 
     deleteCard: (state, action) => {
-      const {pageId, sectionId, cardId} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      const section = page.sections.find(section => section.id === sectionId);
-      section.cards = section.cards.filter(card => card.id !== cardId);
-      section.layout = section.layout.filter(item => item.i !== cardId);
+      const {sectionId, cardId} = action.payload;
+      state.sections[sectionId].layout = state.sections[sectionId].layout.filter(item => item.i !== cardId);
+      state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(card => card.id !== cardId);
+      delete state.cards[cardId];
     },
 
 
     // PARAMETERS
     setParameters: (state, action) => {
-      const {pageId, sectionId, cardId, selectedParameters} = action.payload;
-      const page = state.pages.find(page => page.id === pageId);
-      const section = page.sections.find(section => section.id === sectionId);
-      const card = section.cards.find(card => card.id === cardId);
-      card.selectedParameters = selectedParameters;
+      const {cardId, selectedParameters} = action.payload;
+      state.cards[cardId].selectedParameters = selectedParameters;
     },
 
   },

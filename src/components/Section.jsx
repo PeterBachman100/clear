@@ -15,19 +15,17 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, weather, section, deleteCard }) {
+export default function Section({ pageId, weather, sectionId, editMode }) {
 
     const dispatch = useDispatch();
-
-    const editMode = useSelector(state => state.dashboard.pages.find(page => page.id === state.dashboard.activePageId).editMode);
-
+    const section = useSelector(state => state.dashboard.sections[sectionId]);
 
     const handleDeleteSection = () => {
         dispatch(deleteSection({pageId, sectionId: section.id}));
         handleCloseMenu();
     }
     const handleUpdateSectionName = () => {
-        dispatch(updateSectionName({pageId, sectionId: section.id, newName: sectionName}));
+        dispatch(updateSectionName({sectionId: section.id, newName: sectionName}));
         setEditingSectionName(false);
     }
 
@@ -59,12 +57,12 @@ export default function Section({ pageId, weather, section, deleteCard }) {
 
     // LAYOUT
     const handleLayoutChange = (newLayout) => {
-        dispatch(updateLayout({ pageId, sectionId: section.id, newLayout }));
+        dispatch(updateLayout({ sectionId: section.id, newLayout }));
     };
 
     //CARD
     const handleAddCard = () => {
-        dispatch(addCard({pageId, sectionId: section.id}));
+        dispatch(addCard({ sectionId: section.id }));
     }
 
     return (
@@ -144,10 +142,10 @@ export default function Section({ pageId, weather, section, deleteCard }) {
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
                     onLayoutChange={handleLayoutChange}
                 >
-                    {section.cards.map((card) => {
+                    {section.cardIds.map((cardId) => {
                         return (
-                            <div key={card.id}>
-                                <WeatherCard weather={weather} pageId={pageId} sectionId={section.id} card={card} deleteCard={deleteCard} editMode={editMode} />
+                            <div key={cardId}>
+                                <WeatherCard weather={weather} pageId={pageId} sectionId={section.id} cardId={cardId} editMode={editMode} />
                             </div>
                         );
                     })}
