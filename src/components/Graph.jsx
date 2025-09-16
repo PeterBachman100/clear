@@ -1,11 +1,11 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useTransition } from "react";
 import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer  } from "@mui/x-charts";
-import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider} from "@mui/material";
+import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider, CircularProgress} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters } from "./DashboardSlice";
+import { setParameters, setVisibleDataRange } from "./DashboardSlice";
 
 // Drawing Order
 const parameterDrawingOrder = [
@@ -83,19 +83,32 @@ const barPlotSlotProps = {
 export default function Graph({ weather, parametersVisible, cardId, editMode }) {
 
     const dispatch = useDispatch();
-    
 
-    const { freezing_level_height, is_day, snow_depth, weather_code, wind_direction, surface_pressure, rain, showers, snowfall, relative_humidity, cloud_cover_mid, cloud_cover_high, dew_point, apparent_temperature, ...rest } = weather.hourly.weatherVariables;
-    const hourlyParams = Object.keys(rest);
+    const hourlyParams = Object.keys(weather.hourly.weatherVariables);
 
-    //Slider
-    const [visibleDataRange, setVisibleDataRange] = useState([0, 72]);
-    const handleRangeChange = (event, newValue) => {
-        setVisibleDataRange(newValue);
+    // VISIBLE RANGE & SLIDER
+    // Data and handlers from Redux Store
+    const visibleDataRange = useSelector(state => state.dashboard.cards[cardId].visibleDataRange);
+    const handleSetVisibleDataRange = (event, newRange) => {
+        dispatch(setVisibleDataRange({ cardId: cardId, range: newRange }));
     };
+
+    // Util function 
     const getVisibleRange = (fullDataset) => {
         return fullDataset.slice(visibleDataRange[0], visibleDataRange[1]);
-    }
+    }    
+
+    // Local slider state
+    const [localSliderRange, setLocalSliderRange] = useState(visibleDataRange);
+   
+    const [isPending, startTransition] = useTransition();
+
+    // Keep local slider in sync with Redux, hide spinner after update applied
+    useEffect(() => {
+        setLocalSliderRange(visibleDataRange);
+    }, [visibleDataRange]);
+
+    
 
     //PARAMETERS
     const selectedParameters = useSelector(state => state.dashboard.cards[cardId].selectedParameters);
@@ -345,7 +358,7 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
                 (
                     <>
                     <Box sx={{ width: '100%', height: '90%' }}>
-                        <Box sx={{ width: '100%', height: '100%' }}>
+                        <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
                             {/* Key needed to avoid bug in MUI library */}
                             <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>                  
                                 <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />      
@@ -360,16 +373,39 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
                                     <ChartsTooltip />
                                 </ChartsSurface>                
                             </ChartDataProvider>
+                            {isPending && (
+                                <Box
+                                    sx={{
+                                    position: "absolute",
+                                    top: 0,
+                                    left: 0,
+                                    width: "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    bgcolor: "rgba(255, 255, 255, 0.7)",
+                                    zIndex: 10,
+                                    }}
+                                >
+                                    <CircularProgress />
+                                </Box>
+                            )}
                         </Box>
                     </Box>
                     
-                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px'}}>
+                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px', marginTop: '20px'}}>
                         <Slider
-                            value={visibleDataRange}
-                            onChange={handleRangeChange}
+                            value={localSliderRange}
+                            onChange={(event, newValue) => setLocalSliderRange(newValue)}
+                            onChangeCommitted={(event, newValue) => {
+                                startTransition(() => {
+                                    dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
+                                });
+                            }}
                             min={0}
                             max={336}
-                            step={3}
+                            step={1}
                             sx={{
                                 position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
                                 '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},

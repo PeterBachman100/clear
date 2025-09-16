@@ -33,7 +33,8 @@ const initialDashboardState = {
     '1': {
       id: '1',
       sectionId: '1',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index']
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      visibleDataRange: [0, 72],
     },
   },
 };
@@ -124,7 +125,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'] };
+      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72] };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
@@ -145,9 +146,16 @@ export const dashboardSlice = createSlice({
       state.cards[cardId].selectedParameters = selectedParameters;
     },
 
+
+    // VISIBLE DATA
+    setVisibleDataRange: (state, action) => {
+      const {cardId, range} = action.payload;
+      state.cards[cardId].visibleDataRange = range;
+    }
+
   },
 })
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
