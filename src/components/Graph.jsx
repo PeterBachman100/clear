@@ -115,8 +115,11 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
     const handleSetParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
-        dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
+        startTransition(() => {
+            dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
+        });
     }
+
 
 
     // MEMO-IZED Y Axes and Series

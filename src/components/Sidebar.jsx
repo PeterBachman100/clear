@@ -1,8 +1,8 @@
-import { Drawer, List, Button, ListItem, ListItemButton, ListItemText } from "@mui/material";
+import { Box, List, Button, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { useSelector, useDispatch } from 'react-redux'
 import { addPage, setActivePage } from "./DashboardSlice";
 
-export default function Sidebar() {
+export default function Sidebar({ closeDrawer }) {
 
     const dispatch = useDispatch();
     const pages = useSelector(state => state.dashboard.pages);
@@ -15,20 +15,22 @@ export default function Sidebar() {
     }
 
     return (
-        <Drawer
+        <Box
             sx={{
                 width: 200, flexShrink: 0, '& .MuiDrawer-paper': {
                     width: 200,
                     boxSizing: 'border-box',
                 },
             }}
-            variant="permanent"
         >
             <List className="w-full h-full">
                 {Object.values(pages).map((page) => {
                     return (
                     <ListItem key={page.id}>
-                        <ListItemButton onClick={() => handleSetActivePage(page.id)}>
+                        <ListItemButton onClick={() => {
+                            handleSetActivePage(page.id);
+                            closeDrawer();
+                        }}>
                             <ListItemText primary={page.name}></ListItemText>
                         </ListItemButton>
                     </ListItem>
@@ -38,6 +40,6 @@ export default function Sidebar() {
                     <Button onClick={handleAddPage} variant="outlined" color="secondary">Add Page</Button>
                 </ListItem>
             </List>               
-        </Drawer>
+        </Box>
     );
 }

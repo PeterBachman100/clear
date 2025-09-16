@@ -1,13 +1,25 @@
 import Sidebar from "./Sidebar";
 import Page from "./Page";
+import { useState } from "react";
+import TopBar from "./TopBar";
+import { Drawer, Box } from "@mui/material";
 
 export default function Dashboard() {
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const toggleDrawer = (open) => () => {
+    setIsDrawerOpen(open);
+  };
 
   return (
     <div>
-      <div className='flex min-h-screen min-w-screen'>
-        <Sidebar />
-        <Page />
+      <div className='flex flex-col min-h-screen min-w-screen'>
+        <TopBar onMenuClick={toggleDrawer(true)} />
+        <Box className='mt-20'>
+          <Page />
+        </Box>
+        <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
+          <Sidebar closeDrawer={() => setIsDrawerOpen(false)} />
+        </Drawer>
       </div>
     </div>
   );
