@@ -6,7 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
-import WeatherCard from "./WeatherCard";
+import DataCard from "./DataCard";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { updateLayout, updateSectionName, deleteSection, addCard } from "./DashboardSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -145,7 +145,7 @@ export default function Section({ pageId, weather, sectionId, editMode }) {
                     {section.cardIds.map((cardId) => {
                         return (
                             <div key={cardId}>
-                                <WeatherCard weather={weather} pageId={pageId} sectionId={section.id} cardId={cardId} editMode={editMode} />
+                                <DataCard weather={weather} pageId={pageId} sectionId={section.id} cardId={cardId} editMode={editMode} />
                             </div>
                         );
                     })}
