@@ -5,7 +5,7 @@ import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters, setVisibleDataRange } from "./DashboardSlice";
+import { setVisibleDataRange } from "./DashboardSlice";
 
 // Drawing Order
 const parameterDrawingOrder = [
@@ -80,19 +80,14 @@ const barPlotSlotProps = {
 }
 
 
-export default function Graph({ weather, parametersVisible, cardId, editMode }) {
+export default function Graph({ weather, cardId, cardData }) {
 
     const dispatch = useDispatch();
 
-    const hourlyParams = Object.keys(weather.hourly.weatherVariables);
+    const selectedParameters = cardData.selectedParameters;
+    const visibleDataRange = cardData.visibleDataRange;
 
-    // VISIBLE RANGE & SLIDER
-    // Data and handlers from Redux Store
-    const visibleDataRange = useSelector(state => state.dashboard.cards[cardId].visibleDataRange);
-    const handleSetVisibleDataRange = (event, newRange) => {
-        dispatch(setVisibleDataRange({ cardId: cardId, range: newRange }));
-    };
-
+    // VISIBLE RANGE & SLIDER    
     // Util function 
     const getVisibleRange = (fullDataset) => {
         return fullDataset.slice(visibleDataRange[0], visibleDataRange[1]);
@@ -100,25 +95,11 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
 
     // Local slider state
     const [localSliderRange, setLocalSliderRange] = useState(visibleDataRange);
-   
-    const [isPending, startTransition] = useTransition();
 
     // Keep local slider in sync with Redux, hide spinner after update applied
     useEffect(() => {
         setLocalSliderRange(visibleDataRange);
     }, [visibleDataRange]);
-
-    
-
-    //PARAMETERS
-    const selectedParameters = useSelector(state => state.dashboard.cards[cardId].selectedParameters);
-    const handleSetParameters = (event) => {
-        const { target: { value } } = event;
-        const newParams = (typeof value === 'string' ? value.split(',') : value);
-        startTransition(() => {
-            dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
-        });
-    }
 
 
 
@@ -296,11 +277,10 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
         ];
 
         const xAxisFullRange = xAxis.map((axis) => {
-            return {
-                ...axis,
-                data: weather.hourly.time,
-                position: 'none',
-            };
+            const x = {...axis};
+            x.data = weather.hourly.time;
+            x.position = 'none';
+            return x;
         });
 
         return { xAxis, xAxisFullRange };
@@ -337,26 +317,6 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
 
     return (
         <div className='flex flex-col h-full'>  
-            {parametersVisible && 
-                <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="multiple-select-label">Parameters</InputLabel>
-                    <Select
-                        labelId="multiple-select-label"
-                        id="multiple-select"
-                        multiple
-                        value={selectedParameters}
-                        onChange={handleSetParameters}
-                        renderValue={(selectedParameters) => selectedParameters.join(', ')}
-                    >
-                        {hourlyParams.map((param) => (
-                            <MenuItem key={param} value={param}>
-                                <Checkbox checked={selectedParameters.includes(param)} />
-                                <ListItemText primary={param} />
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-            }
             {selectedParameters.length > 0 ? 
                 (
                     <>
@@ -376,7 +336,7 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
                                     <ChartsTooltip />
                                 </ChartsSurface>                
                             </ChartDataProvider>
-                            {isPending && (
+                            {(1 === 2) && (
                                 <Box
                                     sx={{
                                     position: "absolute",
@@ -402,9 +362,9 @@ export default function Graph({ weather, parametersVisible, cardId, editMode }) 
                             value={localSliderRange}
                             onChange={(event, newValue) => setLocalSliderRange(newValue)}
                             onChangeCommitted={(event, newValue) => {
-                                startTransition(() => {
+                                
                                     dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
-                                });
+                                
                             }}
                             min={0}
                             max={336}

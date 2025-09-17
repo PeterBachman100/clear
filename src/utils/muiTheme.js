@@ -49,4 +49,15 @@ export const mainTheme = createTheme({
     },
   },
   spacing: 4,
+  components: {
+    MuiDrawer: {
+      defaultProps: {
+        BackdropProps: {
+          style: {
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+          },
+        },
+      },
+    },
+  },
 });

@@ -1,82 +1,45 @@
 import { useState } from "react";
 import Graph from './Graph';
-import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent } from "@mui/material";
+import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, Typography } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/DeleteOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { deleteCard } from "./DashboardSlice";
 import { useDispatch } from "react-redux";
 
-export default function WeatherCard({ pageId, weather, sectionId, cardId, editMode }) {
-
-    const dispatch = useDispatch();
-
-    //CARD
-    const handleDeleteCard = () => {
-        dispatch(deleteCard({sectionId: sectionId, cardId: cardId}));
-        handleCloseMenu();
-    }
-
-    // Card Menu
-    const [anchorEl, setAnchorEl] = useState(null);
-    const handleOpenMenu = (event) => {
-        setAnchorEl(event.currentTarget);
-    };
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
-    };
-    const open = Boolean(anchorEl);
-    const id = open ? 'card-menu' : undefined;
-
-    //Graph Parameter Visibility
-    const [parametersVisible, setParametersVisible] = useState(false);
-    const handleToggleParameterVisbility = () => {
-        setParametersVisible(!parametersVisible);
-        handleCloseMenu();
-    }
-
+export default function WeatherCard({ pageId, weather, sectionId, cardId, cardData, editMode, openCardSettings, isBeingEdited }) {
 
     return (
-        <Card className="h-full flex flex-col" elevation={3}>
+        <Card className={`h-full flex flex-col`} sx={isBeingEdited ? { boxShadow: '0 0 0 5px #ffd4d2' } : null} elevation={3}>
             <CardHeader 
                 action={
                     <IconButton
-                        aria-describedby={id} 
-                        onClick={handleOpenMenu}
+                        aria-describedby={cardId} 
+                        onClick={() => {
+                            openCardSettings(cardId);
+                        }}
                     >
-                        <MoreVertIcon />
+                        <SettingsIcon />
                     </IconButton>
                 }
                 sx={{flexDirection: 'row-reverse', p:1, position: 'absolute', right: 0}}
             ></CardHeader> 
-            <Menu
-                id={id}
-                anchorEl={anchorEl}
-                open={open}
-                onClose={handleCloseMenu}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'left',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'left',
-                }}
-            >
-                <MenuItem onClick={handleToggleParameterVisbility}>
-                    {parametersVisible ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide Parameters</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Select Parameters</>}
-                </MenuItem>
-                <MenuItem onClick={handleDeleteCard}>
-                    <DeleteIcon sx={{ mr: 1 }} color="error" />
-                    Delete this card
-                </MenuItem>
-            </Menu>
             <CardContent className="p-1 h-full">
                 <div className='w-full h-full'>
                     {weather? 
-                        <Graph weather={weather} parametersVisible={parametersVisible} pageId={pageId} sectionId={sectionId} cardId={cardId} editMode={editMode} /> :
-                        <div>No Weather Data</div>
+                        <Graph weather={weather} pageId={pageId} sectionId={sectionId} cardId={cardId} cardData={cardData} editMode={editMode} /> :
+                        <div className="w-full h-full flex flex-col justify-center items-center">
+                            <Typography variant="h2">No weather data</Typography>
+                            <p>It could be any of the following:</p>
+                            <ul>
+                                <li>- A Location has not been selected</li>
+                                <li>- Data is currently loading</li>
+                                <li>- Data failed to load</li>
+                            </ul>
+                            
+                        </div>
                     }
                 </div>
             </CardContent>

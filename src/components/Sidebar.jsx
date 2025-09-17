@@ -9,6 +9,7 @@ export default function Sidebar({ closeDrawer }) {
 
     const handleAddPage = () => {
         dispatch(addPage());
+        closeDrawer();
     }
     const handleSetActivePage = (pageId) => {
         dispatch(setActivePage({pageId}));

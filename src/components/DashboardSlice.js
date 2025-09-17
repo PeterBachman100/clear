@@ -60,15 +60,19 @@ export const dashboardSlice = createSlice({
     },
 
     addPage: (state) => {
-      const newId = uuidv4();
-      state.pages[newId] = {
-        id: newId,
+      const newPageId = uuidv4();
+      const newSectionId = uuidv4();
+      const newCardId = uuidv4();
+      state.pages[newPageId] = {
+        id: newPageId,
         name: 'New Page',
         editMode: false,
         location: null, 
-        sectionIds: []
+        sectionIds: [newSectionId]
       };
-      state.activePageId = newId;
+      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72] };
+      state.activePageId = newPageId;
     },
 
     deletePage: (state, action) => {
