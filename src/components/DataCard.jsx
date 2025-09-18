@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 export default function WeatherCard({ pageId, weather, sectionId, cardId, cardData, editMode, openCardSettings, isBeingEdited }) {
 
     return (
-        <Card className={`h-full flex flex-col`} sx={isBeingEdited ? { boxShadow: '0 0 0 5px #ffd4d2' } : null} elevation={3}>
+        <Card className={`h-full flex flex-col !overflow-visible`} sx={isBeingEdited ? { boxShadow: '0 0 0 5px #ffd4d2' } : null} elevation={3}>
             <CardHeader 
                 action={
                     <IconButton

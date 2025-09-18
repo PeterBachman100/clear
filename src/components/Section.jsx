@@ -71,7 +71,7 @@ export default function Section({ pageId, weather, sectionId, editMode, openCard
     }
 
     return (
-        <Card variant="contained" className="w-full" elevation={3} sx={{borderRadius: 0}}>
+        <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
             <CardHeader
                 title={
                     editingSectionName ?

@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect, useTransition } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer  } from "@mui/x-charts";
+import { useState, useMemo, useEffect, useRef } from "react";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer, LineHighlightPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider, CircularProgress} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
@@ -170,7 +170,8 @@ export default function Graph({ weather, cardId, cardData }) {
                     type: 'line',
                     label: `${param} (${getUnitAbbreviation(unit)})`,
                     id: param,
-                    showMark: true,
+                    showMark: false,
+                    shape: 'circle',
                     
                 };
                 
@@ -252,28 +253,6 @@ export default function Graph({ weather, cardId, cardData }) {
                 position: 'none',
                 data: getVisibleRange(weather.hourly.time),
             },
-            {
-                id: 'days',
-                scaleType: 'band',
-                disableTicks: true,
-                disableLine: true,
-                position: 'bottom',
-                data: getVisibleRange(weather.hourly.time),
-                valueFormatter: (timestamp) => {
-                    return new Date(timestamp).toLocaleDateString('en-US', {
-                        weekday: 'short'
-                    });
-                },
-                tickLabelInterval: (value, index) => {
-                    if (index === 0) {
-                        return true;
-                    }
-                    const prevDate = new Date(getVisibleRange(weather.hourly.time)[index - 1]);
-                    const currentDate = new Date(value);
-                    return prevDate.getDate() !== currentDate.getDate();
-                },
-                labelStyle: { fontSize: 22 },
-            },
         ];
 
         const xAxisFullRange = xAxis.map((axis) => {
@@ -296,7 +275,10 @@ export default function Graph({ weather, cardId, cardData }) {
             timestamps.forEach(timestamp => {
                 const currentDate = new Date(timestamp);
                 if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
-                    dailyTimestamps.push(timestamp);
+                    const day = currentDate.toLocaleDateString('en-US', {
+                        weekday: 'short'
+                    });
+                    dailyTimestamps.push({timestamp: timestamp, day: day});
                 }
                 prevDate = currentDate;
             });
@@ -306,25 +288,28 @@ export default function Graph({ weather, cardId, cardData }) {
         return getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
-                x={timestamp}
+                x={timestamp.timestamp}
+                label={timestamp.day}
+                labelAlign="start"
+                labelStyle={{fontSize: 14}}
                 lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
         ));
     }, [weather.hourly.time, visibleDataRange]);
 
-
+    const tooltipAnchorRef = useRef(null);
 
     return (
-        <div className='flex flex-col h-full'>  
+        <div className='flex flex-col h-full relative' ref={tooltipAnchorRef}>  
             {selectedParameters.length > 0 ? 
                 (
                     <>
-                    <Box sx={{ width: '100%', height: '90%' }}>
-                        <Box sx={{ width: '100%', height: '100%', position: 'relative' }}>
+                    <Box sx={{ width: '100%', height: '90%' }} >
+                        <Box sx={{ width: '100%', height: '100%', position: 'relative' }} >
+                            <div ></div>
                             {/* Key needed to avoid bug in MUI library */}
-                            <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>                  
-                                <ChartsLegend sx={{flexShrink: 0, justifyContent: 'center'}} />      
+                            <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>  
                                 <ChartsSurface sx={{width: '100%'}}>
                                     <AreaPlot skipAnimation />
                                     {renderedDayReferenceLines}
@@ -333,38 +318,27 @@ export default function Graph({ weather, cardId, cardData }) {
                                     {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                                     {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                                     <ChartsAxisHighlight x='line' />
-                                    <ChartsTooltip />
+                                    <LineHighlightPlot />
+                                    <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="bottom" container={tooltipAnchorRef.current}
+                                        sx={{
+                                            '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
+                                            '& .MuiChartsTooltip-table caption': {display: 'none'},
+                                            '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
+                                            '& .MuiChartsTooltip-table': {display: 'flex'},
+                                            
+                                        }}
+                                    />
                                 </ChartsSurface>                
                             </ChartDataProvider>
-                            {(1 === 2) && (
-                                <Box
-                                    sx={{
-                                    position: "absolute",
-                                    top: 0,
-                                    left: 0,
-                                    width: "100%",
-                                    height: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                    bgcolor: "rgba(255, 255, 255, 0.7)",
-                                    zIndex: 10,
-                                    }}
-                                >
-                                    <CircularProgress />
-                                </Box>
-                            )}
                         </Box>
                     </Box>
                     
-                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px', marginTop: '20px'}}>
+                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px'}} >
                         <Slider
                             value={localSliderRange}
                             onChange={(event, newValue) => setLocalSliderRange(newValue)}
                             onChangeCommitted={(event, newValue) => {
-                                
-                                    dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
-                                
+                                dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
                             }}
                             min={0}
                             max={336}
