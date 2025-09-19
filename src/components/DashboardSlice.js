@@ -25,8 +25,9 @@ const initialDashboardState = {
       pageId: 'page-1',
       layout: [
         {i: '1', x: 0, y: 0, h: 4, w: 12},
+        {i: '2', x: 0, y: 4, h: 4, w: 12}
       ],
-      cardIds: ['1'],
+      cardIds: ['1', '2'],
     },
   },
   cards: {
@@ -36,6 +37,12 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [0, 72],
     },
+    '2': {
+      id: '2',
+      sectionId: '1',
+      selectedParameters: ['temperature', 'cloud_cover'],
+      visibleDataRange: [0, 200]
+    }
   },
 };
 

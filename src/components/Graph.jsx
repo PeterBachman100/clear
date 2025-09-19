@@ -301,7 +301,7 @@ export default function Graph({ weather, cardId, cardData }) {
     const tooltipAnchorRef = useRef(null);
 
     return (
-        <div className='flex flex-col h-full relative' ref={tooltipAnchorRef}>  
+        <div className='flex flex-col h-full relative'>  
             {selectedParameters.length > 0 ? 
                 (
                     <>
@@ -310,6 +310,7 @@ export default function Graph({ weather, cardId, cardData }) {
                             <div ></div>
                             {/* Key needed to avoid bug in MUI library */}
                             <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>  
+                                <ChartsLegend ref={tooltipAnchorRef} />
                                 <ChartsSurface sx={{width: '100%'}}>
                                     <AreaPlot skipAnimation />
                                     {renderedDayReferenceLines}
@@ -319,9 +320,10 @@ export default function Graph({ weather, cardId, cardData }) {
                                     {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                                     <ChartsAxisHighlight x='line' />
                                     <LineHighlightPlot />
-                                    <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="bottom" container={tooltipAnchorRef.current}
+                                    <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top" container={tooltipAnchorRef.current}
                                         sx={{
                                             '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
+                                            '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
                                             '& .MuiChartsTooltip-table caption': {display: 'none'},
                                             '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
                                             '& .MuiChartsTooltip-table': {display: 'flex'},
