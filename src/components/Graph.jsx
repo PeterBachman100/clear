@@ -104,29 +104,18 @@ export default function Graph({ weather, cardId, cardData }) {
 
 
     // MEMO-IZED Y Axes and Series
-    const { yAxes, yAxesFullRange, series, seriesFullRange, uniqueUnits } = useMemo(() => {
+    const { yAxes, yAxesFullRange, series, seriesFullRange } = useMemo(() => {
         const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedParameters.includes(param));
 
-        // Group parameters by their unit
-        const parametersByUnit = {};
-        orderedSelectedParameters.forEach(param => {
-            const unit = weather.hourly.weatherVariables[param].unit;
-            if (!parametersByUnit[unit]) {
-                parametersByUnit[unit] = []; 
-            }
-            parametersByUnit[unit].push(param);
-        });
-
-        // Generate axes and series based on the grouped data
         const yAxes = [];
         const yAxesFullRange = [];
         const series = [];
         const seriesFullRange = [];
-        const uniqueUnits = Object.keys(parametersByUnit);
 
-        uniqueUnits.forEach((unit) => {
+        orderedSelectedParameters.forEach((param) => {
+            const unit = weather.hourly.weatherVariables[param].unit;
             const axis = {
-                id: unit,
+                id: param,
                 position:'none',
                 disableLine: true,
                 disableTicks: true,
@@ -134,8 +123,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 labelStyle: { fontSize: 16 },
                 tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
                 domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
-                
-            };
+            }
             if (unit === 'fahrenheit') {
                 axis.colorMap = {
                         type: 'continuous',
@@ -148,11 +136,14 @@ export default function Graph({ weather, cardId, cardData }) {
                 axis.reverse = 'true';
                 axis.position = 'none';
                 axis.colorMap = {
-                        type: 'continuous',
-                        min: 1,
-                        max: 12, 
-                        color: (t) => interpolateRdYlGn(1 - t),
-                    };
+                    type: 'continuous',
+                    min: 1,
+                    max: 12, 
+                    color: (t) => interpolateRdYlGn(1 - t),
+                };
+            }
+            if (param === 'cloud_cover') {
+                axis.reverse = 'true';
             }
 
             yAxes.push(axis);
@@ -162,10 +153,9 @@ export default function Graph({ weather, cardId, cardData }) {
                 position: 'none',
             });
 
-            parametersByUnit[unit].forEach(param => {
-                const seriesItem = {
+            const seriesItem = {
                     data: getVisibleRange(weather.hourly.weatherVariables[param].values),
-                    yAxisId: unit, 
+                    yAxisId: param, 
                     xAxisId: 'hours',
                     type: 'line',
                     label: (location) => {
@@ -221,10 +211,12 @@ export default function Graph({ weather, cardId, cardData }) {
                 if (param === 'cloud_cover') {
                     seriesItem.area = 'true';
                     seriesItem.color = '#C9C9C9';
+                    seriesItem.curve = 'step';
                 }
                 if (param === 'cloud_cover_low') {
                     seriesItem.area = 'true';
                     seriesItem.color = '#b8b8b8';
+                    seriesItem.curve = 'step';
                 }
                 if (param === 'visibility') {
                     seriesItem.color = '#000';
@@ -236,7 +228,6 @@ export default function Graph({ weather, cardId, cardData }) {
                     seriesItem.color = '#690000';
                 }
                 
-
                 series.push(seriesItem);
                 
                 const seriesItemFullRange = {
@@ -244,9 +235,10 @@ export default function Graph({ weather, cardId, cardData }) {
                     data: weather.hourly.weatherVariables[param].values,
                 }
                 seriesFullRange.push(seriesItemFullRange);
-            });
+
         });
-        return { yAxes, yAxesFullRange, series, seriesFullRange, uniqueUnits };
+
+        return { yAxes, yAxesFullRange, series, seriesFullRange };
     }, [selectedParameters, weather, visibleDataRange]);
 
     // MEMO-IZED X AXES
@@ -335,7 +327,7 @@ export default function Graph({ weather, cardId, cardData }) {
                         <Box sx={{ width: '100%', height: '100%', position: 'relative' }} >
                             <div ></div>
                             {/* Key needed to avoid bug in MUI library */}
-                            <ChartDataProvider key={uniqueUnits.length} series={series} xAxis={xAxis} yAxis={yAxes}>  
+                            <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>  
                                 <ChartsLegend ref={tooltipAnchorRef} />
                                 <ChartsSurface sx={{width: '100%'}}>
                                     <AreaPlot skipAnimation />
@@ -377,7 +369,7 @@ export default function Graph({ weather, cardId, cardData }) {
                                 '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
                             }}
                         />
-                        <ChartDataProvider key={uniqueUnits.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
+                        <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <AreaPlot skipAnimation />
                                 <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
