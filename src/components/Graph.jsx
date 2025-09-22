@@ -168,17 +168,43 @@ export default function Graph({ weather, cardId, cardData }) {
                     yAxisId: unit, 
                     xAxisId: 'hours',
                     type: 'line',
-                    label: `${param} (${getUnitAbbreviation(unit)})`,
+                    label: (location) => {
+                        const unitAbbreviation = getUnitAbbreviation(unit);
+                        if(location === 'legend') {
+                             if(unitAbbreviation === '') {
+                                return `${param}`
+                            } else {
+                                return `${param} (${unitAbbreviation})`
+                            }
+                        } else {
+                            return `${param}: `
+                        }
+                    },
+                    valueFormatter: (value) => {
+                        const unitAbbreviation = getUnitAbbreviation(unit);
+                        const rounded = Math.round(value);
+                        if(unitAbbreviation === '') {
+                            return `${rounded}`;
+                        }
+                        return `${rounded} ${unitAbbreviation}`;
+                    },
                     id: param,
                     showMark: false,
-                    shape: 'circle',
-                    
+                    shape: 'circle',   
                 };
                 
                 if(param === 'precipitation') {
                     seriesItem.type = 'bar';
                     seriesItem.color = '#0018FF';
                     seriesItem.xAxisId = 'hours-band';
+                    seriesItem.valueFormatter = (value) => {
+                        const unitAbbreviation = getUnitAbbreviation(unit);
+                        const rounded = Math.round(value * 100) / 100;
+                        if(unitAbbreviation === '') {
+                            return `${rounded}`;
+                        }
+                        return `${rounded} ${unitAbbreviation}`;
+                    };
                 }
                 if (param === 'precipitation_probability') {
                     seriesItem.area = 'true';
@@ -319,7 +345,6 @@ export default function Graph({ weather, cardId, cardData }) {
                                     {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                                     {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                                     <ChartsAxisHighlight x='line' />
-                                    <LineHighlightPlot />
                                     <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top" container={tooltipAnchorRef.current}
                                         sx={{
                                             '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
