@@ -343,7 +343,7 @@ export default function Graph({ weather, cardId, cardData }) {
                                             '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
                                             '& .MuiChartsTooltip-table caption': {display: 'none'},
                                             '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
-                                            '& .MuiChartsTooltip-table': {display: 'flex'},
+                                            '& .MuiChartsTooltip-table': {display: 'inline-flex'},
                                             
                                         }}
                                     />
