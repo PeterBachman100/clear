@@ -355,6 +355,12 @@ export default function Graph({ weather, cardId, cardData }) {
 
 
     const tooltipAnchorRef = useRef(null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    useEffect(() => {
+        if (tooltipAnchorRef.current) {
+        setAnchorEl(tooltipAnchorRef.current);
+        }
+    }, []);
 
     return (
         <div className='flex flex-col h-full'>  
@@ -374,7 +380,7 @@ export default function Graph({ weather, cardId, cardData }) {
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                             <ChartsAxisHighlight x='line' />
                             {tooltipAnchorRef.current &&
-                                <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top"
+                                <ChartsTooltip anchorEl={anchorEl} placement="top"
                                     sx={{
                                         '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
                                         '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
