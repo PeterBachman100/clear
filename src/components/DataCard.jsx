@@ -26,7 +26,7 @@ export default function WeatherCard({ pageId, weather, sectionId, cardId, cardDa
                 }
                 sx={{flexDirection: 'row-reverse', p:1, position: 'absolute', right: 0}}
             ></CardHeader> 
-            <CardContent className="p-1 h-full">
+            <CardContent sx={{height: '100%', padding: '24px 8px 8px 8px !important'}}>
                 <div className='w-full h-full'>
                     {weather? 
                         <Graph weather={weather} pageId={pageId} sectionId={sectionId} cardId={cardId} cardData={cardData} editMode={editMode} /> :
@@ -38,7 +38,6 @@ export default function WeatherCard({ pageId, weather, sectionId, cardId, cardDa
                                 <li>- Data is currently loading</li>
                                 <li>- Data failed to load</li>
                             </ul>
-                            
                         </div>
                     }
                 </div>

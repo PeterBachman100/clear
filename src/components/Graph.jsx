@@ -343,71 +343,62 @@ export default function Graph({ weather, cardId, cardData }) {
     const tooltipAnchorRef = useRef(null);
 
     return (
-        <div className='flex flex-col h-full relative'>  
-            {selectedParameters.length > 0 ? 
-                (
-                    <>
-                    <Box sx={{ width: '100%', height: '90%' }} >
-                        <Box sx={{ width: '100%', height: '100%', position: 'relative' }} >
-                            <div ></div>
-                            {/* Key needed to avoid bug in MUI library */}
-                            <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>  
-                                <ChartsLegend ref={tooltipAnchorRef} />
-                                <ChartsSurface sx={{width: '100%'}}>
-                                    <AreaPlot skipAnimation />
-                                    {renderedDayReferenceLines}
-                                    <LinePlot slotProps={linePlotSlotProps} skipAnimation />
-                                    <BarPlot slotProps={barPlotSlotProps} skipAnimation />
-                                    {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
-                                    {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
-                                    <ChartsAxisHighlight x='line' />
-                                    <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top" container={tooltipAnchorRef.current}
-                                        sx={{
-                                            '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
-                                            '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
-                                            '& .MuiChartsTooltip-table caption': {display: 'none'},
-                                            '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
-                                            '& .MuiChartsTooltip-table': {display: 'inline-flex'},
-                                            
-                                        }}
-                                    />
-                                </ChartsSurface>                
-                            </ChartDataProvider>
-                        </Box>
-                    </Box>
-                    
-                    <Box sx={{position: 'relative', height: '30px', marginInline: '10px'}} >
-                        <Slider
-                            value={localSliderRange}
-                            onChange={(event, newValue) => setLocalSliderRange(newValue)}
-                            onChangeCommitted={(event, newValue) => {
-                                dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
-                            }}
-                            min={0}
-                            max={336}
-                            step={1}
-                            sx={{
-                                position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
-                                '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
-                                '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
-                                '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
-                            }}
-                        />
-                        <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
-                            <ChartsSurface sx={{height: '100%'}}>
-                                <AreaPlot skipAnimation />
-                                {fullRangeDayReferenceLines}
-                                <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                                <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} skipAnimation />
-                            </ChartsSurface>           
-                        </ChartDataProvider>
-                    </Box>
-                </>
-                ) :
-                (<div className="flex justify-center items-center h-full">
-                    <p>Select one or more parameters to display the graph.</p>
-                </div>)
-            }
+        <div className='flex flex-col h-full'>  
+            <div style={{width: '100%', height: 'calc(100% - 30px'}} >
+                {/* Key needed to avoid bug in MUI library */}
+                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>
+                    <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
+                        <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
+                            <ChartsLegend sx={{justifyContent: 'center'}} />
+                        </div>
+                        <ChartsSurface sx={{width: '100%', flex: '1', marginBottom: '-20px'}}>
+                            <AreaPlot skipAnimation />
+                            {renderedDayReferenceLines}
+                            <LinePlot slotProps={linePlotSlotProps} skipAnimation />
+                            <BarPlot slotProps={barPlotSlotProps} skipAnimation />
+                            {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
+                            {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
+                            <ChartsAxisHighlight x='line' />
+                            <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top" container={tooltipAnchorRef.current}
+                                sx={{
+                                    '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
+                                    '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
+                                    '& .MuiChartsTooltip-table caption': {display: 'none'},
+                                    '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
+                                    '& .MuiChartsTooltip-table': {display: 'inline-flex'},
+
+                                }}
+                            />
+                        </ChartsSurface> 
+                    </div>               
+                </ChartDataProvider>
+            </div>
+            <div style={{position: 'relative', height: '30px'}} >
+                <Slider
+                    value={localSliderRange}
+                    onChange={(event, newValue) => setLocalSliderRange(newValue)}
+                    onChangeCommitted={(event, newValue) => {
+                        dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
+                    }}
+                    min={0}
+                    max={336}
+                    step={1}
+                    sx={{
+                        position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
+                        '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
+                        '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
+                        '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
+                    }}
+                />
+                <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
+                    <ChartsSurface sx={{height: '100%'}}>
+                        <AreaPlot skipAnimation />
+                        {fullRangeDayReferenceLines}
+                        <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
+                        <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} skipAnimation />
+                    </ChartsSurface>           
+                </ChartDataProvider>
+            </div>
         </div>
     );
 }
