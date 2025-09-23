@@ -97,60 +97,70 @@ const initialDashboardState = {
       sectionId: '1',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [5, 23],
+      legendVisible: true,
     },
     '2': {
       id: '2',
       sectionId: '2',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [29, 47]
+      visibleDataRange: [29, 47],
+      legendVisible: false,
     },
     '3': {
       id: '3',
       sectionId: '2',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [53, 71]
+      visibleDataRange: [53, 71],
+      legendVisible: false,
     },
     '4': {
       id: '4',
       sectionId: '2',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [77, 95]
+      visibleDataRange: [77, 95],
+      legendVisible: false,
     },
     '5': {
       id: '5',
       sectionId: '3',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
-      visibleDataRange: [0, 336]
+      visibleDataRange: [0, 336],
+      legendVisible: false,
     },
     '6': {
       id: '6',
       sectionId: '4',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [5, 23],
+      legendVisible: true,
     },
     '7': {
       id: '7',
       sectionId: '5',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [29, 47]
+      visibleDataRange: [29, 47],
+      legendVisible: false,
     },
     '8': {
       id: '8',
       sectionId: '5',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [53, 71]
+      visibleDataRange: [53, 71],
+      legendVisible: false,
     },
     '9': {
       id: '9',
       sectionId: '5',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [77, 95]
+      visibleDataRange: [77, 95],
+      legendVisible: false,
     },
     '10': {
       id: '10',
       sectionId: '6',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
-      visibleDataRange: [0, 336]
+      visibleDataRange: [0, 336],
+      legendVisible: false,
     },
   },
 };
@@ -271,11 +281,17 @@ export const dashboardSlice = createSlice({
     setVisibleDataRange: (state, action) => {
       const {cardId, range} = action.payload;
       state.cards[cardId].visibleDataRange = range;
-    }
+    },
+
+    // LEGEND
+    setLegendVisibility: (state, action) => {
+      const {cardId, visible} = action.payload;
+      state.cards[cardId].legendVisible = visible;
+    },
 
   },
 })
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

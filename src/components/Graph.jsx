@@ -100,6 +100,7 @@ export default function Graph({ weather, cardId, cardData }) {
 
     const selectedParameters = cardData.selectedParameters;
     const visibleDataRange = cardData.visibleDataRange;
+    const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
 
     // VISIBLE RANGE & SLIDER    
     // Util function 
@@ -362,7 +363,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
-                            <ChartsLegend sx={{justifyContent: 'center'}} />
+                            {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1', marginBottom: '-20px'}}>
                             <AreaPlot skipAnimation />

@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setParameters, deleteCard } from './DashboardSlice';
-import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button } from '@mui/material';
+import { setParameters, deleteCard, setLegendVisibility } from './DashboardSlice';
+import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getPrettyParameterName } from '../utils/parameterNames';
 
@@ -24,10 +24,17 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
     }
     const hourlyParams = Object.keys(weather.hourly.weatherVariables);
 
+    // LEGEND
+    const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
+    const toggleLegendVisibility = (event) => {
+        dispatch(setLegendVisibility({cardId, visible: event.target.checked}));
+    }
+   
     
 
    return (
     <Box sx={{padding: '16px', display: 'flex', justifyContent: 'center'}}>
+        <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
         <FormControl sx={{ m: 1, width: 300 }}>
             <InputLabel id="multiple-select-label">Parameters</InputLabel>
             <Select
@@ -47,6 +54,7 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
             </Select>
         </FormControl>
         <Button onClick={handleDeleteCard} color='error' variant='outlined'><DeleteIcon /> Delete Card</Button>
+        
     </Box>
    );
 }
