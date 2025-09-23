@@ -2,10 +2,10 @@ import { createSlice } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
-  activePageId: 'page-1',
+  activePageId: '2',
   pages: {
-    'page-1': {
-      id: 'page-1',
+    '1': {
+      id: '1',
       name: 'Kirkland',
       location: {
         name: "Kirkland",
@@ -15,34 +15,143 @@ const initialDashboardState = {
         longitude: -122.1930
       },
       editMode: false,
-      sectionIds: ['1'],
+      sectionIds: ['1', '2', '3'],
+    },
+    '2': {
+      id: '2',
+      name: 'Sammamish',
+      location: {
+        name: "Sammamish",
+        admin1: "Washington",
+        country: "United States",
+        latitude: 47.64177,
+        longitude: -122.0804
+      },
+      editMode: false,
+      sectionIds: ['4', '5', '6'],
     },
   },
   sections: {
     '1': {
       id: '1',
-      name: 'Section 1',
-      pageId: 'page-1',
+      name: 'Today',
+      pageId: '1',
       layout: [
-        {i: '1', x: 0, y: 0, h: 4, w: 12},
-        {i: '2', x: 0, y: 4, h: 4, w: 12}
+        {i: '1', x: 0, y: 0, h: 3, w: 12},
       ],
-      cardIds: ['1', '2'],
+      cardIds: ['1'],
     },
+    '2': {
+      id: '2',
+      name: 'Next 3 Days',
+      pageId: '1',
+      layout: [
+        {i: '2', x: 0, y: 0, h: 2, w: 4},
+        {i: '3', x: 4, y: 0, h: 2, w: 4},
+        {i: '4', x: 8, y: 0, h: 2, w: 4},
+      ],
+      cardIds: ['2', '3', '4'],
+    },
+    '3': {
+      id: '3',
+      name: 'Next 2 Weeks',
+      pageId: '1',
+      layout: [
+        {i: '5', x: 0, y: 0, h: 3, w: 12},
+      ],
+      cardIds: ['5'],
+    },
+    '4': {
+      id: '4',
+      name: 'Today',
+      pageId: '2',
+      layout: [
+        {i: '6', x: 0, y: 0, h: 3, w: 12},
+      ],
+      cardIds: ['6'],
+    },
+    '5': {
+      id: '5',
+      name: 'Next 3 Days',
+      pageId: '2',
+      layout: [
+        {i: '7', x: 0, y: 0, h: 2, w: 4},
+        {i: '8', x: 4, y: 0, h: 2, w: 4},
+        {i: '9', x: 8, y: 0, h: 2, w: 4},
+      ],
+      cardIds: ['7', '8', '9'],
+    },
+    '6': {
+      id: '6',
+      name: 'Next 2 Weeks',
+      pageId: '2',
+      layout: [
+        {i: '10', x: 0, y: 0, h: 3, w: 12},
+      ],
+      cardIds: ['10'],
+    }
   },
   cards: {
     '1': {
       id: '1',
       sectionId: '1',
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
-      visibleDataRange: [0, 72],
+      visibleDataRange: [5, 23],
     },
     '2': {
       id: '2',
-      sectionId: '1',
-      selectedParameters: ['temperature', 'cloud_cover'],
-      visibleDataRange: [0, 200]
-    }
+      sectionId: '2',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [29, 47]
+    },
+    '3': {
+      id: '3',
+      sectionId: '2',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [53, 71]
+    },
+    '4': {
+      id: '4',
+      sectionId: '2',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [77, 95]
+    },
+    '5': {
+      id: '5',
+      sectionId: '3',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      visibleDataRange: [0, 336]
+    },
+    '6': {
+      id: '6',
+      sectionId: '4',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      visibleDataRange: [5, 23],
+    },
+    '7': {
+      id: '7',
+      sectionId: '5',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [29, 47]
+    },
+    '8': {
+      id: '8',
+      sectionId: '5',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [53, 71]
+    },
+    '9': {
+      id: '9',
+      sectionId: '5',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      visibleDataRange: [77, 95]
+    },
+    '10': {
+      id: '10',
+      sectionId: '6',
+      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      visibleDataRange: [0, 336]
+    },
   },
 };
 
