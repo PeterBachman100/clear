@@ -373,16 +373,18 @@ export default function Graph({ weather, cardId, cardData }) {
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                             <ChartsAxisHighlight x='line' />
-                            <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top" container={tooltipAnchorRef.current}
-                                sx={{
-                                    '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
-                                    '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
-                                    '& .MuiChartsTooltip-table caption': {display: 'none'},
-                                    '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
-                                    '& .MuiChartsTooltip-table': {display: 'inline-flex'},
+                            {tooltipAnchorRef.current &&
+                                <ChartsTooltip anchorEl={tooltipAnchorRef.current} placement="top"
+                                    sx={{
+                                        '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
+                                        '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
+                                        '& .MuiChartsTooltip-table caption': {display: 'none'},
+                                        '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
+                                        '& .MuiChartsTooltip-table': {display: 'inline-flex'},
 
-                                }}
-                            />
+                                    }}
+                                />
+                            }
                         </ChartsSurface> 
                     </div>               
                 </ChartDataProvider>
