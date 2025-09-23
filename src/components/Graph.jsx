@@ -260,6 +260,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 disableLine: true,
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
+                tickMinStep: (1000 * 60 * 60),
                 data: getVisibleRange(weather.hourly.time),
                 valueFormatter: (timestamp) => {
                     return new Date(timestamp).toLocaleTimeString('en-US', {
