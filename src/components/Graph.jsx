@@ -6,6 +6,7 @@ import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
+import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, Precipitation } from "../assets/legendIcons";
 
 // Drawing Order
 const parameterDrawingOrder = [
@@ -48,7 +49,7 @@ const linePlotSlotProps = {
         if (ownerState.id === 'visibility') {
             return {
                 strokeWidth: '1px',
-                strokeDasharray: '1 5'
+                strokeDasharray: '1 4'
             }
         }
         if (ownerState.id === 'wind_speed') {
@@ -59,7 +60,7 @@ const linePlotSlotProps = {
         if (ownerState.id === 'wind_gusts') {
             return {
                 strokeWidth: '0.5px',
-                strokeDasharray: '4 12'
+                strokeDasharray: '4 8'
             }
         }
     }
@@ -142,9 +143,7 @@ export default function Graph({ weather, cardId, cardData }) {
                     color: (t) => interpolateRdYlGn(1 - t),
                 };
             }
-            if (param === 'cloud_cover') {
-                axis.reverse = 'true';
-            }
+            
 
             yAxes.push(axis);
 
@@ -196,36 +195,44 @@ export default function Graph({ weather, cardId, cardData }) {
                         return `${rounded} ${unitAbbreviation}`;
                     };
                 }
+                if(param === 'precipitation') {
+                    seriesItem.labelMarkType = PrecipitationIcon;
+                }
                 if (param === 'precipitation_probability') {
                     seriesItem.area = 'true';
                     seriesItem.color = 'rgba(155, 223, 250, 0.6)';
+                    seriesItem.labelMarkType = PrecipitationProbabilityIcon;
                 }
                 if (param === 'uv_index') {
                     seriesItem.type = 'bar';
                     seriesItem.xAxisId = 'uv-band';
                     seriesItem.color = '#036837';
+                    seriesItem.labelMarkType = UVIndexIcon;
                 }
                 if(param === 'temperature') {
                     seriesItem.color = '#fce400';
+                    seriesItem.labelMarkType = TemperatureGradientIcon;
                 }
                 if (param === 'cloud_cover') {
                     seriesItem.area = 'true';
                     seriesItem.color = '#C9C9C9';
-                    seriesItem.curve = 'step';
+                    seriesItem.labelMarkType = CloudCoverIcon;
                 }
                 if (param === 'cloud_cover_low') {
                     seriesItem.area = 'true';
-                    seriesItem.color = '#b8b8b8';
-                    seriesItem.curve = 'step';
+                    seriesItem.color = '#99999980';
+                    seriesItem.labelMarkType = CloudCoverLowIcon;
                 }
                 if (param === 'visibility') {
                     seriesItem.color = '#000';
+                    seriesItem.labelMarkType = VisibilityIcon;
                 }
                 if (param === 'wind_speed') {
-                    seriesItem.color = '#900000';
+                    seriesItem.color = 'red';
                 }
                 if (param === 'wind_gusts') {
-                    seriesItem.color = '#690000';
+                    seriesItem.color = 'red';
+                    seriesItem.labelMarkType = WindGustIcon;
                 }
                 
                 series.push(seriesItem);
