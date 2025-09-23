@@ -80,7 +80,19 @@ const barPlotSlotProps = {
         }
     }
 }
-
+// SLIDER BAR SLOT PROPS
+const sliderBarPlotSlotProps = {
+    bar: (ownerState) => {
+        if (ownerState.id === 'uv_index') {
+            return {
+                height: 5,
+                style: {
+                    transform: 'translateY(-6px)'
+                }                                                                 
+            }
+        }
+    }
+}
 
 export default function Graph({ weather, cardId, cardData }) {
 
@@ -392,11 +404,11 @@ export default function Graph({ weather, cardId, cardData }) {
                     }}
                 />
                 <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
-                    <ChartsSurface sx={{height: '100%'}}>
+                    <ChartsSurface sx={{height: '95%'}}>
                         <AreaPlot skipAnimation />
                         {fullRangeDayReferenceLines}
                         <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                        <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} skipAnimation />
+                        <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
                     </ChartsSurface>           
                 </ChartDataProvider>
             </div>
