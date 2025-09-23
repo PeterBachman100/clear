@@ -294,24 +294,23 @@ export default function Graph({ weather, cardId, cardData }) {
     // end memo-ized x axes
     
     // DAY REFERENCE LINES
+    const getDailyLinePositions = (timestamps) => {
+        const dailyTimestamps = [];
+        let prevDate = null;
+        timestamps.forEach(timestamp => {
+            const currentDate = new Date(timestamp);
+            if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
+                const day = currentDate.toLocaleDateString('en-US', {
+                    weekday: 'short'
+                });
+                dailyTimestamps.push({timestamp: timestamp, day: day});
+            }
+            prevDate = currentDate;
+        });
+        return dailyTimestamps;
+    };
+
     const renderedDayReferenceLines = useMemo(() => {
-    
-        const getDailyLinePositions = (timestamps) => {
-            const dailyTimestamps = [];
-            let prevDate = null;
-            timestamps.forEach(timestamp => {
-                const currentDate = new Date(timestamp);
-                if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
-                    const day = currentDate.toLocaleDateString('en-US', {
-                        weekday: 'short'
-                    });
-                    dailyTimestamps.push({timestamp: timestamp, day: day});
-                }
-                prevDate = currentDate;
-            });
-            return dailyTimestamps;
-        };
-        
         return getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
@@ -324,6 +323,22 @@ export default function Graph({ weather, cardId, cardData }) {
             />
         ));
     }, [weather.hourly.time, visibleDataRange]);
+
+    const fullRangeDayReferenceLines = useMemo(() => {
+        return getDailyLinePositions(weather.hourly.time).map((timestamp, index) => (
+            <ChartsReferenceLine
+                key={index}
+                x={timestamp.timestamp}
+                label={timestamp.day[0]}
+                labelAlign="start"
+                labelStyle={{fontSize: 10, fontWeight: 'bold'}}
+                spacing={{x:2,y:0}}
+                lineStyle={{ stroke: '#a3a3a3', strokeWidth: 2, strokeDasharray: '4 4' }}
+                disableTooltips={true}
+            />
+        ));
+    }, [weather.hourly.time]);
+
 
     const tooltipAnchorRef = useRef(null);
 
@@ -381,6 +396,7 @@ export default function Graph({ weather, cardId, cardData }) {
                         <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                             <ChartsSurface sx={{height: '100%'}}>
                                 <AreaPlot skipAnimation />
+                                {fullRangeDayReferenceLines}
                                 <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
                                 <BarPlot slotProps={barPlotSlotProps} strokeWidth={1} skipAnimation />
                             </ChartsSurface>           
