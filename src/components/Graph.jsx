@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useRef } from "react";
 import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer, LineHighlightPlot  } from "@mui/x-charts";
 import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider, CircularProgress} from "@mui/material";
 import { getUnitAbbreviation } from "../utils/unitAbbreviations";
+import { getPrettyParameterName } from "../utils/parameterNames";
 import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
@@ -159,14 +160,15 @@ export default function Graph({ weather, cardId, cardData }) {
                     type: 'line',
                     label: (location) => {
                         const unitAbbreviation = getUnitAbbreviation(unit);
+                        const name = getPrettyParameterName(param);
                         if(location === 'legend') {
                              if(unitAbbreviation === '') {
-                                return `${param}`
+                                return `${name}`
                             } else {
-                                return `${param} (${unitAbbreviation})`
+                                return `${name} (${unitAbbreviation})`
                             }
                         } else {
-                            return `${param}: `
+                            return `${name}: `
                         }
                     },
                     valueFormatter: (value) => {

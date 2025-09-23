@@ -1,8 +1,8 @@
-import React, { useTransition } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { setParameters, deleteCard } from './DashboardSlice';
 import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import { getPrettyParameterName } from '../utils/parameterNames';
 
 export default function CardSettings({ cardId, weather, closeCardSettings }) {
 
@@ -36,12 +36,12 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
                 multiple
                 value={selectedParameters}
                 onChange={handleSetParameters}
-                renderValue={(selectedParameters) => selectedParameters.join(', ')}
+                renderValue={() => 'Select Parameters'}
             >
                 {hourlyParams.map((param) => (
                     <MenuItem key={param} value={param}>
-                        <Checkbox checked={selectedParameters.includes(param)} />
-                        <ListItemText primary={param} />
+                        <Checkbox checked={selectedParameters.includes(param)} color='secondary' />
+                        <ListItemText primary={getPrettyParameterName(param)} />
                     </MenuItem>
                 ))}
             </Select>
