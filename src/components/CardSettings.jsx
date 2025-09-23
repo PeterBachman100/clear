@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setParameters, deleteCard, setLegendVisibility } from './DashboardSlice';
+import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility } from './DashboardSlice';
 import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getPrettyParameterName } from '../utils/parameterNames';
@@ -29,12 +29,19 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
     const toggleLegendVisibility = (event) => {
         dispatch(setLegendVisibility({cardId, visible: event.target.checked}));
     }
+
+    // RANGE SLIDER
+    const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
+    const toggleRangeSliderVisibility = (event) => {
+        dispatch(setRangeSliderVisibility({cardId, visible: event.target.checked}));
+    }
    
     
 
    return (
     <Box sx={{padding: '16px', display: 'flex', justifyContent: 'center'}}>
         <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
+        <FormControlLabel control={<Switch checked={isRangeSliderVisible} onChange={toggleRangeSliderVisibility} color='secondary'/>} label="Range Slider" />
         <FormControl sx={{ m: 1, width: 300 }}>
             <InputLabel id="multiple-select-label">Parameters</InputLabel>
             <Select

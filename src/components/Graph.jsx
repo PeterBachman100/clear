@@ -101,6 +101,7 @@ export default function Graph({ weather, cardId, cardData }) {
     const selectedParameters = cardData.selectedParameters;
     const visibleDataRange = cardData.visibleDataRange;
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
+    const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
 
     // VISIBLE RANGE & SLIDER    
     // Util function 
@@ -364,7 +365,7 @@ export default function Graph({ weather, cardId, cardData }) {
 
     return (
         <div className='flex flex-col h-full'>  
-            <div style={{width: '100%', height: 'calc(100% - 30px'}} >
+            <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
                 <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
@@ -395,32 +396,34 @@ export default function Graph({ weather, cardId, cardData }) {
                     </div>               
                 </ChartDataProvider>
             </div>
-            <div style={{position: 'relative', height: '30px'}} >
-                <Slider
-                    value={localSliderRange}
-                    onChange={(event, newValue) => setLocalSliderRange(newValue)}
-                    onChangeCommitted={(event, newValue) => {
-                        dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
-                    }}
-                    min={0}
-                    max={336}
-                    step={1}
-                    sx={{
-                        position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
-                        '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
-                        '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
-                        '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
-                    }}
-                />
-                <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
-                    <ChartsSurface sx={{height: '95%'}}>
-                        <AreaPlot skipAnimation />
-                        {fullRangeDayReferenceLines}
-                        <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                        <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
-                    </ChartsSurface>           
-                </ChartDataProvider>
-            </div>
+            {isRangeSliderVisible &&
+                <div style={{position: 'relative', height: '30px'}} >
+                    <Slider
+                        value={localSliderRange}
+                        onChange={(event, newValue) => setLocalSliderRange(newValue)}
+                        onChangeCommitted={(event, newValue) => {
+                            dispatch(setVisibleDataRange({ cardId: cardId, range: newValue }));
+                        }}
+                        min={0}
+                        max={336}
+                        step={1}
+                        sx={{
+                            position: 'absolute', bottom: 0, left: 0, zIndex: 1, width: '100%', height: '100%',padding: '0 !important',
+                            '& .MuiSlider-thumb': {height: '100%', borderRadius: 0, width: '8px', color: '#000'},
+                            '& .MuiSlider-track': {border: '1px solid gray', color: '#ffffff00', backdropFilter: 'brightness(1.2)', borderRadius: 0, height: '100%'},
+                            '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
+                        }}
+                    />
+                    <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
+                        <ChartsSurface sx={{height: '95%'}}>
+                            <AreaPlot skipAnimation />
+                            {fullRangeDayReferenceLines}
+                            <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
+                            <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
+                        </ChartsSurface>           
+                    </ChartDataProvider>
+                </div>
+            }
         </div>
     );
 }

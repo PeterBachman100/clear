@@ -98,6 +98,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
+      rangeSliderVisible: true,
     },
     '2': {
       id: '2',
@@ -105,6 +106,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '3': {
       id: '3',
@@ -112,6 +114,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '4': {
       id: '4',
@@ -119,6 +122,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '5': {
       id: '5',
@@ -126,6 +130,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
+      rangeSliderVisible: true,
     },
     '6': {
       id: '6',
@@ -133,6 +138,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
+      rangeSliderVisible: true,
     },
     '7': {
       id: '7',
@@ -140,6 +146,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '8': {
       id: '8',
@@ -147,6 +154,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '9': {
       id: '9',
@@ -154,6 +162,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
+      rangeSliderVisible: false,
     },
     '10': {
       id: '10',
@@ -161,6 +170,7 @@ const initialDashboardState = {
       selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
+      rangeSliderVisible: true,
     },
   },
 };
@@ -289,9 +299,15 @@ export const dashboardSlice = createSlice({
       state.cards[cardId].legendVisible = visible;
     },
 
+    //RANGE SLIDER
+    setRangeSliderVisibility: (state, action) => {
+      const {cardId, visible} = action.payload;
+      state.cards[cardId].rangeSliderVisible = visible;
+    }
+
   },
 })
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
