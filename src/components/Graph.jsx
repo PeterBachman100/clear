@@ -6,7 +6,7 @@ import { getDomainLimitByUnit } from "../utils/chartUtils";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
-import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, Precipitation } from "../assets/legendIcons";
+import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
 
 // Drawing Order
 const parameterDrawingOrder = [
