@@ -102,6 +102,7 @@ export default function Graph({ weather, cardId, cardData }) {
     const visibleDataRange = cardData.visibleDataRange;
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
     const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
+    const isHourlyLabelsVisible = useSelector(state => state.dashboard.cards[cardId].hourlyLabelsVisible);
 
     // VISIBLE RANGE & SLIDER    
     // Util function 
@@ -271,6 +272,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 id: 'hours',
                 scaleType: 'time',
                 position: 'bottom',
+                position: isHourlyLabelsVisible ? 'bottom' : 'none',
                 disableLine: true,
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
@@ -305,7 +307,7 @@ export default function Graph({ weather, cardId, cardData }) {
         });
 
         return { xAxis, xAxisFullRange };
-    }, [weather.hourly.time, visibleDataRange]);
+    }, [weather.hourly.time, visibleDataRange, isHourlyLabelsVisible]);
     // end memo-ized x axes
     
     // DAY REFERENCE LINES
@@ -332,7 +334,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 x={timestamp.timestamp}
                 label={timestamp.day}
                 labelAlign="start"
-                labelStyle={{fontSize: 14}}
+                labelStyle={{fontSize: 14, transform: 'translateY(-8px)',}}
                 lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
@@ -374,11 +376,11 @@ export default function Graph({ weather, cardId, cardData }) {
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1', marginBottom: '-20px'}}>
                             <AreaPlot skipAnimation />
-                            {renderedDayReferenceLines}
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
+                            {renderedDayReferenceLines}
                             <ChartsAxisHighlight x='line' />
                             {tooltipAnchorRef.current &&
                                 <ChartsTooltip anchorEl={anchorEl} placement="top"
@@ -417,9 +419,9 @@ export default function Graph({ weather, cardId, cardData }) {
                     <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                         <ChartsSurface sx={{height: '95%'}}>
                             <AreaPlot skipAnimation />
-                            {fullRangeDayReferenceLines}
                             <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
+                            {fullRangeDayReferenceLines}
                         </ChartsSurface>           
                     </ChartDataProvider>
                 </div>

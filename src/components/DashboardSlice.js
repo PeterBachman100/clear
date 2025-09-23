@@ -99,6 +99,7 @@ const initialDashboardState = {
       visibleDataRange: [5, 23],
       legendVisible: true,
       rangeSliderVisible: true,
+      hourlyLabelsVisible: true,
     },
     '2': {
       id: '2',
@@ -107,6 +108,7 @@ const initialDashboardState = {
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '3': {
       id: '3',
@@ -115,6 +117,7 @@ const initialDashboardState = {
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '4': {
       id: '4',
@@ -123,6 +126,7 @@ const initialDashboardState = {
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '5': {
       id: '5',
@@ -139,6 +143,7 @@ const initialDashboardState = {
       visibleDataRange: [5, 23],
       legendVisible: true,
       rangeSliderVisible: true,
+      hourlyLabelsVisible: true,
     },
     '7': {
       id: '7',
@@ -147,6 +152,7 @@ const initialDashboardState = {
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '8': {
       id: '8',
@@ -155,6 +161,7 @@ const initialDashboardState = {
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '9': {
       id: '9',
@@ -163,6 +170,7 @@ const initialDashboardState = {
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
+      hourlyLabelsVisible: false,
     },
     '10': {
       id: '10',
@@ -171,6 +179,7 @@ const initialDashboardState = {
       visibleDataRange: [0, 336],
       legendVisible: false,
       rangeSliderVisible: true,
+      hourlyLabelsVisible: true,
     },
   },
 };
@@ -303,11 +312,17 @@ export const dashboardSlice = createSlice({
     setRangeSliderVisibility: (state, action) => {
       const {cardId, visible} = action.payload;
       state.cards[cardId].rangeSliderVisible = visible;
-    }
+    },
+
+    // HOURLY LABELS
+    setHourlyLabelsVisibility: (state, action) => {
+      const {cardId, visible} = action.payload;
+      state.cards[cardId].hourlyLabelsVisible = visible;
+    },
 
   },
 })
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;

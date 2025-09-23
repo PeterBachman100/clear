@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility } from './DashboardSlice';
+import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } from './DashboardSlice';
 import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getPrettyParameterName } from '../utils/parameterNames';
@@ -35,6 +35,13 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
     const toggleRangeSliderVisibility = (event) => {
         dispatch(setRangeSliderVisibility({cardId, visible: event.target.checked}));
     }
+
+    // HOURLY LABELS
+    const isHourlyLabelsVisible = useSelector(state => state.dashboard.cards[cardId].hourlyLabelsVisible);
+    const toggleHourlyLabelsVisibility = (event) => {
+        dispatch(setHourlyLabelsVisibility({cardId, visible: event.target.checked}));
+    }
+
    
     
 
@@ -42,6 +49,7 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
     <Box sx={{padding: '16px', display: 'flex', justifyContent: 'center'}}>
         <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
         <FormControlLabel control={<Switch checked={isRangeSliderVisible} onChange={toggleRangeSliderVisibility} color='secondary'/>} label="Range Slider" />
+        <FormControlLabel control={<Switch checked={isHourlyLabelsVisible} onChange={toggleHourlyLabelsVisibility} color='secondary'/>} label="Hourly Labels" />
         <FormControl sx={{ m: 1, width: 300 }}>
             <InputLabel id="multiple-select-label">Parameters</InputLabel>
             <Select
