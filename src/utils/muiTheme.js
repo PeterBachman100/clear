@@ -59,5 +59,14 @@ export const mainTheme = createTheme({
         },
       },
     },
+    MuiListItemButton: {
+      styleOverrides: {
+        root: {
+          '&.Mui-selected': {
+            backgroundColor: '#ddd',
+          }
+        }
+      }
+    }
   },
 });

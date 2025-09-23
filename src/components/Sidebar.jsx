@@ -6,12 +6,14 @@ export default function Sidebar({ closeDrawer }) {
 
     const dispatch = useDispatch();
     const pages = useSelector(state => state.dashboard.pages);
+    const activePage = useSelector(state => state.dashboard.activePageId);
 
     const handleAddPage = () => {
-        dispatch(addPage());
         closeDrawer();
+        dispatch(addPage());
     }
     const handleSetActivePage = (pageId) => {
+        closeDrawer();
         dispatch(setActivePage({pageId}));
     }
 
@@ -28,9 +30,8 @@ export default function Sidebar({ closeDrawer }) {
                 {Object.values(pages).map((page) => {
                     return (
                     <ListItem key={page.id}>
-                        <ListItemButton onClick={() => {
+                        <ListItemButton selected={page.id === activePage} onClick={() => {
                             handleSetActivePage(page.id);
-                            closeDrawer();
                         }}>
                             <ListItemText primary={page.name}></ListItemText>
                         </ListItemButton>
