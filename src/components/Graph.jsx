@@ -374,7 +374,8 @@ export default function Graph({ weather, cardId, cardData }) {
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
-                        <ChartsSurface sx={{width: '100%', flex: '1', marginBottom: '-20px'}}>
+                        <ChartsSurface 
+                            sx={{width: '100%', flex: '1', marginBottom: '-20px',}}>
                             <AreaPlot skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
