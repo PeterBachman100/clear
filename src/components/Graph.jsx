@@ -72,9 +72,9 @@ const barPlotSlotProps = {
     bar: (ownerState) => {
         if (ownerState.id === 'uv_index') {
             return {
-                height: 5,
+                height: 3,
                 style: {
-                    transform: 'translateY(-10px)'
+                    transform: 'translateY(3px)'
                 }                                                                 
             }
         }
@@ -85,9 +85,9 @@ const sliderBarPlotSlotProps = {
     bar: (ownerState) => {
         if (ownerState.id === 'uv_index') {
             return {
-                height: 5,
+                height: 2,
                 style: {
-                    transform: 'translateY(-6px)'
+                    transform: 'translateY(-2px)'
                 }                                                                 
             }
         }
@@ -333,7 +333,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 x={timestamp.timestamp}
                 label={timestamp.day}
                 labelAlign="start"
-                labelStyle={{fontSize: 14, transform: 'translateY(-8px)',}}
+                labelStyle={{fontSize: 14, transform: 'translateY(-16px)',}}
                 lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
@@ -368,7 +368,7 @@ export default function Graph({ weather, cardId, cardData }) {
         <div className='flex flex-col h-full'>  
             <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
-                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 16} : {bottom: 0, left: 0, right: 0, top: 16}}>
+                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 12} : {bottom: 0, left: 0, right: 0, top: 12}}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
@@ -376,8 +376,9 @@ export default function Graph({ weather, cardId, cardData }) {
                         <ChartsSurface 
                             sx={{width: '100%', flex: '1',}}>
                             <AreaPlot skipAnimation />
-                            <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
+                            <LinePlot slotProps={linePlotSlotProps} skipAnimation />
+                            
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                             {renderedDayReferenceLines}
@@ -419,8 +420,9 @@ export default function Graph({ weather, cardId, cardData }) {
                     <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                         <ChartsSurface sx={{height: '95%'}}>
                             <AreaPlot skipAnimation />
-                            <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
+                            <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
+                            
                             {fullRangeDayReferenceLines}
                         </ChartsSurface>           
                     </ChartDataProvider>
