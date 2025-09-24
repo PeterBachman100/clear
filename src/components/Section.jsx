@@ -140,7 +140,7 @@ export default function Section({ pageId, weather, sectionId, editMode, openCard
                     layouts={{ lg: section.layout, md: section.layout, sm: section.layout, xs: section.layout, xxs: section.layout }}
                     breakpoints={{ lg: 1200, md: 1000, sm: 600, xs: 400, xxs: 0 }}
                     cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-                    rowHeight={100}
+                    rowHeight={75}
                     isDraggable={editMode}
                     isResizable={editMode}
                     autoSize={true}

@@ -271,7 +271,6 @@ export default function Graph({ weather, cardId, cardData }) {
             {
                 id: 'hours',
                 scaleType: 'time',
-                position: 'bottom',
                 position: isHourlyLabelsVisible ? 'bottom' : 'none',
                 disableLine: true,
                 disableTicks: true,
@@ -369,13 +368,13 @@ export default function Graph({ weather, cardId, cardData }) {
         <div className='flex flex-col h-full'>  
             <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
-                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes}>
+                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 16} : {bottom: 0, left: 0, right: 0, top: 16}}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
                         <ChartsSurface 
-                            sx={{width: '100%', flex: '1', marginBottom: '-20px',}}>
+                            sx={{width: '100%', flex: '1',}}>
                             <AreaPlot skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
