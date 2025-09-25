@@ -216,7 +216,7 @@ export const dashboardSlice = createSlice({
         sectionIds: [newSectionId]
       };
       state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72] };
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -274,7 +274,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72] };
+      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
