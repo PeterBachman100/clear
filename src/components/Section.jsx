@@ -1,4 +1,4 @@
-import { useState} from "react";
+import { useState, useEffect } from "react";
 import { Button, Card, CardHeader, CardContent, Typography, IconButton, Menu, MenuItem, TextField } from "@mui/material";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
@@ -9,20 +9,21 @@ import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined
 import DataCard from "./DataCard";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { updateLayout, updateSectionName, deleteSection, addCard } from "./DashboardSlice";
+import { selectWeatherByLocation } from "../utils/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, weather, sectionId, editMode, openCardSettings, cardSettingsId }) {
+export default function Section({ pageId, sectionId, editMode, openCardSettings, cardSettingsId }) {
 
     const dispatch = useDispatch();
 
     const section = useSelector(state => state.dashboard.sections[sectionId]);
     const cards = useSelector(state => state.dashboard.sections[sectionId]?.cardIds
         .map(cardId => state.dashboard.cards[cardId])
-        .filter(card => card) // This line filters out null/undefined values
+        .filter(card => card) // Filter out null/undefined values
     );
 
     const handleDeleteSection = () => {
@@ -69,6 +70,10 @@ export default function Section({ pageId, weather, sectionId, editMode, openCard
     const handleAddCard = () => {
         dispatch(addCard({ sectionId }));
     }
+
+    // LOCATION and WEATHER
+    const location = useSelector((state) => state.dashboard.pages[pageId].location);
+    const weatherState = useSelector(state => selectWeatherByLocation(state, location));
 
     return (
         <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
@@ -150,7 +155,7 @@ export default function Section({ pageId, weather, sectionId, editMode, openCard
                     {cards.map((card) => {
                         return (
                             <div key={card.id}>
-                                <DataCard weather={weather} pageId={pageId} sectionId={sectionId} cardId={card.id} cardData={card} editMode={editMode} openCardSettings={openCardSettings} isBeingEdited={cardSettingsId === card.id} />
+                                <DataCard pageId={pageId} sectionId={sectionId} cardId={card.id} cardData={card} editMode={editMode} openCardSettings={openCardSettings} isBeingEdited={cardSettingsId === card.id} />
                             </div>
                         );
                     })}

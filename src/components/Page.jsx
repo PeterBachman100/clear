@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import Section from "./Section";
 import LocationSearch from "./LocationSearch";
 import CardSettings from "./CardSettings";
-import { fetchWeather } from "../utils/fetchWeather";
 import { Typography, Button, Drawer, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
 import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux'
 import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } from "./DashboardSlice";
+import { fetchAndStoreWeather } from "../utils/weatherThunk";
+import { selectWeatherByLocation } from "../utils/selectors";
       
 export default function Page() {
 
@@ -55,6 +56,7 @@ export default function Page() {
     };
 
     // LOCATION
+    const location = useSelector((state) => state.dashboard.pages[page.id].location);
     const handleSetLocation = (pageId, newLocation) => {
         dispatch(setLocation({ pageId: pageId, location: newLocation }));
     };
@@ -66,18 +68,11 @@ export default function Page() {
     
 
     // Weather
-    const [weather, setWeather] = useState(null);
-    const handleFetchWeather = async () => {
-        try {
-            const weatherData = await fetchWeather(page.location);
-            setWeather(weatherData);
-        } catch(error) {
-            console.error("Failed to fetch weather data:", error);
-        } 
-    }
     useEffect(() => {
-        handleFetchWeather();
-    }, []);
+    if (location) {
+        dispatch(fetchAndStoreWeather(location));
+    }
+}, [dispatch, location?.latitude, location?.longitude]);
 
 
     // Location Dialog
@@ -192,7 +187,7 @@ export default function Page() {
                     <div>
                         {page.sectionIds.map((sectionId) => {
                             return (
-                                <Section key={sectionId} weather={weather} pageId={page.id} editMode={editMode} sectionId={sectionId} openCardSettings={handleOpenCardSettings} cardSettingsId={cardSettingsId} />
+                                <Section key={sectionId} pageId={page.id} editMode={editMode} sectionId={sectionId} openCardSettings={handleOpenCardSettings} cardSettingsId={cardSettingsId} />
                             );
                         })}
                     </div>
