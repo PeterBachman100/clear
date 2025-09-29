@@ -58,6 +58,7 @@ export default function Page() {
     // LOCATION
     const location = useSelector((state) => state.dashboard.pages[page.id].location);
     const handleSetLocation = (pageId, newLocation) => {
+        handleCloseDialog();
         dispatch(setLocation({ pageId: pageId, location: newLocation }));
     };
 
@@ -212,16 +213,6 @@ export default function Page() {
                 <DialogActions>
                     <Button onClick={handleCloseDialog} variant="outlined" color="error">
                         Cancel
-                    </Button>
-                    <Button 
-                        variant="outlined" 
-                        color="secondary"
-                        onClick={() => {
-                            handleFetchWeather();
-                            handleCloseDialog();
-                            }}
-                    >
-                        Save Location
                     </Button>
                 </DialogActions>
             </Dialog>
