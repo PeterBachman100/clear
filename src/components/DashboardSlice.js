@@ -12,7 +12,8 @@ const initialDashboardState = {
         admin1: "Washington",
         country: "United States",
         latitude: 47.6751,
-        longitude: -122.1930
+        longitude: -122.1930,
+        timezone: 'America/Los_Angeles'
       },
       editMode: false,
       sectionIds: ['1', '2', '3'],
@@ -25,7 +26,8 @@ const initialDashboardState = {
         admin1: "Washington",
         country: "United States",
         latitude: 47.64177,
-        longitude: -122.0804
+        longitude: -122.0804,
+        timezone: 'America/Los_Angeles'
       },
       editMode: false,
       sectionIds: ['4', '5', '6'],

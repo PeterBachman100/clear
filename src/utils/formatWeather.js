@@ -34,6 +34,7 @@ export default function formatWeather(weatherData) {
             latitude: weatherData.latitude,
             longitude: weatherData.longitude,
             timezone: weatherData.timezone,
+            utc_offset_seconds: weatherData.utc_offset_seconds,
         },
         current: {
             time: weatherData.current.time,

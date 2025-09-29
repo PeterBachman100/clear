@@ -9,7 +9,8 @@ export async function fetchWeather(location) {
         "daily": dailyParameters,
         "hourly": hourlyParameters,
         "current": currentParameters,
-        "timezone": "auto",
+        "timezone": location.timezone,
+        "timeformat": 'unixtime',
         "forecast_days": 14,
         "wind_speed_unit": "mph",
         "temperature_unit": "fahrenheit",
@@ -28,6 +29,8 @@ export async function fetchWeather(location) {
         
         const weatherData = await response.json();
         const formattedWeatherData = formatWeather(weatherData);
+        console.log(weatherData);
+        console.log(formattedWeatherData);
         return formattedWeatherData;
 
     } catch (error) {

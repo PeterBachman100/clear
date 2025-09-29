@@ -8,7 +8,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
 
-const parseTimes = (times) => times.map((t) => new Date(t).getTime());
+const parseTimesFromUnix = (times) => {
+    return times.map(t => t * 1000); // Multiply by 1000 for milliseconds
+};
 
 export default function Graph({ weather, cardId, cardData }) {
 
@@ -191,7 +193,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
                 tickMinStep: (1000 * 60 * 60),
-                data: parseTimes(getVisibleRange(weather.hourly.time)),
+                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
                 valueFormatter: (timestamp) => {
                     return new Date(timestamp).toLocaleTimeString('en-US', {
                         hour: 'numeric', hour12: true, timeZone: weather.location.timezone
@@ -202,20 +204,20 @@ export default function Graph({ weather, cardId, cardData }) {
                 id: 'uv-band',
                 scaleType: 'band',
                 position: 'none',
-                data: parseTimes(getVisibleRange(weather.hourly.time)),
+                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
                 barGapRatio: '-1',
             },
             {
                 id: 'hours-band',
                 scaleType: 'band',
                 position: 'none',
-                data: parseTimes(getVisibleRange(weather.hourly.time)),
+                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
             },
         ];
 
         const xAxisFullRange = xAxis.map((axis) => {
             const x = {...axis};
-            x.data = parseTimes(weather.hourly.time);
+            x.data = parseTimesFromUnix(weather.hourly.time);
             x.position = 'none';
             return x;
         });
@@ -242,7 +244,7 @@ export default function Graph({ weather, cardId, cardData }) {
     };
 
     const renderedDayReferenceLines = useMemo(() => {
-        return getDailyLinePositions(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
+        return getDailyLinePositions(parseTimesFromUnix(getVisibleRange(weather.hourly.time))).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
                 x={timestamp.timestamp}

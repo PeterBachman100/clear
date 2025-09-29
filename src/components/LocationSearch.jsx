@@ -41,6 +41,7 @@ export default function LocationSearch({ page, onSelect }) {
                         country: newValue.country,
                         latitude: newValue.latitude,
                         longitude: newValue.longitude,
+                        timezone: newValue.timezone,
                     });
                 }
             }}
