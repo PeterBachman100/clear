@@ -69,10 +69,13 @@ export default function Page() {
 
     // Weather
     useEffect(() => {
-    if (location) {
-        dispatch(fetchAndStoreWeather(location));
-    }
-}, [dispatch, location?.latitude, location?.longitude]);
+        if (location) {
+            dispatch(fetchAndStoreWeather(location));
+        }
+    }, [dispatch, location?.latitude, location?.longitude]);
+    
+    const weatherState = useSelector(state => selectWeatherByLocation(state, location));
+    const weather = weatherState?.data;
 
 
     // Location Dialog

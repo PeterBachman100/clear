@@ -3,13 +3,11 @@ export const getDomainLimitByUnit = (minValue, maxValue, unit) => {
     let max = maxValue;
 
     const defaultDomains = {
-        'fahrenheit': { min: 32, max: 100 },
-        'percentage': { min: 0, max: 105 },
-        'feet': { min: 0, max: 160000 }, 
-        'miles_per_hour': { min: 0, max: 25 },
+        '°F': { min: 32, max: 100 },
+        '%': { min: 0, max: 105 },
+        'mp/h': { min: 0, max: 25 },
         'miles': { min: 0, max: 15 },
         'inch': { min: 0, max: 0.3 },
-        'hectopascal': { min: 950, max: 1050 },
         'dimensionless': { min: 0, max: 12 },
     };
 
@@ -26,3 +24,90 @@ export const getDomainLimitByUnit = (minValue, maxValue, unit) => {
     
     return { min, max };
 };
+
+export function getUnitAbbreviation(fullUnit) {
+    const mappings = {
+        '°F': '°F',
+        '%': '%',
+        'inch': 'in',
+        'mp/h': 'mph',
+        'dimensionless': '',
+        'miles': 'mi'
+    };
+    return mappings[fullUnit] ?? fullUnit;
+}
+
+export const parameterDrawingOrder = [
+    'cloud_cover', 
+    'cloud_cover_low',
+    'precipitation_probability',
+    'precipitation',
+    'temperature_2m',
+    'wind_speed_10m',
+    'wind_gusts_10m',
+    'visibility',
+    'uv_index'
+];
+
+export const linePlotSlotProps = {
+    line: (ownerState) => {
+        if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
+            return {
+                strokeWidth: '0px'
+            }
+        }
+        if (ownerState.id === 'precipitation_probability') {
+            return {
+                strokeWidth: '1px'
+            }
+        }
+        if (ownerState.id === 'temperature_2m') {
+            return {
+                strokeWidth: '3px'
+            }
+        }
+        if (ownerState.id === 'visibility') {
+            return {
+                strokeWidth: '1px',
+                strokeDasharray: '1 4'
+            }
+        }
+        if (ownerState.id === 'wind_speed_10m') {
+            return {
+                strokeWidth: '0.5px'
+            }
+        }
+        if (ownerState.id === 'wind_gusts_10m') {
+            return {
+                strokeWidth: '0.5px',
+                strokeDasharray: '4 8'
+            }
+        }
+    }
+}
+
+export const barPlotSlotProps = {
+    bar: (ownerState) => {
+        if (ownerState.id === 'uv_index') {
+            return {
+                height: 3,
+                style: {
+                    transform: 'translateY(3px)'
+                }                                                                 
+            }
+        }
+    }
+}
+
+export const sliderBarPlotSlotProps = {
+    bar: (ownerState) => {
+        if (ownerState.id === 'uv_index') {
+            return {
+                height: 2,
+                style: {
+                    transform: 'translateY(-2px)'
+                }                                                                 
+            }
+        }
+    }
+}

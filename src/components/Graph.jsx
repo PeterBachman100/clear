@@ -1,98 +1,14 @@
 import { useState, useMemo, useEffect, useRef } from "react";
-import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, MarkPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot, ChartContainer, LineHighlightPlot  } from "@mui/x-charts";
-import { Box, FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Slider, CircularProgress} from "@mui/material";
-import { getUnitAbbreviation } from "../utils/unitAbbreviations";
-import { getPrettyParameterName } from "../utils/parameterNames";
-import { getDomainLimitByUnit } from "../utils/chartUtils";
+import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
+import { Slider } from "@mui/material";
+import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
+import { getPrettyParameterName } from "../utils/parameters";
 import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
 
-// Drawing Order
-const parameterDrawingOrder = [
-    'cloud_cover', 
-    'cloud_cover_low',
-    'precipitation_probability',
-    'precipitation',
-    'temperature',
-    'wind_speed',
-    'wind_gusts',
-    'visibility',
-    'uv_index'
-];
-
-// LINE PLOT SLOT PROPS
-const linePlotSlotProps = {
-    line: (ownerState) => {
-        if (ownerState.id === 'cloud_cover' || ownerState.id === 'cloud_cover_low') {
-            return {
-                strokeWidth: '0px'
-            }
-        }
-        if (ownerState.id === 'precipitation_probability') {
-            return {
-                strokeWidth: '1px'
-            }
-        }
-        if (ownerState.id === 'apparent_temperature') {
-            return {
-                strokeDasharray: '10 10',
-                strokeWidth: '3px'
-
-            }
-        } 
-        if (ownerState.id === 'temperature') {
-            return {
-                strokeWidth: '3px'
-            }
-        }
-        if (ownerState.id === 'visibility') {
-            return {
-                strokeWidth: '1px',
-                strokeDasharray: '1 4'
-            }
-        }
-        if (ownerState.id === 'wind_speed') {
-            return {
-                strokeWidth: '0.5px'
-            }
-        }
-        if (ownerState.id === 'wind_gusts') {
-            return {
-                strokeWidth: '0.5px',
-                strokeDasharray: '4 8'
-            }
-        }
-    }
-}
-
-// BAR PLOT SLOT PROPS
-const barPlotSlotProps = {
-    bar: (ownerState) => {
-        if (ownerState.id === 'uv_index') {
-            return {
-                height: 3,
-                style: {
-                    transform: 'translateY(3px)'
-                }                                                                 
-            }
-        }
-    }
-}
-// SLIDER BAR SLOT PROPS
-const sliderBarPlotSlotProps = {
-    bar: (ownerState) => {
-        if (ownerState.id === 'uv_index') {
-            return {
-                height: 2,
-                style: {
-                    transform: 'translateY(-2px)'
-                }                                                                 
-            }
-        }
-    }
-}
+const parseTimes = (times) => times.map((t) => new Date(t).getTime());
 
 export default function Graph({ weather, cardId, cardData }) {
 
@@ -141,7 +57,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 tickLabelStyle: {fontSize: 14, fontWeight: 'bold'},
                 domainLimit: (minVal, maxVal) => getDomainLimitByUnit(minVal, maxVal, unit),
             }
-            if (unit === 'fahrenheit') {
+            if (unit === '°F') {
                 axis.colorMap = {
                         type: 'continuous',
                         min: 1,
@@ -169,7 +85,7 @@ export default function Graph({ weather, cardId, cardData }) {
             });
 
             const seriesItem = {
-                    data: getVisibleRange(weather.hourly.weatherVariables[param].values),
+                    data: getVisibleRange(weather.hourly.weatherVariables[param].data),
                     yAxisId: param, 
                     xAxisId: 'hours',
                     type: 'line',
@@ -195,8 +111,7 @@ export default function Graph({ weather, cardId, cardData }) {
                         return `${rounded} ${unitAbbreviation}`;
                     },
                     id: param,
-                    showMark: false,
-                    shape: 'circle',   
+                    showMark: false,  
                 };
                 
                 if(param === 'precipitation') {
@@ -226,7 +141,7 @@ export default function Graph({ weather, cardId, cardData }) {
                     seriesItem.color = '#036837';
                     seriesItem.labelMarkType = UVIndexIcon;
                 }
-                if(param === 'temperature') {
+                if(param === 'temperature_2m') {
                     seriesItem.color = '#fce400';
                     seriesItem.labelMarkType = TemperatureGradientIcon;
                 }
@@ -244,10 +159,10 @@ export default function Graph({ weather, cardId, cardData }) {
                     seriesItem.color = '#000';
                     seriesItem.labelMarkType = VisibilityIcon;
                 }
-                if (param === 'wind_speed') {
+                if (param === 'wind_speed_10m') {
                     seriesItem.color = 'red';
                 }
-                if (param === 'wind_gusts') {
+                if (param === 'wind_gusts_10m') {
                     seriesItem.color = 'red';
                     seriesItem.labelMarkType = WindGustIcon;
                 }
@@ -256,7 +171,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 
                 const seriesItemFullRange = {
                     ...seriesItem,
-                    data: weather.hourly.weatherVariables[param].values,
+                    data: weather.hourly.weatherVariables[param].data,
                 }
                 seriesFullRange.push(seriesItemFullRange);
 
@@ -276,10 +191,10 @@ export default function Graph({ weather, cardId, cardData }) {
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
                 tickMinStep: (1000 * 60 * 60),
-                data: getVisibleRange(weather.hourly.time),
+                data: parseTimes(getVisibleRange(weather.hourly.time)),
                 valueFormatter: (timestamp) => {
                     return new Date(timestamp).toLocaleTimeString('en-US', {
-                        weekday: undefined, month: undefined, day: undefined, hour: 'numeric', minute: undefined, second: undefined, hour12: true, timeZone: weather.location.timezone
+                        hour: 'numeric', hour12: true, timeZone: weather.location.timezone
                     });
                 },
             },
@@ -287,20 +202,20 @@ export default function Graph({ weather, cardId, cardData }) {
                 id: 'uv-band',
                 scaleType: 'band',
                 position: 'none',
-                data: getVisibleRange(weather.hourly.time),
+                data: parseTimes(getVisibleRange(weather.hourly.time)),
                 barGapRatio: '-1',
             },
             {
                 id: 'hours-band',
                 scaleType: 'band',
                 position: 'none',
-                data: getVisibleRange(weather.hourly.time),
+                data: parseTimes(getVisibleRange(weather.hourly.time)),
             },
         ];
 
         const xAxisFullRange = xAxis.map((axis) => {
             const x = {...axis};
-            x.data = weather.hourly.time;
+            x.data = parseTimes(weather.hourly.time);
             x.position = 'none';
             return x;
         });
@@ -319,7 +234,7 @@ export default function Graph({ weather, cardId, cardData }) {
                 const day = currentDate.toLocaleDateString('en-US', {
                     weekday: 'short'
                 });
-                dailyTimestamps.push({timestamp: timestamp, day: day});
+                dailyTimestamps.push({timestamp: currentDate.getTime(), day: day});
             }
             prevDate = currentDate;
         });
@@ -331,6 +246,7 @@ export default function Graph({ weather, cardId, cardData }) {
             <ChartsReferenceLine
                 key={index}
                 x={timestamp.timestamp}
+                xAxisId="hours"
                 label={timestamp.day}
                 labelAlign="start"
                 labelStyle={{fontSize: 14, transform: 'translateY(-16px)',}}
@@ -345,6 +261,7 @@ export default function Graph({ weather, cardId, cardData }) {
             <ChartsReferenceLine
                 key={index}
                 x={timestamp.timestamp}
+                xAxisId="hours"
                 label={timestamp.day[0]}
                 labelAlign="start"
                 labelStyle={{fontSize: 10, fontWeight: 'bold'}}
@@ -422,7 +339,6 @@ export default function Graph({ weather, cardId, cardData }) {
                             <AreaPlot skipAnimation />
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                            
                             {fullRangeDayReferenceLines}
                         </ChartsSurface>           
                     </ChartDataProvider>

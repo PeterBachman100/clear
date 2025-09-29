@@ -95,7 +95,7 @@ const initialDashboardState = {
     '1': {
       id: '1',
       sectionId: '1',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
       rangeSliderVisible: true,
@@ -104,7 +104,7 @@ const initialDashboardState = {
     '2': {
       id: '2',
       sectionId: '2',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -113,7 +113,7 @@ const initialDashboardState = {
     '3': {
       id: '3',
       sectionId: '2',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -122,7 +122,7 @@ const initialDashboardState = {
     '4': {
       id: '4',
       sectionId: '2',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -131,7 +131,7 @@ const initialDashboardState = {
     '5': {
       id: '5',
       sectionId: '3',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
       rangeSliderVisible: true,
@@ -139,7 +139,7 @@ const initialDashboardState = {
     '6': {
       id: '6',
       sectionId: '4',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
       rangeSliderVisible: true,
@@ -148,7 +148,7 @@ const initialDashboardState = {
     '7': {
       id: '7',
       sectionId: '5',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -157,7 +157,7 @@ const initialDashboardState = {
     '8': {
       id: '8',
       sectionId: '5',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -166,7 +166,7 @@ const initialDashboardState = {
     '9': {
       id: '9',
       sectionId: '5',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -175,7 +175,7 @@ const initialDashboardState = {
     '10': {
       id: '10',
       sectionId: '6',
-      selectedParameters: ['temperature', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed', 'wind_gusts', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
       rangeSliderVisible: true,
@@ -216,7 +216,7 @@ export const dashboardSlice = createSlice({
         sectionIds: [newSectionId]
       };
       state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -274,7 +274,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);

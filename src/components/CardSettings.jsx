@@ -2,7 +2,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } from './DashboardSlice';
 import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getPrettyParameterName } from '../utils/parameterNames';
+import { getPrettyParameterName } from '../utils/parameters';
 
 export default function CardSettings({ cardId, weather, closeCardSettings }) {
 
