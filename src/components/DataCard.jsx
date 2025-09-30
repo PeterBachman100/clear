@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import Graph from './Graph';
 import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, Typography } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
+import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { useDispatch, useSelector } from "react-redux";
 import { selectWeatherByLocation } from "../utils/selectors";
 
@@ -57,9 +58,10 @@ export default function WeatherCard({ pageId, sectionId, cardId, cardData, editM
                         <SettingsIcon />
                     </IconButton>
                 }
-                sx={{flexDirection: 'row-reverse', p:1, position: 'absolute', right: 0}}
+                subheader={<><LocationPinIcon /> {location.name}</>}
+                sx={{width: '100%', p:0, position: 'absolute', justifyContent: 'space-between', fontSize: '1rem'}}
             ></CardHeader>
-            <CardContent sx={{height: '100%', padding: '24px 8px 8px 8px !important'}}>
+            <CardContent sx={{height: '100%', padding: '32px 8px 8px 8px !important'}}>
                 <div className='w-full h-full'>
                     {renderContent()}
                 </div>

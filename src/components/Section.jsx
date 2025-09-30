@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import LocationPinIcon from '@mui/icons-material/LocationPin';
 import DataCard from "./DataCard";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { updateLayout, updateSectionName, deleteSection, addCard } from "./DashboardSlice";
@@ -78,6 +79,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     return (
         <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
             <CardHeader
+                subheader={<><LocationPinIcon /> {location.name}</>}
                 title={
                     editingSectionName ?
                         <div className="flex gap-4">
@@ -101,7 +103,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                         <MoreVertIcon />
                     </IconButton>
                 }
-                sx={{p: 1, flexDirection: 'row-reverse'}}
+                sx={{p: 1, justifyContent: 'center', width: '100%'}}
             />
             <Menu
                 id={id}

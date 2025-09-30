@@ -3,7 +3,7 @@ import Section from "./Section";
 import LocationSearch from "./LocationSearch";
 import CardSettings from "./CardSettings";
 import { Typography, Button, Drawer, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
-import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material';
+import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon, LocationPin as LocationPinIcon } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux'
 import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } from "./DashboardSlice";
@@ -131,6 +131,7 @@ export default function Page() {
                             <MoreVertIcon />
                         </IconButton>
                     }
+                    subheader={<><LocationPinIcon /> {location.name}</>}
                     sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse'}}
                 />
                 <Menu
