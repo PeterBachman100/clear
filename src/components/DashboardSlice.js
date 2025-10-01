@@ -74,7 +74,7 @@ const initialDashboardState = {
       id: '4',
       name: 'Today',
       pageId: '2',
-      locationId: null,
+      locationId: '47.6751,-122.1930',
       layout: [
         {i: '6', x: 0, y: 0, h: 3, w: 12},
       ],

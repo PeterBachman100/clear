@@ -4,12 +4,12 @@ import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, Typography }
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { useDispatch, useSelector } from "react-redux";
-import { selectWeatherByLocation } from "../utils/selectors";
+import { selectWeatherByLocation, selectCardLocationId } from "../utils/selectors";
 
 export default function WeatherCard({ pageId, sectionId, cardId, cardData, editMode, openCardSettings, isBeingEdited }) {
 
     // LOCATION and WEATHER
-    const locationId = useSelector((state) => state.dashboard.pages[pageId].locationId);
+    const locationId = useSelector(state => selectCardLocationId(state, cardId));
     const location = useSelector((state) => state.dashboard.locations[locationId]);
     const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 

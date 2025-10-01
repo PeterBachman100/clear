@@ -10,7 +10,7 @@ import LocationPinIcon from '@mui/icons-material/LocationPin';
 import DataCard from "./DataCard";
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { updateLayout, updateSectionName, deleteSection, addCard } from "./DashboardSlice";
-import { selectWeatherByLocation } from "../utils/selectors";
+import { selectWeatherByLocation, selectSectionLocationId } from "../utils/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
@@ -73,8 +73,8 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     }
 
     // LOCATION and WEATHER
-    const locationId = useSelector((state) => state.dashboard.pages[pageId].locationId);
-    const location = useSelector((state) => state.dashboard.locations[locationId]);
+    const locationId = useSelector(state => selectSectionLocationId(state, sectionId, pageId));
+    const location = useSelector(state => state.dashboard.locations[locationId]);
     const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 
     return (
