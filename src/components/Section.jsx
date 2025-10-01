@@ -73,8 +73,9 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     }
 
     // LOCATION and WEATHER
-    const location = useSelector((state) => state.dashboard.pages[pageId].location);
-    const weatherState = useSelector(state => selectWeatherByLocation(state, location));
+    const locationId = useSelector((state) => state.dashboard.pages[pageId].locationId);
+    const location = useSelector((state) => state.dashboard.locations[locationId]);
+    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 
     return (
         <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
@@ -103,7 +104,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                         <MoreVertIcon />
                     </IconButton>
                 }
-                sx={{p: 1, justifyContent: 'center', width: '100%'}}
+                sx={{p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%'}}
             />
             <Menu
                 id={id}

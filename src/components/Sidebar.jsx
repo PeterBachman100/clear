@@ -1,12 +1,13 @@
 import { Box, List, Button, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { useSelector, useDispatch } from 'react-redux'
 import { addPage, setActivePage } from "./DashboardSlice";
+import { selectPages, selectActivePageId } from '../utils/selectors';
 
 export default function Sidebar({ closeDrawer }) {
 
     const dispatch = useDispatch();
-    const pages = useSelector(state => state.dashboard.pages);
-    const activePage = useSelector(state => state.dashboard.activePageId);
+    const pages = useSelector(selectPages);
+    const activePage = useSelector(selectActivePageId);
 
     const handleAddPage = () => {
         closeDrawer();

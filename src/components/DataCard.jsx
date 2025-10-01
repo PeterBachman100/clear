@@ -9,8 +9,9 @@ import { selectWeatherByLocation } from "../utils/selectors";
 export default function WeatherCard({ pageId, sectionId, cardId, cardData, editMode, openCardSettings, isBeingEdited }) {
 
     // LOCATION and WEATHER
-    const location = useSelector((state) => state.dashboard.pages[pageId].location);
-    const weatherState = useSelector(state => selectWeatherByLocation(state, location));
+    const locationId = useSelector((state) => state.dashboard.pages[pageId].locationId);
+    const location = useSelector((state) => state.dashboard.locations[locationId]);
+    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 
     const weather = weatherState?.data;
 

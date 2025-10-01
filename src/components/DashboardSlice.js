@@ -3,32 +3,36 @@ import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
   activePageId: '2',
+  locations: {
+    '47.6751,-122.1930' : {
+      name: "Kirkland",
+      admin1: "Washington",
+      country: "United States",
+      latitude: 47.6751,
+      longitude: -122.1930,
+      timezone: 'America/Los_Angeles'
+    },
+    '47.64177,-122.0804': {
+      name: "Sammamish",
+      admin1: "Washington",
+      country: "United States",
+      latitude: 47.64177,
+      longitude: -122.0804,
+      timezone: 'America/Los_Angeles'
+    }
+  },
   pages: {
     '1': {
       id: '1',
       name: 'Kirkland',
-      location: {
-        name: "Kirkland",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 47.6751,
-        longitude: -122.1930,
-        timezone: 'America/Los_Angeles'
-      },
+      locationId: '47.6751,-122.1930',
       editMode: false,
       sectionIds: ['1', '2', '3'],
     },
     '2': {
       id: '2',
       name: 'Sammamish',
-      location: {
-        name: "Sammamish",
-        admin1: "Washington",
-        country: "United States",
-        latitude: 47.64177,
-        longitude: -122.0804,
-        timezone: 'America/Los_Angeles'
-      },
+      locationId: '47.64177,-122.0804',
       editMode: false,
       sectionIds: ['4', '5', '6'],
     },
@@ -38,6 +42,7 @@ const initialDashboardState = {
       id: '1',
       name: 'Today',
       pageId: '1',
+      locationId: null,
       layout: [
         {i: '1', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -47,6 +52,7 @@ const initialDashboardState = {
       id: '2',
       name: 'Next 3 Days',
       pageId: '1',
+      locationId: null,
       layout: [
         {i: '2', x: 0, y: 0, h: 2, w: 4},
         {i: '3', x: 4, y: 0, h: 2, w: 4},
@@ -58,6 +64,7 @@ const initialDashboardState = {
       id: '3',
       name: 'Next 2 Weeks',
       pageId: '1',
+      locationId: null,
       layout: [
         {i: '5', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -67,6 +74,7 @@ const initialDashboardState = {
       id: '4',
       name: 'Today',
       pageId: '2',
+      locationId: null,
       layout: [
         {i: '6', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -76,6 +84,7 @@ const initialDashboardState = {
       id: '5',
       name: 'Next 3 Days',
       pageId: '2',
+      locationId: null,
       layout: [
         {i: '7', x: 0, y: 0, h: 2, w: 4},
         {i: '8', x: 4, y: 0, h: 2, w: 4},
@@ -87,6 +96,7 @@ const initialDashboardState = {
       id: '6',
       name: 'Next 2 Weeks',
       pageId: '2',
+      locationId: null,
       layout: [
         {i: '10', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -97,6 +107,7 @@ const initialDashboardState = {
     '1': {
       id: '1',
       sectionId: '1',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
@@ -106,6 +117,7 @@ const initialDashboardState = {
     '2': {
       id: '2',
       sectionId: '2',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
@@ -115,6 +127,7 @@ const initialDashboardState = {
     '3': {
       id: '3',
       sectionId: '2',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
@@ -124,6 +137,7 @@ const initialDashboardState = {
     '4': {
       id: '4',
       sectionId: '2',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
@@ -133,6 +147,7 @@ const initialDashboardState = {
     '5': {
       id: '5',
       sectionId: '3',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
@@ -141,6 +156,7 @@ const initialDashboardState = {
     '6': {
       id: '6',
       sectionId: '4',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
@@ -150,6 +166,7 @@ const initialDashboardState = {
     '7': {
       id: '7',
       sectionId: '5',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [29, 47],
       legendVisible: false,
@@ -159,6 +176,7 @@ const initialDashboardState = {
     '8': {
       id: '8',
       sectionId: '5',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [53, 71],
       legendVisible: false,
@@ -168,6 +186,7 @@ const initialDashboardState = {
     '9': {
       id: '9',
       sectionId: '5',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
       visibleDataRange: [77, 95],
       legendVisible: false,
@@ -177,6 +196,7 @@ const initialDashboardState = {
     '10': {
       id: '10',
       sectionId: '6',
+      locationId: null,
       selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
@@ -214,11 +234,11 @@ export const dashboardSlice = createSlice({
         id: newPageId,
         name: 'New Page',
         editMode: false,
-        location: null, 
+        locationId: null, 
         sectionIds: [newSectionId]
       };
-      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, locationId: null, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -255,7 +275,7 @@ export const dashboardSlice = createSlice({
     addSection: (state, action) => {
       const {pageId} = action.payload;
       const newSectionId = uuidv4();
-      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, layout: [], cardIds: []}
+      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, layout: [], cardIds: []}
       state.pages[pageId].sectionIds.push(newSectionId);
       state.sections[newSectionId] = newSection;
     },
@@ -276,7 +296,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);

@@ -56,7 +56,8 @@ export default function Page() {
     };
 
     // LOCATION
-    const location = useSelector((state) => state.dashboard.pages[page.id].location);
+    const locationId = useSelector((state) => state.dashboard.pages[page.id].locationId);
+    const location = useSelector((state) => state.dashboard.locations[locationId]);
     const handleSetLocation = (pageId, newLocation) => {
         handleCloseDialog();
         dispatch(setLocation({ pageId: pageId, location: newLocation }));
@@ -75,7 +76,7 @@ export default function Page() {
         }
     }, [dispatch, location?.latitude, location?.longitude]);
     
-    const weatherState = useSelector(state => selectWeatherByLocation(state, location));
+    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
     const weather = weatherState?.data;
 
 
