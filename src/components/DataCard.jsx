@@ -1,49 +1,54 @@
 import { useEffect } from 'react';
 import Graph from './Graph';
-import { Card, CardHeader, IconButton, Menu, MenuItem, CardContent, Typography } from "@mui/material";
+import { Card, CardHeader, IconButton, CardContent, Typography } from "@mui/material";
 import SettingsIcon from '@mui/icons-material/Settings';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { useDispatch, useSelector } from "react-redux";
-import { selectWeatherByLocation, selectCardLocationId } from "../utils/selectors";
+import { getWeather } from "../utils/weatherThunk";
+import { selectCardLocationId } from "../utils/selectors";
 
-export default function WeatherCard({ pageId, sectionId, cardId, cardData, editMode, openCardSettings, isBeingEdited }) {
+export default function DataCard({ pageId, sectionId, cardId, editMode, openCardSettings, isBeingEdited }) {
 
-    // LOCATION and WEATHER
+    const dispatch = useDispatch();
+    
+    // LOCATION
     const locationId = useSelector(state => selectCardLocationId(state, cardId));
     const location = useSelector((state) => state.dashboard.locations[locationId]);
-    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 
-    const weather = weatherState?.data;
+    // WEATHER
+    const weatherState = useSelector((state) => state.weather[locationId]);
+    useEffect(() => {
+        if(locationId) {
+            dispatch(getWeather(locationId));
+        }
+    }, [dispatch, locationId]);
+    
+    
 
     const renderContent = () => {
-        if (weatherState?.status === 'pending') {
+        if (weatherState) {
+            if (weatherState.status === 'pending') {
+                return (
+                    <Typography variant="h2">weatherState status: pending</Typography>
+                );
+            }
+
+            if (weatherState.status === 'rejected') {
+                return (
+                    <Typography variant="h2">weatherState status: rejected</Typography>
+                );
+            }
+
+            if (weatherState.status === 'fulfilled') {
+                return <Graph weather={weatherState.data} pageId={pageId} sectionId={sectionId} cardId={cardId} />;
+            }
+        }
+        
+        else {
             return (
-                <div className="w-full h-full flex flex-col justify-center items-center">
-                    <Typography variant="h2">Loading weather data...</Typography>
-                </div>
-            );
+                <Typography variant="h2">No weatherState</Typography>
+            )
         }
-
-        if (weatherState?.status === 'rejected') {
-            return (
-                <div className="w-full h-full flex flex-col justify-center items-center">
-                    <Typography variant="h2">Error loading data</Typography>
-                    <p>{weatherState.error}</p>
-                </div>
-            );
-        }
-
-        if (weatherState?.status === 'fulfilled' && weather) {
-            return <Graph weather={weather} pageId={pageId} sectionId={sectionId} cardId={cardId} cardData={cardData} editMode={editMode} />;
-        }
-
-        // Fallback for initial render or no location
-        return (
-            <div className="w-full h-full flex flex-col justify-center items-center">
-                <Typography variant="h2">No weather data</Typography>
-                <p>A location has not been selected for this page.</p>
-            </div>
-        );
     };
 
     return (
@@ -59,7 +64,7 @@ export default function WeatherCard({ pageId, sectionId, cardId, cardData, editM
                         <SettingsIcon />
                     </IconButton>
                 }
-                subheader={<><LocationPinIcon /> {location.name}</>}
+                subheader={<><LocationPinIcon /> {location?.name}</>}
                 sx={{width: '100%', p:0, position: 'absolute', justifyContent: 'space-between', fontSize: '1rem'}}
             ></CardHeader>
             <CardContent sx={{height: '100%', padding: '32px 8px 8px 8px !important'}}>

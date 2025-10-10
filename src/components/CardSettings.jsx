@@ -2,9 +2,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } from './DashboardSlice';
 import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { getPrettyParameterName } from '../utils/parameters';
+import { getPrettyParameterName, hourlyParameters } from '../utils/parameters';
+import { selectWeatherByLocation } from "../utils/selectors";
 
-export default function CardSettings({ cardId, weather, closeCardSettings }) {
+export default function CardSettings({ cardId, closeCardSettings }) {
 
     const dispatch = useDispatch();
     const sectionId = useSelector(state => state.dashboard.cards[cardId].sectionId);
@@ -22,7 +23,6 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
         const newParams = (typeof value === 'string' ? value.split(',') : value);
         dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
     }
-    const hourlyParams = Object.keys(weather.hourly.weatherVariables);
 
     // LEGEND
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
@@ -60,7 +60,7 @@ export default function CardSettings({ cardId, weather, closeCardSettings }) {
                 onChange={handleSetParameters}
                 renderValue={() => 'Select Parameters'}
             >
-                {hourlyParams.map((param) => (
+                {hourlyParameters.map((param) => (
                     <MenuItem key={param} value={param}>
                         <Checkbox checked={selectedParameters.includes(param)} color='secondary' />
                         <ListItemText primary={getPrettyParameterName(param)} />

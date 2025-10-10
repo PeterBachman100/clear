@@ -2,15 +2,15 @@ import { createSlice } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
-  activePageId: '2',
+  activePageId: '1',
   locations: {
-    '47.6751,-122.1930' : {
-      name: "Kirkland",
-      admin1: "Washington",
-      country: "United States",
-      latitude: 47.6751,
-      longitude: -122.1930,
-      timezone: 'America/Los_Angeles'
+    "45.97641,7.65861" : {
+      name: "Matterhorn",
+      admin1: null,
+      country: "Switzerland",
+      latitude: 45.97641,
+      longitude: 7.65861,
+      timezone: "Europe/Zurich"
     },
     '47.64177,-122.0804': {
       name: "Sammamish",
@@ -19,15 +19,47 @@ const initialDashboardState = {
       latitude: 47.64177,
       longitude: -122.0804,
       timezone: 'America/Los_Angeles'
-    }
+    },
+    "36.23962,-116.81133": {
+      name: "Death Valley",
+      admin1: "California",
+      country: "United States",
+      latitude: 36.23962,
+      longitude: -116.81133,
+      timezone: 'America/Los_Angeles'
+    },
+    "25.29847,91.58225": {
+      name: "Mawsynrām",
+      admin1: "Meghalaya",
+      country: "India",
+      latitude: 25.29847,
+      longitude: 91.58225,
+      timezone: "Asia/Kolkata"
+    },
+    "-78.15856,16.40626": {
+      name: "Antarctica",
+      admin1: null,
+      country: null,
+      latitude: -78.15856,
+      longitude: 16.40626,
+      timezone: "Antarctica/Syowa"
+    },
+    "-3.07583,37.35333": {
+      name: "Mount Kilimanjaro",
+      admin1: "Kilimanjaro",
+      country: "Tanzania",
+      latitude: -3.07583,
+      longitude: 37.35333,
+      timezone: "Africa/Dar_es_Salaam",
+    },
   },
   pages: {
     '1': {
       id: '1',
-      name: 'Kirkland',
-      locationId: '47.6751,-122.1930',
+      name: 'Around The World',
+      locationId: null,
       editMode: false,
-      sectionIds: ['1', '2', '3'],
+      sectionIds: ['1'],
     },
     '2': {
       id: '2',
@@ -44,37 +76,19 @@ const initialDashboardState = {
       pageId: '1',
       locationId: null,
       layout: [
-        {i: '1', x: 0, y: 0, h: 3, w: 12},
+        {i: '1', x: 0, y: 0, h: 3, w: 6},
+        {i: '2', x: 6, y: 0, h: 3, w: 6},
+        {i: '3', x: 0, y: 3, h: 3, w: 6},
+        {i: '4', x: 6, y: 3, h: 3, w: 6},
+        {i: '5', x: 0, y: 6, h: 3, w: 12},
       ],
-      cardIds: ['1'],
-    },
-    '2': {
-      id: '2',
-      name: 'Next 3 Days',
-      pageId: '1',
-      locationId: null,
-      layout: [
-        {i: '2', x: 0, y: 0, h: 2, w: 4},
-        {i: '3', x: 4, y: 0, h: 2, w: 4},
-        {i: '4', x: 8, y: 0, h: 2, w: 4},
-      ],
-      cardIds: ['2', '3', '4'],
-    },
-    '3': {
-      id: '3',
-      name: 'Next 2 Weeks',
-      pageId: '1',
-      locationId: null,
-      layout: [
-        {i: '5', x: 0, y: 0, h: 3, w: 12},
-      ],
-      cardIds: ['5'],
+      cardIds: ['1','2', '3', '4', '5'],
     },
     '4': {
       id: '4',
       name: 'Today',
       pageId: '2',
-      locationId: '47.6751,-122.1930',
+      locationId: null,
       layout: [
         {i: '6', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -107,51 +121,52 @@ const initialDashboardState = {
     '1': {
       id: '1',
       sectionId: '1',
-      locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      locationId: "45.97641,7.65861",
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m'],
       visibleDataRange: [5, 23],
-      legendVisible: true,
-      rangeSliderVisible: true,
+      legendVisible: false,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
     },
     '2': {
       id: '2',
-      sectionId: '2',
-      locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [29, 47],
+      sectionId: '1',
+      locationId: "36.23962,-116.81133",
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m'],
+      visibleDataRange: [5, 23],
       legendVisible: false,
       rangeSliderVisible: false,
-      hourlyLabelsVisible: false,
+      hourlyLabelsVisible: true,
     },
     '3': {
       id: '3',
-      sectionId: '2',
-      locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [53, 71],
+      sectionId: '1',
+      locationId:  "25.29847,91.58225",
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m'],
+      visibleDataRange: [5, 23],
       legendVisible: false,
       rangeSliderVisible: false,
-      hourlyLabelsVisible: false,
+      hourlyLabelsVisible: true,
     },
     '4': {
       id: '4',
-      sectionId: '2',
-      locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
-      visibleDataRange: [77, 95],
+      sectionId: '1',
+      locationId: "-78.15856,16.40626",
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m'],
+      visibleDataRange: [5, 23],
       legendVisible: false,
       rangeSliderVisible: false,
-      hourlyLabelsVisible: false,
+      hourlyLabelsVisible: true,
     },
     '5': {
       id: '5',
-      sectionId: '3',
-      locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 336],
+      sectionId: '1',
+      locationId: "-3.07583,37.35333",
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m'],
+      visibleDataRange: [5, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
+      hourlyLabelsVisible: true,
     },
     '6': {
       id: '6',
@@ -215,7 +230,9 @@ export const dashboardSlice = createSlice({
     setLocation: (state, action) => {
       const { pageId, location } = action.payload;
       if (state.pages[pageId]) {
-        state.pages[pageId].location = location;
+        const newLocationId = `${location.latitude},${location.longitude}`
+        state.pages[pageId].locationId = newLocationId;
+        state.locations[newLocationId] = {name: location.name, admin1: location.admin1, country: location.country, latitude: location.latitude, longitude: location.longitude, timezone: location.timezone};
       }
     },
 
@@ -343,7 +360,7 @@ export const dashboardSlice = createSlice({
     },
 
   },
-})
+});
 
 export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } = dashboardSlice.actions;
 

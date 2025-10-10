@@ -1,5 +1,5 @@
 import formatWeather from "./formatWeather";
-import { currentParameters ,hourlyParameters, dailyParameters } from "./parameters";
+import { currentParameters, hourlyParameters, dailyParameters } from "./parameters";
 
 export async function fetchWeather(location) {
     
@@ -29,8 +29,6 @@ export async function fetchWeather(location) {
         
         const weatherData = await response.json();
         const formattedWeatherData = formatWeather(weatherData);
-        console.log(weatherData);
-        console.log(formattedWeatherData);
         return formattedWeatherData;
 
     } catch (error) {

@@ -6,7 +6,10 @@ const getLocationId = (state, locationId) => locationId;
 export const selectWeatherByLocation = createSelector(
   [getWeatherSlice, getLocationId],
   (weatherSlice, locationId) => {
-    return weatherSlice[locationId] || null;
+    if (!weatherSlice[locationId]) {
+      return 'No such weather key found';
+    }
+    return weatherSlice[locationId];
   }
 );
 

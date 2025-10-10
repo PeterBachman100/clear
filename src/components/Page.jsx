@@ -7,8 +7,7 @@ import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux'
 import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } from "./DashboardSlice";
-import { fetchAndStoreWeather } from "../utils/weatherThunk";
-import { selectWeatherByLocation } from "../utils/selectors";
+
       
 export default function Page() {
 
@@ -67,18 +66,6 @@ export default function Page() {
     const handleToggleEditMode = (pageId) => {
         dispatch(toggleEditMode({pageId: pageId}));
     }
-    
-
-    // Weather
-    useEffect(() => {
-        if (location) {
-            dispatch(fetchAndStoreWeather(location));
-        }
-    }, [dispatch, location?.latitude, location?.longitude]);
-    
-    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
-    const weather = weatherState?.data;
-
 
     // Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -132,7 +119,7 @@ export default function Page() {
                             <MoreVertIcon />
                         </IconButton>
                     }
-                    subheader={<><LocationPinIcon /> {location.name}</>}
+                    subheader={<><LocationPinIcon /> {location?.name || 'No page-level location selected'}</>}
                     sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse'}}
                 />
                 <Menu
@@ -225,7 +212,7 @@ export default function Page() {
                 sx={{position: 'relative'}}
             >
                 <IconButton variant="outlined" color="secondary" sx={{position: 'absolute', top: 0, right: 0}} onClick={handleCloseCardSettings}><CloseIcon /></IconButton>
-                {cardSettingsId && <CardSettings cardId={cardSettingsId} closeCardSettings={handleCloseCardSettings} weather={weather} />}
+                {cardSettingsId && <CardSettings cardId={cardSettingsId} closeCardSettings={handleCloseCardSettings} />}
             </Drawer>
         </>
     );

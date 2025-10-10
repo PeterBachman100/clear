@@ -12,12 +12,12 @@ const parseTimesFromUnix = (times) => {
     return times.map(t => t * 1000); // Multiply by 1000 for milliseconds
 };
 
-export default function Graph({ weather, cardId, cardData }) {
+export default function Graph({ weather, cardId }) {
 
     const dispatch = useDispatch();
 
-    const selectedParameters = cardData.selectedParameters;
-    const visibleDataRange = cardData.visibleDataRange;
+    const selectedParameters = useSelector((state) => state.dashboard.cards[cardId].selectedParameters);
+    const visibleDataRange = useSelector((state) => state.dashboard.cards[cardId].visibleDataRange);
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
     const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
     const isHourlyLabelsVisible = useSelector(state => state.dashboard.cards[cardId].hourlyLabelsVisible);

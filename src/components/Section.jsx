@@ -22,10 +22,11 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     const dispatch = useDispatch();
 
     const section = useSelector(state => state.dashboard.sections[sectionId]);
-    const cards = useSelector(state => state.dashboard.sections[sectionId]?.cardIds
-        .map(cardId => state.dashboard.cards[cardId])
-        .filter(card => card) // Filter out null/undefined values
-    );
+    const cardIds = useSelector(state => state.dashboard.sections[sectionId].cardIds);
+
+    // LOCATION
+    const locationId = useSelector(state => selectSectionLocationId(state, sectionId, pageId));
+    const location = useSelector(state => state.dashboard.locations[locationId]);
 
     const handleDeleteSection = () => {
         dispatch(deleteSection({pageId, sectionId}));
@@ -72,15 +73,11 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
         dispatch(addCard({ sectionId }));
     }
 
-    // LOCATION and WEATHER
-    const locationId = useSelector(state => selectSectionLocationId(state, sectionId, pageId));
-    const location = useSelector(state => state.dashboard.locations[locationId]);
-    const weatherState = useSelector(state => selectWeatherByLocation(state, locationId));
 
     return (
         <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
             <CardHeader
-                subheader={<><LocationPinIcon /> {location.name}</>}
+                subheader={<><LocationPinIcon /> {location?.name || 'No section-level location selected'}</>}
                 title={
                     editingSectionName ?
                         <div className="flex gap-4">
@@ -155,10 +152,10 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
                     onLayoutChange={handleLayoutChange}
                 >
-                    {cards.map((card) => {
+                    {cardIds.map((cardId) => {
                         return (
-                            <div key={card.id}>
-                                <DataCard pageId={pageId} sectionId={sectionId} cardId={card.id} cardData={card} editMode={editMode} openCardSettings={openCardSettings} isBeingEdited={cardSettingsId === card.id} />
+                            <div key={cardId}>
+                                <DataCard pageId={pageId} sectionId={sectionId} cardId={cardId} openCardSettings={openCardSettings} />
                             </div>
                         );
                     })}

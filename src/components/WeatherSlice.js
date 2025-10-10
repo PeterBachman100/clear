@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { fetchAndStoreWeather } from '../utils/weatherThunk';
+import { getWeather } from '../utils/weatherThunk';
 
 const initialState = {};
 
@@ -8,10 +8,23 @@ const getLocationKey = (location) => `${location?.latitude},${location?.longitud
 export const weatherSlice = createSlice({
   name: 'weather',
   initialState,
-  reducers: {},
+  reducers: {
+    ensureLocationEntry: (state, action) => {
+      const locationId = action.payload;
+      if (state[locationId]) {
+        return;
+      }
+      state[locationId] = {
+        data: null,
+        status: 'initial',
+        lastFetched: null,
+        error: null,
+      }
+    }
+  },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchAndStoreWeather.pending, (state, action) => {
+      .addCase(getWeather.pending, (state, action) => {
         const { location } = action.meta.arg;
         const locationKey = getLocationKey(location);
         state[locationKey] = {
@@ -21,7 +34,7 @@ export const weatherSlice = createSlice({
           error: null,
         };
       })
-      .addCase(fetchAndStoreWeather.fulfilled, (state, action) => {
+      .addCase(getWeather.fulfilled, (state, action) => {
         const { weatherData, location } = action.payload;
         const locationKey = getLocationKey(location);
         state[locationKey] = {
@@ -31,7 +44,7 @@ export const weatherSlice = createSlice({
           error: null,
         };
       })
-      .addCase(fetchAndStoreWeather.rejected, (state, action) => {
+      .addCase(getWeather.rejected, (state, action) => {
         const { location } = action.meta.arg;
         const locationKey = getLocationKey(location);
         state[locationKey] = {
@@ -44,7 +57,7 @@ export const weatherSlice = createSlice({
   },
 });
 
-export const { storeWeather } = weatherSlice.actions;
+export const { ensureLocationEntry } = weatherSlice.actions;
 
 export default weatherSlice.reducer;
 
