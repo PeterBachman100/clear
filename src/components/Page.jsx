@@ -57,9 +57,10 @@ export default function Page() {
     // LOCATION
     const locationId = useSelector((state) => state.dashboard.pages[page.id].locationId);
     const location = useSelector((state) => state.dashboard.locations[locationId]);
-    const handleSetLocation = (pageId, newLocation) => {
+
+    const handleSetLocation = (newLocation) => {
         handleCloseDialog();
-        dispatch(setLocation({ pageId: pageId, location: newLocation }));
+        dispatch(setLocation({ itemCategory: 'pages', itemId: page.id, location: newLocation }));
     };
 
     // LAYOUT
@@ -138,7 +139,7 @@ export default function Page() {
                 >
                     <MenuItem onClick={() => {handleOpenDialog()}}>
                         <EditLocationOutlinedIcon sx={{ mr: 1 }} />
-                        Set Location
+                        Set Page Location
                     </MenuItem>
                     <MenuItem onClick={() => {
                         handleAddSection();
@@ -194,10 +195,10 @@ export default function Page() {
                 maxWidth="lg"
             >
                 <DialogTitle id="dialog-title">
-                    {"Set Location"}
+                    {"Set Page Location"}
                 </DialogTitle>
                 <DialogContent>
-                    <LocationSearch page={page} onSelect={handleSetLocation} />
+                    <LocationSearch onSelect={handleSetLocation} />
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={handleCloseDialog} variant="outlined" color="error">

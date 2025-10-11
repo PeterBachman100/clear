@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Autocomplete, TextField, Box, Typography } from "@mui/material";
 import useDebouncedValue from "../utils/debounce";
 
-export default function LocationSearch({ page, onSelect }) {
+export default function LocationSearch({ onSelect }) {
     const [searchTerm, setSearchTerm] = useState('');
     const debouncedSearchTerm = useDebouncedValue(searchTerm, 300);
     const [searchResults, setSearchResults] = useState([]);
@@ -35,7 +35,7 @@ export default function LocationSearch({ page, onSelect }) {
             }}
             onChange={(event, newValue) => {
                 if (newValue) {
-                    onSelect(page.id, {
+                    onSelect({
                         name: newValue.name,
                         admin1: newValue.admin1,
                         country: newValue.country,

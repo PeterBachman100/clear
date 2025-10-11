@@ -1,9 +1,10 @@
+import { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } from './DashboardSlice';
-import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch } from '@mui/material';
+import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation } from './DashboardSlice';
+import { FormControl, InputLabel, Select, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import LocationSearch from './LocationSearch';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { getPrettyParameterName, hourlyParameters } from '../utils/parameters';
-import { selectWeatherByLocation } from "../utils/selectors";
 
 export default function CardSettings({ cardId, closeCardSettings }) {
 
@@ -42,10 +43,23 @@ export default function CardSettings({ cardId, closeCardSettings }) {
         dispatch(setHourlyLabelsVisibility({cardId, visible: event.target.checked}));
     }
 
+    // LOCATION
+    const handleSetLocation = (newLocation) => {
+        handleCloseDialog();
+        dispatch(setLocation({ itemCategory: 'cards', itemId: sectionId, location: newLocation }));
+    };
+    // Location Dialog
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+    };
+    const handleCloseDialog = () => {setDialogOpen(false)};
+
    
     
 
    return (
+    <>
     <Box sx={{padding: '16px', display: 'flex', justifyContent: 'center'}}>
         <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
         <FormControlLabel control={<Switch checked={isRangeSliderVisible} onChange={toggleRangeSliderVisibility} color='secondary'/>} label="Range Slider" />
@@ -68,8 +82,29 @@ export default function CardSettings({ cardId, closeCardSettings }) {
                 ))}
             </Select>
         </FormControl>
+        <Button onClick={() => {handleOpenDialog()}} color='secondary' variant='outlined'>Set Card Location</Button>
         <Button onClick={handleDeleteCard} color='error' variant='outlined'><DeleteIcon /> Delete Card</Button>
         
     </Box>
+    <Dialog
+        open={dialogOpen}
+        onClose={handleCloseDialog}
+        aria-labelledby="dialog-title"
+        fullWidth 
+        maxWidth="lg"
+    >
+        <DialogTitle id="dialog-title">
+            {"Set Card Location"}
+        </DialogTitle>
+        <DialogContent>
+            <LocationSearch onSelect={handleSetLocation} />
+        </DialogContent>
+        <DialogActions>
+            <Button onClick={handleCloseDialog} variant="outlined" color="error">
+                Cancel
+            </Button>
+        </DialogActions>
+    </Dialog>
+    </>
    );
 }

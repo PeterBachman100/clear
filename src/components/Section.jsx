@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Card, CardHeader, CardContent, Typography, IconButton, Menu, MenuItem, TextField } from "@mui/material";
+import { Button, Card, CardHeader, CardContent, Typography, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -7,10 +7,12 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import { EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material'
 import DataCard from "./DataCard";
+import LocationSearch from "./LocationSearch";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { updateLayout, updateSectionName, deleteSection, addCard } from "./DashboardSlice";
-import { selectWeatherByLocation, selectSectionLocationId } from "../utils/selectors";
+import { updateLayout, updateSectionName, deleteSection, addCard, setLocation } from "./DashboardSlice";
+import { selectSectionLocationId } from "../utils/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import "/node_modules/react-grid-layout/css/styles.css";
 import "/node_modules/react-resizable/css/styles.css";
@@ -27,6 +29,23 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     // LOCATION
     const locationId = useSelector(state => selectSectionLocationId(state, sectionId, pageId));
     const location = useSelector(state => state.dashboard.locations[locationId]);
+
+    const handleSetLocation = (newLocation) => {
+        handleCloseDialog();
+        dispatch(setLocation({ itemCategory: 'sections', itemId: sectionId, location: newLocation }));
+    };
+
+     // Location Dialog
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const handleOpenDialog = () => {
+        setDialogOpen(true);
+        handleCloseMenu();
+    };
+    const handleCloseDialog = () => {setDialogOpen(false)};
+
+
+
+
 
     const handleDeleteSection = () => {
         dispatch(deleteSection({pageId, sectionId}));
@@ -64,6 +83,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     };
 
     // LAYOUT
+    const layout = useSelector((state) => state.dashboard.sections[sectionId].layout);
     const handleLayoutChange = (newLayout) => {
         dispatch(updateLayout({ sectionId, newLayout }));
     };
@@ -75,6 +95,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
 
 
     return (
+        <>
         <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
             <CardHeader
                 subheader={<><LocationPinIcon /> {location?.name || 'No section-level location selected'}</>}
@@ -124,6 +145,10 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                     <AddIcon sx={{ mr: 1}} color="success" />
                     Add a Card
                 </MenuItem>
+                <MenuItem onClick={() => {handleOpenDialog()}}>
+                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
+                    Set Section Location
+                </MenuItem>
                 <MenuItem onClick={() => {
                     setEditingSectionName(true);
                     handleCloseMenu();
@@ -142,7 +167,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
             <CardContent sx={{p:0}}>
                 <ResponsiveReactGridLayout
                     className="layout"
-                    layouts={{ lg: section.layout, md: section.layout, sm: section.layout, xs: section.layout, xxs: section.layout }}
+                    layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
                     breakpoints={{ lg: 1200, md: 1000, sm: 600, xs: 400, xxs: 0 }}
                     cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
                     rowHeight={75}
@@ -162,7 +187,26 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                 </ResponsiveReactGridLayout>
             </CardContent>
         </Card>
-
+        <Dialog
+            open={dialogOpen}
+            onClose={handleCloseDialog}
+            aria-labelledby="dialog-title"
+            fullWidth 
+            maxWidth="lg"
+        >
+            <DialogTitle id="dialog-title">
+                {"Set Section Location"}
+            </DialogTitle>
+            <DialogContent>
+                <LocationSearch onSelect={handleSetLocation} />
+            </DialogContent>
+            <DialogActions>
+                <Button onClick={handleCloseDialog} variant="outlined" color="error">
+                    Cancel
+                </Button>
+            </DialogActions>
+        </Dialog>
+        </>
     );
 }
 
