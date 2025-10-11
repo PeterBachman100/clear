@@ -229,17 +229,21 @@ export const dashboardSlice = createSlice({
     // LOCATION
     setLocation: (state, action) => {
       const { itemCategory, itemId, location } = action.payload;
-      const newLocationId = `${location.latitude},${location.longitude}`
+      if(location === null) {
+        state[itemCategory][itemId].locationId = null;
+      } else {
+        const newLocationId = `${location.latitude},${location.longitude}`
+        state[itemCategory][itemId].locationId = newLocationId;
+        state.locations[newLocationId] = {
+          name: location.name, 
+          admin1: location.admin1, 
+          country: location.country, 
+          latitude: location.latitude, 
+          longitude: location.longitude, 
+          timezone: location.timezone
+        };
+      }
       
-      state[itemCategory][itemId].locationId = newLocationId;
-      state.locations[newLocationId] = {
-        name: location.name, 
-        admin1: location.admin1, 
-        country: location.country, 
-        latitude: location.latitude, 
-        longitude: location.longitude, 
-        timezone: location.timezone
-      };
     },
 
 

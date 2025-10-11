@@ -45,15 +45,15 @@ export default function CardSettings({ cardId, closeCardSettings }) {
 
     // LOCATION
     const handleSetLocation = (newLocation) => {
-        handleCloseDialog();
+        handleCloseCardDialog();
         dispatch(setLocation({ itemCategory: 'cards', itemId: sectionId, location: newLocation }));
     };
     // Location Dialog
-    const [dialogOpen, setDialogOpen] = useState(false);
-    const handleOpenDialog = () => {
-        setDialogOpen(true);
+    const [cardDialogOpen, setCardDialogOpen] = useState(false);
+    const handleOpenCardDialog = () => {
+        setCardDialogOpen(true);
     };
-    const handleCloseDialog = () => {setDialogOpen(false)};
+    const handleCloseCardDialog = () => {setCardDialogOpen(false)};
 
    
     
@@ -82,14 +82,13 @@ export default function CardSettings({ cardId, closeCardSettings }) {
                 ))}
             </Select>
         </FormControl>
-        <Button onClick={() => {handleOpenDialog()}} color='secondary' variant='outlined'>Set Card Location</Button>
+        <Button onClick={() => {handleOpenCardDialog()}} color='secondary' variant='outlined'>Set Card Location</Button>
         <Button onClick={handleDeleteCard} color='error' variant='outlined'><DeleteIcon /> Delete Card</Button>
         
     </Box>
     <Dialog
-        open={dialogOpen}
-        onClose={handleCloseDialog}
-        aria-labelledby="dialog-title"
+        open={cardDialogOpen}
+        onClose={handleCloseCardDialog}
         fullWidth 
         maxWidth="lg"
     >
@@ -100,7 +99,8 @@ export default function CardSettings({ cardId, closeCardSettings }) {
             <LocationSearch onSelect={handleSetLocation} />
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleCloseDialog} variant="outlined" color="error">
+            <Button onClick={() => handleSetLocation(null)} variant="outlined" color="secondary">Set to "Null"</Button>
+            <Button onClick={handleCloseCardDialog} variant="outlined" color="error">
                 Cancel
             </Button>
         </DialogActions>

@@ -116,7 +116,6 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                     }
                 action={
                     <IconButton
-                        aria-describedby={id} 
                         onClick={handleOpenMenu}
                     >
                         <MoreVertIcon />
@@ -190,7 +189,6 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
         <Dialog
             open={dialogOpen}
             onClose={handleCloseDialog}
-            aria-labelledby="dialog-title"
             fullWidth 
             maxWidth="lg"
         >
@@ -201,6 +199,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                 <LocationSearch onSelect={handleSetLocation} />
             </DialogContent>
             <DialogActions>
+                <Button onClick={() => handleSetLocation(null)} variant="outlined" color="secondary">Set to "Null"</Button>
                 <Button onClick={handleCloseDialog} variant="outlined" color="error">
                     Cancel
                 </Button>

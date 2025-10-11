@@ -56,7 +56,6 @@ export default function DataCard({ pageId, sectionId, cardId, editMode, openCard
             <CardHeader
                 action={
                     <IconButton
-                        aria-describedby={cardId}
                         onClick={() => {
                             openCardSettings(cardId);
                         }}

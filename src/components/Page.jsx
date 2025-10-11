@@ -68,7 +68,7 @@ export default function Page() {
         dispatch(toggleEditMode({pageId: pageId}));
     }
 
-    // Location Dialog
+    // Page Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
     const handleOpenDialog = () => {
         setDialogOpen(true);
@@ -114,7 +114,7 @@ export default function Page() {
                     }
                     action={
                         <IconButton
-                            aria-describedby={id} 
+                            
                             onClick={handleOpenMenu}
                         >
                             <MoreVertIcon />
@@ -190,7 +190,6 @@ export default function Page() {
             <Dialog
                 open={dialogOpen}
                 onClose={handleCloseDialog}
-                aria-labelledby="dialog-title"
                 fullWidth 
                 maxWidth="lg"
             >
@@ -201,6 +200,7 @@ export default function Page() {
                     <LocationSearch onSelect={handleSetLocation} />
                 </DialogContent>
                 <DialogActions>
+                    <Button onClick={() => handleSetLocation(null)} variant="outlined" color="secondary">Set to "Null"</Button>
                     <Button onClick={handleCloseDialog} variant="outlined" color="error">
                         Cancel
                     </Button>
