@@ -43,10 +43,6 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
     };
     const handleCloseDialog = () => {setDialogOpen(false)};
 
-
-
-
-
     const handleDeleteSection = () => {
         dispatch(deleteSection({pageId, sectionId}));
         handleCloseMenu();

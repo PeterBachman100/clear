@@ -31,6 +31,7 @@ export default function Page() {
     const open = Boolean(anchorEl);
     const id = open ? 'section-menu' : undefined;
 
+    // Delete Page
     const handleDeletePage = () => {
         dispatch(deletePage({pageId: page.id}));
         handleCloseMenu();
@@ -75,23 +76,6 @@ export default function Page() {
         handleCloseMenu();
     };
     const handleCloseDialog = () => {setDialogOpen(false)};
-    
-
-    // Card settings
-    const [cardSettingsOpen, setCardSettingsOpen] = useState(false);
-    const [cardSettingsId, setCardSettingsId] = useState(null);
-
-    const handleOpenCardSettings = (cardId) => {
-        setCardSettingsId(cardId);
-        setCardSettingsOpen(true);
-    }
-    
-    const handleCloseCardSettings = () => {
-        setCardSettingsOpen(false);
-        setCardSettingsId(null);
-    }
-
-    
 
     return (
         <>
@@ -112,14 +96,7 @@ export default function Page() {
                             :
                             <>{showName && <Typography variant="h1">{page.name}</Typography>}</> 
                     }
-                    action={
-                        <IconButton
-                            
-                            onClick={handleOpenMenu}
-                        >
-                            <MoreVertIcon />
-                        </IconButton>
-                    }
+                    action={<IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
                     subheader={<><LocationPinIcon /> {location?.name || 'No page-level location selected'}</>}
                     sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse'}}
                 />
@@ -181,7 +158,7 @@ export default function Page() {
                     <div>
                         {page.sectionIds.map((sectionId) => {
                             return (
-                                <Section key={sectionId} pageId={page.id} editMode={editMode} sectionId={sectionId} openCardSettings={handleOpenCardSettings} cardSettingsId={cardSettingsId} />
+                                <Section key={sectionId} pageId={page.id} editMode={editMode} sectionId={sectionId} />
                             );
                         })}
                     </div>
@@ -206,15 +183,6 @@ export default function Page() {
                     </Button>
                 </DialogActions>
             </Dialog>
-            <Drawer
-                anchor="bottom"
-                open={cardSettingsOpen}
-                onClose={handleCloseCardSettings}
-                sx={{position: 'relative'}}
-            >
-                <IconButton variant="outlined" color="secondary" sx={{position: 'absolute', top: 0, right: 0}} onClick={handleCloseCardSettings}><CloseIcon /></IconButton>
-                {cardSettingsId && <CardSettings cardId={cardSettingsId} closeCardSettings={handleCloseCardSettings} />}
-            </Drawer>
         </>
     );
 }
