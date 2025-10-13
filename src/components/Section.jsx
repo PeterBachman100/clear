@@ -117,7 +117,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                         <MoreVertIcon />
                     </IconButton>
                 }
-                sx={{p: 1, display: 'flex', flexDirection: 'row', justifyContent: 'center', width: '100%'}}
+                sx={{p: 1, display: 'flex', flexDirection: 'row-reverse', justifyContent: 'center', width: '100%'}}
             />
             <Menu
                 id={id}
