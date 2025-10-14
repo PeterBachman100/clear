@@ -227,16 +227,32 @@ export default function Graph({ weather, cardId }) {
     // end memo-ized x axes
     
     // DAY REFERENCE LINES
-    const getDailyLinePositions = (timestamps) => {
+    const getDailyLinePositions = (timestamps, timezone) => {
         const dailyTimestamps = [];
         let prevDate = null;
+
+        const dateFormatter = new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            timeZone: timezone
+        });
+
+        const weekdayFormatter = new Intl.DateTimeFormat('en-US', {
+            weekday: 'short',
+            timeZone: timezone,
+        });
+
+
         timestamps.forEach(timestamp => {
-            const currentDate = new Date(timestamp);
-            if (!prevDate || currentDate.getDate() !== prevDate.getDate()) {
-                const day = currentDate.toLocaleDateString('en-US', {
-                    weekday: 'short'
-                });
-                dailyTimestamps.push({timestamp: currentDate.getTime(), day: day});
+            const timestampMS = timestamp * 1000;
+            const date = new Date(timestampMS);
+
+            const currentDate = dateFormatter.format(date);
+
+            if (!prevDate || currentDate !== prevDate) {
+                const weekday = weekdayFormatter.format(date);
+                dailyTimestamps.push({timestamp: timestampMS, day: weekday});
             }
             prevDate = currentDate;
         });
@@ -244,7 +260,7 @@ export default function Graph({ weather, cardId }) {
     };
 
     const renderedDayReferenceLines = useMemo(() => {
-        return getDailyLinePositions(parseTimesFromUnix(getVisibleRange(weather.hourly.time))).map((timestamp, index) => (
+        return getDailyLinePositions(getVisibleRange(weather.hourly.time), weather.location.timeZone).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
                 x={timestamp.timestamp}
@@ -259,7 +275,7 @@ export default function Graph({ weather, cardId }) {
     }, [weather.hourly.time, visibleDataRange]);
 
     const fullRangeDayReferenceLines = useMemo(() => {
-        return getDailyLinePositions(weather.hourly.time).map((timestamp, index) => (
+        return getDailyLinePositions(weather.hourly.time, weather.location.timezone).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
                 x={timestamp.timestamp}
