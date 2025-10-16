@@ -3,14 +3,22 @@ import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxi
 import { Slider } from "@mui/material";
 import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
 import { getPrettyParameterName } from "../utils/parameters";
-import { interpolateRdYlBu, interpolateRdYlGn } from "d3-scale-chromatic";
+import { interpolateRdYlBu, interpolateRdYlGn, interpolateSpectral, interpolateTurbo } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
 
-const parseTimesFromUnix = (times) => {
-    return times.map(t => t * 1000); // Multiply by 1000 for milliseconds
-};
+const convertTimestampsToDateObjects = (timestamps) => {
+    return timestamps.map(timestamp => new Date(timestamp * 1000));
+}
+
+const convertDateToTimezoneBasedString = (date, timezone) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        timeZone: timezone,
+    });
+    return formatter.format(date);
+}
 
 export default function Graph({ weather, cardId }) {
 
@@ -64,7 +72,7 @@ export default function Graph({ weather, cardId }) {
                         type: 'continuous',
                         min: 1,
                         max: 110,
-                        color: (t) => interpolateRdYlBu(1 - t),
+                        color: (t) => interpolateTurbo(t),
                     };
             }
             if (unit === 'dimensionless') {
@@ -192,32 +200,28 @@ export default function Graph({ weather, cardId }) {
                 disableLine: true,
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
-                tickMinStep: (1000 * 60 * 60),
-                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
-                valueFormatter: (timestamp) => {
-                    return new Date(timestamp).toLocaleTimeString('en-US', {
-                        hour: 'numeric', hour12: true, timeZone: weather.location.timezone
-                    });
-                },
+                tickMinStep: (1000 * 60 * 60), // 1 hour
+                data: convertTimestampsToDateObjects(getVisibleRange(weather.hourly.time)),
+                valueFormatter: date => convertDateToTimezoneBasedString(date, weather.location.timezone),
             },
             {
                 id: 'uv-band',
                 scaleType: 'band',
                 position: 'none',
-                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
+                data: getVisibleRange(weather.hourly.time),
                 barGapRatio: '-1',
             },
             {
                 id: 'hours-band',
                 scaleType: 'band',
                 position: 'none',
-                data: parseTimesFromUnix(getVisibleRange(weather.hourly.time)),
+                data: getVisibleRange(weather.hourly.time),
             },
         ];
 
         const xAxisFullRange = xAxis.map((axis) => {
             const x = {...axis};
-            x.data = parseTimesFromUnix(weather.hourly.time);
+            x.data = convertTimestampsToDateObjects(weather.hourly.time);
             x.position = 'none';
             return x;
         });
@@ -227,43 +231,32 @@ export default function Graph({ weather, cardId }) {
     // end memo-ized x axes
     
     // DAY REFERENCE LINES
-    const getDailyLinePositions = (timestamps, timezone) => {
-        const dailyTimestamps = [];
-        let prevDate = null;
+    const getDayStarts = (timestamps) => {
+        const dayStartTimestamps = [];
+        let prevDay = null;
 
-        const dateFormatter = new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: '2-digit',
-            day: '2-digit',
-            timeZone: timezone
+        const dayFormatter = new Intl.DateTimeFormat('en-US', {
+            weekday: 'long',
+            timeZone: weather.location.timezone,
         });
-
-        const weekdayFormatter = new Intl.DateTimeFormat('en-US', {
-            weekday: 'short',
-            timeZone: timezone,
-        });
-
 
         timestamps.forEach(timestamp => {
-            const timestampMS = timestamp * 1000;
-            const date = new Date(timestampMS);
+            const date = new Date(timestamp * 1000);
+            const currentDay = dayFormatter.format(date);
 
-            const currentDate = dateFormatter.format(date);
-
-            if (!prevDate || currentDate !== prevDate) {
-                const weekday = weekdayFormatter.format(date);
-                dailyTimestamps.push({timestamp: timestampMS, day: weekday});
+            if (!prevDay || currentDay !== prevDay) {
+                dayStartTimestamps.push({date: date, day: currentDay});
             }
-            prevDate = currentDate;
+            prevDay = currentDay;
         });
-        return dailyTimestamps;
+        return dayStartTimestamps;
     };
 
-    const renderedDayReferenceLines = useMemo(() => {
-        return getDailyLinePositions(getVisibleRange(weather.hourly.time), weather.location.timeZone).map((timestamp, index) => (
+    const dayReferenceLines = useMemo(() => {
+        return getDayStarts(getVisibleRange(weather.hourly.time)).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
-                x={timestamp.timestamp}
+                x={timestamp.date}
                 xAxisId="hours"
                 label={timestamp.day}
                 labelAlign="start"
@@ -275,10 +268,10 @@ export default function Graph({ weather, cardId }) {
     }, [weather.hourly.time, visibleDataRange]);
 
     const fullRangeDayReferenceLines = useMemo(() => {
-        return getDailyLinePositions(weather.hourly.time, weather.location.timezone).map((timestamp, index) => (
+        return getDayStarts(weather.hourly.time).map((timestamp, index) => (
             <ChartsReferenceLine
                 key={index}
-                x={timestamp.timestamp}
+                x={timestamp.date}
                 xAxisId="hours"
                 label={timestamp.day[0]}
                 labelAlign="start"
@@ -316,7 +309,7 @@ export default function Graph({ weather, cardId }) {
                             
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
-                            {renderedDayReferenceLines}
+                            {dayReferenceLines}
                             <ChartsAxisHighlight x='line' />
                             {tooltipAnchorRef.current &&
                                 <ChartsTooltip anchorEl={anchorEl} placement="top"
@@ -357,7 +350,7 @@ export default function Graph({ weather, cardId }) {
                             <AreaPlot skipAnimation />
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                            {fullRangeDayReferenceLines}
+                            {/* {fullRangeDayReferenceLines} */}
                         </ChartsSurface>           
                     </ChartDataProvider>
                 </div>
