@@ -22,8 +22,8 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
 
     // LOCATION
     const handleSetLocation = (newLocation) => {
+        dispatch(setLocation({ itemCategory: 'cards', itemId: cardId, location: newLocation }));
         handleCloseDialog();
-        dispatch(setLocation({ itemCategory: 'cards', itemId: sectionId, location: newLocation }));
     };
     // Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
