@@ -115,7 +115,7 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
             <CardHeader
                 action={<IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
                 subheader={<><LocationPinIcon /> {location?.name}</>}
-                sx={{width: '100%', p:0, position: 'absolute', justifyContent: 'space-between', fontSize: '1rem'}}
+                sx={{width: '100%', p:0, position: 'absolute', flexDirection: 'row-reverse', justifyContent: 'space-between', fontSize: '1rem'}}
             ></CardHeader>
             <Menu
                 id={id}

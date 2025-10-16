@@ -262,7 +262,7 @@ export default function Graph({ weather, cardId }) {
                 label={timestamp.day}
                 labelAlign="start"
                 labelStyle={{fontSize: 14, transform: 'translateY(-16px)',}}
-                lineStyle={{ stroke: '#ccc', strokeWidth: 1, strokeDasharray: '4 4' }}
+                lineStyle={{ stroke: '#000', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
         ));
@@ -305,12 +305,13 @@ export default function Graph({ weather, cardId }) {
                         <ChartsSurface 
                             sx={{width: '100%', flex: '1',}}>
                             <AreaPlot skipAnimation />
+                            {dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
-                            {dayReferenceLines}
+                            
                             <ChartsAxisHighlight x='line' />
                             {tooltipAnchorRef.current &&
                                 <ChartsTooltip anchorEl={anchorEl} placement="top"
