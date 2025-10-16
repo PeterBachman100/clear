@@ -197,6 +197,7 @@ export default function Graph({ weather, cardId }) {
                 id: 'hours',
                 scaleType: 'time',
                 position: isHourlyLabelsVisible ? 'bottom' : 'none',
+                domainLimit: 'strict',
                 disableLine: true,
                 disableTicks: true,
                 tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
@@ -350,7 +351,7 @@ export default function Graph({ weather, cardId }) {
                             <AreaPlot skipAnimation />
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} strokeWidth={1} skipAnimation/>
-                            {/* {fullRangeDayReferenceLines} */}
+                            {fullRangeDayReferenceLines}
                         </ChartsSurface>           
                     </ChartDataProvider>
                 </div>
