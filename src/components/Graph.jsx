@@ -3,7 +3,7 @@ import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxi
 import { Slider } from "@mui/material";
 import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
 import { getPrettyParameterName } from "../utils/parameters";
-import { interpolateRdYlBu, interpolateRdYlGn, interpolateSpectral, interpolateTurbo } from "d3-scale-chromatic";
+import { interpolateRdYlGn, interpolateTurbo } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
@@ -291,7 +291,7 @@ export default function Graph({ weather, cardId }) {
         if (tooltipAnchorRef.current) {
         setAnchorEl(tooltipAnchorRef.current);
         }
-    }, []);
+    }, [tooltipAnchorRef.current]);
 
     return (
         <div className='flex flex-col h-full'>  
