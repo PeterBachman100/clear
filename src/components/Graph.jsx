@@ -142,7 +142,8 @@ export default function Graph({ weather, cardId }) {
                 }
                 if (param === 'precipitation_probability') {
                     seriesItem.area = 'true';
-                    seriesItem.color = 'rgba(155, 223, 250, 0.6)';
+                    // seriesItem.color = 'rgba(155, 223, 250, 0.6)';
+                    seriesItem.color =  'url(#RAIN_PATTERN_ID)';
                     seriesItem.labelMarkType = PrecipitationProbabilityIcon;
                 }
                 if (param === 'uv_index') {
@@ -259,9 +260,10 @@ export default function Graph({ weather, cardId }) {
                 key={index}
                 x={timestamp.date}
                 xAxisId="hours"
-                label={timestamp.day}
+                label={timestamp.day.slice(0,3)}
                 labelAlign="start"
-                labelStyle={{fontSize: 14, transform: 'translateY(-16px)',}}
+                labelStyle={{fontSize: 14, fontWeight: 400}}
+                spacing={{x:2,y:-12}}
                 lineStyle={{ stroke: '#000', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
@@ -302,8 +304,26 @@ export default function Graph({ weather, cardId }) {
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
-                        <ChartsSurface 
-                            sx={{width: '100%', flex: '1',}}>
+                        <ChartsSurface sx={{width: '100%', flex: '1',}}>
+                            <defs>
+                                <pattern
+    id='RAIN_PATTERN_ID'
+    width="3"             // 👈 GREATLY REDUCED: The pattern tile repeats every 4 pixels
+    height="100%"         
+    patternUnits="userSpaceOnUse"
+    patternTransform="rotate(26)"
+    strokeWidth="1"     // 👈 REDUCED: The lines are much thinner
+    fill="none"
+    stroke="#55c2e5"
+    strokeOpacity="1"
+>
+    {/* Line position is now relative to the 4px tile width.
+        A line at x="2" is half-way across the 4px tile. 
+        This results in a stripe every 4px across the chart.
+    */}
+    <line x1="1" y1="0%" x2="1" y2="100%" /> 
+</pattern>
+                            </defs>
                             <AreaPlot skipAnimation />
                             {dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
