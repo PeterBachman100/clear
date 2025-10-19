@@ -3,7 +3,7 @@ import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxi
 import { Slider } from "@mui/material";
 import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
 import { getPrettyParameterName } from "../utils/parameters";
-import { interpolateRdYlGn, interpolateTurbo } from "d3-scale-chromatic";
+import { interpolateRdYlGn, interpolateTurbo, interpolateRdYlBu } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
@@ -72,7 +72,7 @@ export default function Graph({ weather, cardId }) {
                         type: 'continuous',
                         min: 1,
                         max: 110,
-                        color: (t) => interpolateTurbo(t),
+                        color: (t) => interpolateRdYlBu(1 - t),
                     };
             }
             if (unit === 'dimensionless') {
@@ -142,8 +142,7 @@ export default function Graph({ weather, cardId }) {
                 }
                 if (param === 'precipitation_probability') {
                     seriesItem.area = 'true';
-                    // seriesItem.color = 'rgba(155, 223, 250, 0.6)';
-                    seriesItem.color =  'url(#RAIN_PATTERN_ID)';
+                    seriesItem.color = '#a4e5f685';
                     seriesItem.labelMarkType = PrecipitationProbabilityIcon;
                 }
                 if (param === 'uv_index') {
@@ -158,12 +157,12 @@ export default function Graph({ weather, cardId }) {
                 }
                 if (param === 'cloud_cover') {
                     seriesItem.area = 'true';
-                    seriesItem.color = '#C9C9C9';
+                    seriesItem.color = '#c7c7ca';
                     seriesItem.labelMarkType = CloudCoverIcon;
                 }
                 if (param === 'cloud_cover_low') {
                     seriesItem.area = 'true';
-                    seriesItem.color = '#99999980';
+                    seriesItem.color = '#afafaf82';
                     seriesItem.labelMarkType = CloudCoverLowIcon;
                 }
                 if (param === 'visibility') {
@@ -263,8 +262,8 @@ export default function Graph({ weather, cardId }) {
                 label={timestamp.day.slice(0,3)}
                 labelAlign="start"
                 labelStyle={{fontSize: 14, fontWeight: 400}}
-                spacing={{x:2,y:-12}}
-                lineStyle={{ stroke: '#000', strokeWidth: 1, strokeDasharray: '4 4' }}
+                spacing={{x:0,y:-18}}
+                lineStyle={{ stroke: '#949292', strokeWidth: 1, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
         ));
@@ -280,7 +279,7 @@ export default function Graph({ weather, cardId }) {
                 labelAlign="start"
                 labelStyle={{fontSize: 10, fontWeight: 'bold'}}
                 spacing={{x:2,y:0}}
-                lineStyle={{ stroke: '#a3a3a3', strokeWidth: 2, strokeDasharray: '4 4' }}
+                lineStyle={{ stroke: '#949292', strokeWidth: 2, strokeDasharray: '4 4' }}
                 disableTooltips={true}
             />
         ));
@@ -299,31 +298,12 @@ export default function Graph({ weather, cardId }) {
         <div className='flex flex-col h-full'>  
             <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
-                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 12} : {bottom: 0, left: 0, right: 0, top: 12}}>
+                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 20} : {bottom: 0, left: 0, right: 0, top: 20}}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1',}}>
-                            <defs>
-                                <pattern
-    id='RAIN_PATTERN_ID'
-    width="3"             // 👈 GREATLY REDUCED: The pattern tile repeats every 4 pixels
-    height="100%"         
-    patternUnits="userSpaceOnUse"
-    patternTransform="rotate(26)"
-    strokeWidth="1"     // 👈 REDUCED: The lines are much thinner
-    fill="none"
-    stroke="#55c2e5"
-    strokeOpacity="1"
->
-    {/* Line position is now relative to the 4px tile width.
-        A line at x="2" is half-way across the 4px tile. 
-        This results in a stripe every 4px across the chart.
-    */}
-    <line x1="1" y1="0%" x2="1" y2="100%" /> 
-</pattern>
-                            </defs>
                             <AreaPlot skipAnimation />
                             {dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />

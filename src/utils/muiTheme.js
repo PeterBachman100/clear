@@ -4,10 +4,10 @@ export const mainTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#eee',
+      main: '#ffffff00',
     },
     secondary: {
-      main: '#000000',
+      main: '#ffffff00',
     },
     error: {
       main: '#f90000',
@@ -26,6 +26,7 @@ export const mainTheme = createTheme({
     fontFamily: 'Roboto',
     fontSize: 12,
     fontWeightLight: 300,
+    color: '#FFF',
     h1: {
       fontSize: '2.5rem',
     },

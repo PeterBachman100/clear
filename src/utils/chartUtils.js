@@ -92,7 +92,7 @@ export const barPlotSlotProps = {
             return {
                 height: 3,
                 style: {
-                    transform: 'translateY(3px)'
+                    transform: 'translateY(-5px)'
                 }                                                                 
             }
         }
