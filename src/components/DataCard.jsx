@@ -6,7 +6,7 @@ import DeleteOutlineIcon from '@mui/icons-material/Delete';
 import LocationSearch from './LocationSearch';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation } from './DashboardSlice';
+import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility } from './DashboardSlice';
 import { getWeather } from "../utils/weatherThunk";
 import { selectCardLocationId } from "../utils/selectors";
 import { getPrettyParameterName, hourlyParameters } from '../utils/parameters';
@@ -70,6 +70,13 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
     const toggleHourlyLabelsVisibility = (event) => {
         dispatch(setHourlyLabelsVisibility({cardId, visible: event.target.checked}));
     }
+
+    // REFERENCE LINES
+    const isReferenceLinesVisible = useSelector(state => state.dashboard.cards[cardId].referenceLinesVisible);
+    const toggleReferenceLinesVisibility = (event) => {
+        dispatch(setReferenceLinesVisibility({cardId, visible: event.target.checked}));
+    }
+
     // Card Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenMenu = (event) => {
@@ -146,6 +153,9 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
                 </MenuItem>
                 <MenuItem>
                     <FormControlLabel control={<Switch checked={isHourlyLabelsVisible} onChange={toggleHourlyLabelsVisibility} color='secondary'/>} label="Hourly Labels" />
+                </MenuItem>
+                <MenuItem>
+                    <FormControlLabel control={<Switch checked={isReferenceLinesVisible} onChange={toggleReferenceLinesVisibility} color='secondary'/>} label="Day Reference Lines" />
                 </MenuItem>
                 <MenuItem>
                     <FormControl sx={{ m: 1, width: 300 }}>

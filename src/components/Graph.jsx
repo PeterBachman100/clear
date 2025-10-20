@@ -29,6 +29,7 @@ export default function Graph({ weather, cardId }) {
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
     const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
     const isHourlyLabelsVisible = useSelector(state => state.dashboard.cards[cardId].hourlyLabelsVisible);
+    const isReferenceLinesVisible = useSelector(state => state.dashboard.cards[cardId].referenceLinesVisible);
 
     // VISIBLE RANGE & SLIDER    
     // Util function 
@@ -305,7 +306,7 @@ export default function Graph({ weather, cardId }) {
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1',}}>
                             <AreaPlot skipAnimation />
-                            {dayReferenceLines}
+                            {isReferenceLinesVisible && dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
                             

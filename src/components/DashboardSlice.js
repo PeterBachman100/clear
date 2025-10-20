@@ -127,6 +127,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '2': {
       id: '2',
@@ -137,6 +138,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '3': {
       id: '3',
@@ -147,6 +149,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '4': {
       id: '4',
@@ -157,6 +160,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '5': {
       id: '5',
@@ -167,6 +171,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '6': {
       id: '6',
@@ -177,6 +182,7 @@ const initialDashboardState = {
       legendVisible: true,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
     '7': {
       id: '7',
@@ -187,6 +193,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
+      referenceLinesVisible: true,
     },
     '8': {
       id: '8',
@@ -197,6 +204,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
+      referenceLinesVisible: true,
     },
     '9': {
       id: '9',
@@ -207,6 +215,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
+      referenceLinesVisible: true,
     },
     '10': {
       id: '10',
@@ -217,6 +226,7 @@ const initialDashboardState = {
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
+      referenceLinesVisible: true,
     },
   },
 };
@@ -265,7 +275,7 @@ export const dashboardSlice = createSlice({
         sectionIds: [newSectionId]
       };
       state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, locationId: null, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -323,7 +333,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
@@ -333,7 +343,6 @@ export const dashboardSlice = createSlice({
     deleteCard: (state, action) => {
       const {sectionId, cardId} = action.payload;
       state.sections[sectionId].layout = state.sections[sectionId].layout.filter(item => item.i !== cardId);
-      // state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(card => card.id !== cardId);
       state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(id => id !== cardId);
       delete state.cards[cardId];
     },
@@ -370,9 +379,15 @@ export const dashboardSlice = createSlice({
       state.cards[cardId].hourlyLabelsVisible = visible;
     },
 
+    // REFERENCE LINES
+    setReferenceLinesVisibility: (state, action) => {
+      const {cardId, visible} = action.payload;
+      state.cards[cardId].referenceLinesVisible = visible;
+    },
+
   },
 });
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setReferenceLinesVisibility } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
