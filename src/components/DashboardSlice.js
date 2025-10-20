@@ -333,7 +333,8 @@ export const dashboardSlice = createSlice({
     deleteCard: (state, action) => {
       const {sectionId, cardId} = action.payload;
       state.sections[sectionId].layout = state.sections[sectionId].layout.filter(item => item.i !== cardId);
-      state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(card => card.id !== cardId);
+      // state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(card => card.id !== cardId);
+      state.sections[sectionId].cardIds = state.sections[sectionId].cardIds.filter(id => id !== cardId);
       delete state.cards[cardId];
     },
 

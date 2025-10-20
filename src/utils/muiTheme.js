@@ -4,10 +4,10 @@ export const mainTheme = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#ffffff00',
+      main: '#f2f2f2',
     },
     secondary: {
-      main: '#ffffff00',
+      main: '#000',
     },
     error: {
       main: '#f90000',

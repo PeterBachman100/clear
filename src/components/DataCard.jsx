@@ -42,7 +42,6 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
 
     // DELETE
     const handleDeleteCard = () => {
-        closeCardSettings();
         dispatch(deleteCard({sectionId: sectionId, cardId: cardId}));
     }
 
