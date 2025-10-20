@@ -11,7 +11,7 @@ Clear is a customizable weather dashboard, enabling users to quickly and easily 
 ---
 ## Features
 ### Pages
-Each page contains a customizable layout of user-created cards that display hourly weather forecast information about 1 specified location.
+Each page contains a customizable layout of user-created cards that display hourly weather forecast information.
 
 ### Graphs
 - **Add, delete, move, resize, and customize graphs**
@@ -33,10 +33,14 @@ Each page contains a customizable layout of user-created cards that display hour
 		- Tomorrow (hours 24 - 48)
 		- The next 3 days (hours 0 - 72)
 		- The next 14 days (hours 0 - 336)
-- **Customize graph display,** by toggling visibility of:
+- **Customize graph display:** by toggling visibility of:
 	- Hourly labels
 	- Legend
 	- Forecast range selection slider
+- **Cascading location selection:**
+	- See weather for any number of locations on a single page
+	- Set location for the entire Page, a Section, or a single Card
+	- Location gets inherited automatically, unless an override is set
 
 ---
 ## Technologies, Libraries, APIs
@@ -54,7 +58,6 @@ Each page contains a customizable layout of user-created cards that display hour
 ---
 
 ## Possible Future Features
-- Multiple locations on 1 page
 - Current Weather
 - Daily Weather
 - Save layout
