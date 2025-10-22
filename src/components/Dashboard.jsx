@@ -11,12 +11,12 @@ export default function Dashboard() {
   };
 
   return (
-    <div>
-      <div className='flex flex-col min-h-screen min-w-screen'>
+    <div className="bg-black">
+      <div className='flex flex-col min-h-screen min-w-screen bg-transparent'>
         <TopBar onMenuClick={toggleDrawer(true)} />
-        <Box className='mt-20'>
+        <div className='mt-20 bg-transparent'>
           <Page />
-        </Box>
+        </div>
         <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer(false)}>
           <Sidebar closeDrawer={() => setIsDrawerOpen(false)} />
         </Drawer>

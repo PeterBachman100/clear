@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Button, Card, CardHeader, CardContent, Typography, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Button, Card, CardHeader, CardContent, Typography, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions, FormControlLabel, Switch } from "@mui/material";
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -11,7 +11,7 @@ import { EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-mat
 import DataCard from "./DataCard";
 import LocationSearch from "./LocationSearch";
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { updateLayout, updateSectionName, deleteSection, addCard, setLocation } from "./DashboardSlice";
+import { updateLayout, updateSectionName, deleteSection, addCard, setLocation, setLocationVisibility } from "./DashboardSlice";
 import { selectSectionLocationId } from "../utils/selectors";
 import { useDispatch, useSelector } from "react-redux";
 import "/node_modules/react-grid-layout/css/styles.css";
@@ -19,12 +19,13 @@ import "/node_modules/react-resizable/css/styles.css";
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
-export default function Section({ pageId, sectionId, editMode, openCardSettings, cardSettingsId }) {
+export default function Section({ pageId, sectionId }) {
 
     const dispatch = useDispatch();
 
     const section = useSelector(state => state.dashboard.sections[sectionId]);
     const cardIds = useSelector(state => state.dashboard.sections[sectionId].cardIds);
+    const editMode = useSelector(state => state.dashboard.pages[pageId].editMode);
 
     // LOCATION
     const locationId = useSelector(state => selectSectionLocationId(state, sectionId, pageId));
@@ -34,6 +35,12 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
         handleCloseDialog();
         dispatch(setLocation({ itemCategory: 'sections', itemId: sectionId, location: newLocation }));
     };
+
+    // LOCATION LABEL
+    const isLocationVisible = useSelector(state => state.dashboard.sections[sectionId].locationVisible);
+    const toggleLocationVisibility = (event) => {
+        dispatch(setLocationVisibility({category: 'sections', id: sectionId, visible: event.target.checked}));
+    }
 
      // Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -92,9 +99,9 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
 
     return (
         <>
-        <Card variant="contained" className="w-full !overflow-visible" elevation={3} sx={{borderRadius: 0}}>
+        <Card variant="contained" className="w-full" sx={{p:0}}>
             <CardHeader
-                subheader={<><LocationPinIcon /> {location?.name || 'No section-level location selected'}</>}
+                subheader={isLocationVisible && <><LocationPinIcon /> {location?.name || 'No section-level location selected'}</>}
                 title={
                     editingSectionName ?
                         <div className="flex gap-4">
@@ -110,13 +117,7 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                         :
                         <>{showName && <Typography variant="subtitle">{section.name}</Typography>}</>
                     }
-                action={
-                    <IconButton
-                        onClick={handleOpenMenu}
-                    >
-                        <MoreVertIcon />
-                    </IconButton>
-                }
+                action={editMode && <IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
                 sx={{p: 1, display: 'flex', flexDirection: 'row-reverse', justifyContent: 'center', width: '100%'}}
             />
             <Menu
@@ -154,6 +155,9 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                 <MenuItem onClick={handleToggleNameVisibility}>
                     {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                 </MenuItem>
+                <MenuItem>
+                    <FormControlLabel control={<Switch checked={isLocationVisible} onChange={toggleLocationVisibility} color='secondary'/>} label="Location Label" />
+                </MenuItem>
                 <MenuItem onClick={handleDeleteSection}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                     Delete this Section
@@ -165,8 +169,9 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                     layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
                     breakpoints={{ lg: 1200, md: 1000, sm: 600, xs: 400, xxs: 0 }}
                     cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
-                    rowHeight={75}
+                    rowHeight={50}
                     isDraggable={editMode}
+                    draggableHandle=".draggableHandle"
                     isResizable={editMode}
                     autoSize={true}
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
@@ -174,8 +179,8 @@ export default function Section({ pageId, sectionId, editMode, openCardSettings,
                 >
                     {cardIds.map((cardId) => {
                         return (
-                            <div key={cardId}>
-                                <DataCard pageId={pageId} sectionId={sectionId} cardId={cardId} openCardSettings={openCardSettings} />
+                            <div key={cardId} className='bg-black'>
+                                <DataCard pageId={pageId} sectionId={sectionId} cardId={cardId} />
                             </div>
                         );
                     })}

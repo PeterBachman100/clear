@@ -1,20 +1,23 @@
 import { useEffect, useState } from 'react';
 import Graph from './Graph';
-import { Card, CardHeader, IconButton, CardContent, Typography, FormControl, InputLabel, Select, Menu, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Card, CardHeader, CardActions, IconButton, CardContent, Typography, FormControl, InputLabel, Select, Menu, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/Delete';
 import LocationSearch from './LocationSearch';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
+import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility } from './DashboardSlice';
+import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility, setLocationVisibility } from './DashboardSlice';
 import { getWeather } from "../utils/weatherThunk";
 import { selectCardLocationId } from "../utils/selectors";
 import { getPrettyParameterName, hourlyParameters } from '../utils/parameters';
 import { EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material';
 
-export default function DataCard({ pageId, sectionId, cardId, editMode }) {
+export default function DataCard({ pageId, sectionId, cardId }) {
 
     const dispatch = useDispatch();
+
+    const editMode = useSelector(state => state.dashboard.pages[pageId].editMode);
     
     // LOCATION
     const locationId = useSelector(state => selectCardLocationId(state, cardId));
@@ -77,6 +80,12 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
         dispatch(setReferenceLinesVisibility({cardId, visible: event.target.checked}));
     }
 
+    // LOCATION LABEL
+    const isLocationVisible = useSelector(state => state.dashboard.cards[cardId].locationVisible);
+    const toggleLocationVisibility = (event) => {
+        dispatch(setLocationVisibility({category: 'cards', id: cardId, visible: event.target.checked}));
+    }
+
     // Card Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenMenu = (event) => {
@@ -115,14 +124,16 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
         }
     };
 
+    const isHeaderHidden = !(editMode || isLocationVisible);
+    const subHeaderContent = <div className='flex gap-4'>{editMode && <OpenWithIcon className="draggableHandle cursor-pointer" />}{isLocationVisible && <div><LocationPinIcon /> {location?.name}</div>}</div>
     return (
         <>
-        <Card className={`h-full flex flex-col !overflow-visible`} elevation={3}>
-            <CardHeader
-                action={<IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
-                subheader={<><LocationPinIcon /> {location?.name}</>}
-                sx={{width: '100%', p:0, position: 'absolute', flexDirection: 'row-reverse', justifyContent: 'space-between', fontSize: '1rem'}}
-            ></CardHeader>
+        <Card className={`h-full flex flex-col bg-black`}>
+            {!isHeaderHidden && <CardHeader
+                action={editMode && <IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
+                subheader={subHeaderContent}
+                sx={{width: '100%', p:0, position: 'absolute', flexDirection: 'row-reverse', justifyContent: 'space-between', gap: '1rem', marginLeft: '1rem', fontSize: '1rem', backgroundColor: 'black'}}
+            ></CardHeader>}
             <Menu
                 id={id}
                 anchorEl={anchorEl}
@@ -137,14 +148,6 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem onClick={() => {
-                    handleOpenDialog()
-                    handleCloseMenu();
-                }
-                }>
-                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
-                    Set Card Location
-                </MenuItem>
                 <MenuItem>
                     <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
                 </MenuItem>
@@ -156,6 +159,9 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
                 </MenuItem>
                 <MenuItem>
                     <FormControlLabel control={<Switch checked={isReferenceLinesVisible} onChange={toggleReferenceLinesVisibility} color='secondary'/>} label="Day Reference Lines" />
+                </MenuItem>
+                <MenuItem>
+                    <FormControlLabel control={<Switch checked={isLocationVisible} onChange={toggleLocationVisibility} color='secondary'/>} label="Location Label" />
                 </MenuItem>
                 <MenuItem>
                     <FormControl sx={{ m: 1, width: 300 }}>
@@ -177,12 +183,20 @@ export default function DataCard({ pageId, sectionId, cardId, editMode }) {
                         </Select>
                     </FormControl>
                 </MenuItem>
+                <MenuItem onClick={() => {
+                    handleOpenDialog()
+                    handleCloseMenu();
+                }
+                }>
+                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
+                    Set Card Location
+                </MenuItem>
                 <MenuItem onClick={handleDeleteCard}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                     Delete this Card
                 </MenuItem>
             </Menu>
-            <CardContent sx={{height: '100%', padding: '32px 8px 8px 8px !important'}}>
+            <CardContent sx={{height: '100%', padding: () => `${isHeaderHidden ? '8px' : '32px'} 8px 8px 8px !important`, backgroundColor: 'black'}}>
                 <div className='w-full h-full'>
                     {renderContent()}
                 </div>

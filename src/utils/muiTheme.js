@@ -2,31 +2,31 @@ import { createTheme } from "@mui/material";
 
 export const mainTheme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     primary: {
-      main: '#f2f2f2',
+      main: '#ffffff',
     },
     secondary: {
-      main: '#000',
+      main: '#ffffff',
     },
     error: {
-      main: '#f90000',
+      main: '#FD1C03',
     },
     warning: {
       main: '#edbe02',
     },
     info: {
-      main: '#58a8f3',
+      main: '#1E90FF',
     },
     success: {
-      main: '#2abf06',
+      main: '#00FF85',
     },
   },
   typography: {
-    fontFamily: 'Roboto',
+    fontFamily: '"Roboto", "sans-serif"',
     fontSize: 12,
     fontWeightLight: 300,
-    color: '#FFF',
+    color: '#dcdee0',
     h1: {
       fontSize: '2.5rem',
     },
@@ -55,7 +55,7 @@ export const mainTheme = createTheme({
       defaultProps: {
         BackdropProps: {
           style: {
-            backgroundColor: 'rgba(0, 0, 0, 0.2)',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
           },
         },
       },
@@ -64,7 +64,7 @@ export const mainTheme = createTheme({
       styleOverrides: {
         root: {
           '&.Mui-selected': {
-            backgroundColor: '#ddd',
+            backgroundColor: '#000',
           }
         }
       }

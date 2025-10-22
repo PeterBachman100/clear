@@ -1,2 +1,6 @@
 @import "tailwindcss";
 
+.react-grid-item > .react-resizable-handle::after {
+    border-right: 2px solid #FFF !important;
+    border-bottom: 2px solid #FFF !important;
+}

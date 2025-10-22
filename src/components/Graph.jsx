@@ -6,7 +6,7 @@ import { getPrettyParameterName } from "../utils/parameters";
 import { interpolateRdYlGn, interpolateTurbo, interpolateRdYlBu } from "d3-scale-chromatic";
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
-import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, CloudCoverLowIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
+import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
 
 const convertTimestampsToDateObjects = (timestamps) => {
     return timestamps.map(timestamp => new Date(timestamp * 1000));
@@ -19,6 +19,7 @@ const convertDateToTimezoneBasedString = (date, timezone) => {
     });
     return formatter.format(date);
 }
+
 
 export default function Graph({ weather, cardId }) {
 
@@ -71,7 +72,7 @@ export default function Graph({ weather, cardId }) {
             if (unit === '°F') {
                 axis.colorMap = {
                         type: 'continuous',
-                        min: 1,
+                        min: 0,
                         max: 110,
                         color: (t) => interpolateRdYlBu(1 - t),
                     };
@@ -127,7 +128,7 @@ export default function Graph({ weather, cardId }) {
                 
                 if(param === 'precipitation') {
                     seriesItem.type = 'bar';
-                    seriesItem.color = '#0018FF';
+                    seriesItem.color = '#58b0db';
                     seriesItem.xAxisId = 'hours-band';
                     seriesItem.valueFormatter = (value) => {
                         const unitAbbreviation = getUnitAbbreviation(unit);
@@ -143,7 +144,7 @@ export default function Graph({ weather, cardId }) {
                 }
                 if (param === 'precipitation_probability') {
                     seriesItem.area = 'true';
-                    seriesItem.color = '#a4e5f685';
+                    seriesItem.color = 'url(#precipitationProbabilityGradient)';
                     seriesItem.labelMarkType = PrecipitationProbabilityIcon;
                 }
                 if (param === 'uv_index') {
@@ -158,16 +159,11 @@ export default function Graph({ weather, cardId }) {
                 }
                 if (param === 'cloud_cover') {
                     seriesItem.area = 'true';
-                    seriesItem.color = '#c7c7ca';
+                    seriesItem.color = 'url(#cloudCoverGradient)';
                     seriesItem.labelMarkType = CloudCoverIcon;
                 }
-                if (param === 'cloud_cover_low') {
-                    seriesItem.area = 'true';
-                    seriesItem.color = '#afafaf82';
-                    seriesItem.labelMarkType = CloudCoverLowIcon;
-                }
                 if (param === 'visibility') {
-                    seriesItem.color = '#000';
+                    seriesItem.color = '#FFF';
                     seriesItem.labelMarkType = VisibilityIcon;
                 }
                 if (param === 'wind_speed_10m') {
@@ -201,7 +197,12 @@ export default function Graph({ weather, cardId }) {
                 domainLimit: 'strict',
                 disableLine: true,
                 disableTicks: true,
-                tickLabelStyle: { fontWeight: 300, fontSize: '10px' },
+                tickLabelStyle: { fontWeight: 200, fontSize: '10px' },
+                sx: {
+                    '& .MuiChartsAxis-tickLabel': {
+                        fill: '#a2a2a3 !important',
+                    }
+                },
                 tickMinStep: (1000 * 60 * 60), // 1 hour
                 data: convertTimestampsToDateObjects(getVisibleRange(weather.hourly.time)),
                 valueFormatter: date => convertDateToTimezoneBasedString(date, weather.location.timezone),
@@ -264,7 +265,7 @@ export default function Graph({ weather, cardId }) {
                 labelAlign="start"
                 labelStyle={{fontSize: 14, fontWeight: 400}}
                 spacing={{x:0,y:-18}}
-                lineStyle={{ stroke: '#949292', strokeWidth: 1, strokeDasharray: '4 4' }}
+                lineStyle={{ stroke: '#454545', strokeWidth: 1}}
                 disableTooltips={true}
             />
         ));
@@ -280,7 +281,7 @@ export default function Graph({ weather, cardId }) {
                 labelAlign="start"
                 labelStyle={{fontSize: 10, fontWeight: 'bold'}}
                 spacing={{x:2,y:0}}
-                lineStyle={{ stroke: '#949292', strokeWidth: 2, strokeDasharray: '4 4' }}
+                lineStyle={{ stroke: '#949292', strokeWidth: 1}}
                 disableTooltips={true}
             />
         ));
@@ -305,11 +306,36 @@ export default function Graph({ weather, cardId }) {
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1',}}>
+                            <defs> 
+                                <linearGradient id="precipitationProbabilityGradient" x1="0" x2="0" y1="0" y2="1">
+                                    <stop 
+                                        offset="0%" 
+                                        stopColor="#1fdaff" 
+                                        stopOpacity={0.3} 
+                                    /> 
+                                    <stop 
+                                        offset="100%" 
+                                        stopColor="#1fdaff" 
+                                        stopOpacity={0.1} 
+                                    /> 
+                                </linearGradient>
+                                <linearGradient id="cloudCoverGradient" x1="0" x2="0" y1="0" y2="1">
+                                    <stop 
+                                        offset="0%" 
+                                        stopColor="#545454" 
+                                        stopOpacity={1} 
+                                    /> 
+                                    <stop 
+                                        offset="100%" 
+                                        stopColor="#545454" 
+                                        stopOpacity={0.1} 
+                                    /> 
+                                </linearGradient>
+                            </defs>
                             <AreaPlot skipAnimation />
-                            {isReferenceLinesVisible && dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
-                            
+                            {isReferenceLinesVisible && dayReferenceLines}
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                             
@@ -319,7 +345,7 @@ export default function Graph({ weather, cardId }) {
                                     sx={{
                                         '& .MuiChartsTooltip-root': {position: 'static', transform: 'none', marginTop: '5px', zIndex: 100},
                                         '& .MuiChartsTooltip-container': {display: 'flex', 'flexWrap': 'wrap'},
-                                        '& .MuiChartsTooltip-table caption': {display: 'none'},
+                                        '& .MuiChartsTooltip-table caption': {fontWeight: 900},
                                         '& .MuiChartsTooltip-table tbody': {display: 'flex', flexWrap: 'wrap'},
                                         '& .MuiChartsTooltip-table': {display: 'inline-flex'},
 

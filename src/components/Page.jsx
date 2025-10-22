@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import Section from "./Section";
 import LocationSearch from "./LocationSearch";
-import CardSettings from "./CardSettings";
-import { Typography, Button, Drawer, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions } from '@mui/material';
+import { Typography, Button, Drawer, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormControlLabel, Switch } from '@mui/material';
 import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon, LocationPin as LocationPinIcon } from '@mui/icons-material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux'
-import { deletePage, updatePageName, setLocation, toggleEditMode, addSection } from "./DashboardSlice";
+import { deletePage, updatePageName, setLocation, toggleEditMode, addSection, setLocationVisibility } from "./DashboardSlice";
 
       
 export default function Page() {
 
     const dispatch = useDispatch();
     const page = useSelector(state => state.dashboard.pages[state.dashboard.activePageId]);
-    const editMode = page.editMode;    
+    const editMode = useSelector(state => state.dashboard.pages[state.dashboard.activePageId].editMode);    
+
 
     //SECTIONS
     const handleAddSection = () => {
@@ -64,6 +64,12 @@ export default function Page() {
         dispatch(setLocation({ itemCategory: 'pages', itemId: page.id, location: newLocation }));
     };
 
+    // LOCATION LABEL
+    const isLocationVisible = useSelector(state => state.dashboard.pages[page.id].locationVisible);
+    const toggleLocationVisibility = (event) => {
+        dispatch(setLocationVisibility({category: 'pages', id: page.id, visible: event.target.checked}));
+    }
+
     // LAYOUT
     const handleToggleEditMode = (pageId) => {
         dispatch(toggleEditMode({pageId: pageId}));
@@ -79,7 +85,7 @@ export default function Page() {
 
     return (
         <>
-            <Card className='w-full min-h-screen'>
+            <Card className='w-full min-h-screen bg-black'>
                 <CardHeader
                     title={
                         editingPageName ?
@@ -97,8 +103,8 @@ export default function Page() {
                             <>{showName && <Typography variant="h1">{page.name}</Typography>}</> 
                     }
                     action={<IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
-                    subheader={<><LocationPinIcon /> {location?.name || 'No page-level location selected'}</>}
-                    sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse'}}
+                    subheader={isLocationVisible && <><LocationPinIcon /> {location?.name || 'No page-level location selected'}</>}
+                    sx={{p:1, textAlign: 'center', flexDirection: 'row-reverse', backgroundColor: '#000000'}}
                 />
                 <Menu
                     id={id}
@@ -130,7 +136,7 @@ export default function Page() {
                         handleCloseMenu();
                     }}>
                         <ViewComfyIcon sx={{ mr: 1}} />
-                        {editMode ? 'Save Layout' : 'Edit Layout'}
+                        {editMode ? 'Save Dashboard' : 'Edit Dashboard'}
                     </MenuItem>
                     <MenuItem onClick={() => {
                         setEditingPageName(true);
@@ -142,23 +148,26 @@ export default function Page() {
                     <MenuItem onClick={handleToggleNameVisibility}>
                         {showName ? <><VisibilityOffOutlinedIcon sx={{ mr: 1 }} />Hide name</> : <><VisibilityOutlinedIcon sx={{ mr: 1 }} />Show name</>}
                     </MenuItem>
+                    <MenuItem>
+                        <FormControlLabel control={<Switch checked={isLocationVisible} onChange={toggleLocationVisibility} color='secondary'/>} label="Location Label" />
+                    </MenuItem>
                     <MenuItem onClick={handleDeletePage}>
                         <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                         Delete this Page
                     </MenuItem>
                 </Menu>
-                <CardContent sx={{p:0, display: 'flex', flexDirection: 'column'}}>
+                <CardContent sx={{display: 'flex', flexDirection: 'column', backgroundColor: '#000'}}>
                     {editMode && <Button variant="outlined" color="success" onClick={() => {
                             handleToggleEditMode(page.id);
                             handleCloseMenu();
                         }}>
-                            Save Layout
+                            Save Dashboard
                         </Button>
                     }
-                    <div>
+                    <div className="flex flex-col gap-4">
                         {page.sectionIds.map((sectionId) => {
                             return (
-                                <Section key={sectionId} pageId={page.id} editMode={editMode} sectionId={sectionId} />
+                                <Section key={sectionId} pageId={page.id} sectionId={sectionId} />
                             );
                         })}
                     </div>

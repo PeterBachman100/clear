@@ -58,6 +58,7 @@ const initialDashboardState = {
       id: '1',
       name: 'Around The World',
       locationId: null,
+      locationVisible: false,
       editMode: false,
       sectionIds: ['1'],
     },
@@ -65,6 +66,7 @@ const initialDashboardState = {
       id: '2',
       name: 'Sammamish',
       locationId: '47.64177,-122.0804',
+      locationVisible: true,
       editMode: false,
       sectionIds: ['4', '5', '6'],
     },
@@ -75,6 +77,7 @@ const initialDashboardState = {
       name: 'Today',
       pageId: '1',
       locationId: null,
+      locationVisible: false,
       layout: [
         {i: '1', x: 0, y: 0, h: 3, w: 6},
         {i: '2', x: 6, y: 0, h: 3, w: 6},
@@ -89,6 +92,7 @@ const initialDashboardState = {
       name: 'Today',
       pageId: '2',
       locationId: null,
+      locationVisible: true,
       layout: [
         {i: '6', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -99,6 +103,7 @@ const initialDashboardState = {
       name: 'Next 3 Days',
       pageId: '2',
       locationId: null,
+      locationVisible: true,
       layout: [
         {i: '7', x: 0, y: 0, h: 2, w: 4},
         {i: '8', x: 4, y: 0, h: 2, w: 4},
@@ -111,6 +116,7 @@ const initialDashboardState = {
       name: 'Next 2 Weeks',
       pageId: '2',
       locationId: null,
+      locationVisible: true,
       layout: [
         {i: '10', x: 0, y: 0, h: 3, w: 12},
       ],
@@ -122,111 +128,121 @@ const initialDashboardState = {
       id: '1',
       sectionId: '1',
       locationId: "45.97641,7.65861",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 50],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      visibleDataRange: [0, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
-      referenceLinesVisible: true,
+      referenceLinesVisible: false,
+      locationVisible: true,
     },
     '2': {
       id: '2',
       sectionId: '1',
       locationId: "36.23962,-116.81133",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 50],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      visibleDataRange: [0, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
-      referenceLinesVisible: true,
+      referenceLinesVisible: false,
+      locationVisible: true,
     },
     '3': {
       id: '3',
       sectionId: '1',
       locationId:  "25.29847,91.58225",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 50],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      visibleDataRange: [0, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
-      referenceLinesVisible: true,
+      referenceLinesVisible: false,
+      locationVisible: true,
     },
     '4': {
       id: '4',
       sectionId: '1',
       locationId: "-78.15856,16.40626",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 50],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      visibleDataRange: [0, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
-      referenceLinesVisible: true,
+      referenceLinesVisible: false,
+      locationVisible: true,
     },
     '5': {
       id: '5',
       sectionId: '1',
       locationId: "-3.07583,37.35333",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
-      visibleDataRange: [0, 50],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      visibleDataRange: [0, 23],
       legendVisible: false,
-      rangeSliderVisible: true,
+      rangeSliderVisible: false,
       hourlyLabelsVisible: true,
-      referenceLinesVisible: true,
+      referenceLinesVisible: false,
+      locationVisible: true,
     },
     '6': {
       id: '6',
       sectionId: '4',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [5, 23],
       legendVisible: true,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
       referenceLinesVisible: true,
+      locationVisible: true,
     },
     '7': {
       id: '7',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover',],
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
       referenceLinesVisible: true,
+      locationVisible: true,
     },
     '8': {
       id: '8',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', ],
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
       referenceLinesVisible: true,
+      locationVisible: true,
     },
     '9': {
       id: '9',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low',],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover'],
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
       hourlyLabelsVisible: false,
       referenceLinesVisible: true,
+      locationVisible: true,
     },
     '10': {
       id: '10',
       sectionId: '6',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'cloud_cover_low', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
       visibleDataRange: [0, 336],
       legendVisible: false,
       rangeSliderVisible: true,
       hourlyLabelsVisible: true,
       referenceLinesVisible: true,
+      locationVisible: true,
     },
   },
 };
@@ -272,10 +288,11 @@ export const dashboardSlice = createSlice({
         name: 'New Page',
         editMode: false,
         locationId: null, 
+        locationVisible: true,
         sectionIds: [newSectionId]
       };
-      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, locationId: null, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
+      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, locationId: null, locationVisible: true, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
+      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, locationVisible: true, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -312,7 +329,7 @@ export const dashboardSlice = createSlice({
     addSection: (state, action) => {
       const {pageId} = action.payload;
       const newSectionId = uuidv4();
-      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, layout: [], cardIds: []}
+      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, locationVisible: true, layout: [], cardIds: []}
       state.pages[pageId].sectionIds.push(newSectionId);
       state.sections[newSectionId] = newSection;
     },
@@ -333,7 +350,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
@@ -385,9 +402,15 @@ export const dashboardSlice = createSlice({
       state.cards[cardId].referenceLinesVisible = visible;
     },
 
+    // LOCATION LABEL
+    setLocationVisibility: (state, action) => {
+      const {category, id, visible} = action.payload;
+      state[category][id].locationVisible = visible;
+    },
+
   },
 });
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setReferenceLinesVisibility } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setReferenceLinesVisibility, setLocationVisibility } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
