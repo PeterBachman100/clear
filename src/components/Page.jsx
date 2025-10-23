@@ -156,7 +156,7 @@ export default function Page() {
                         Delete this Page
                     </MenuItem>
                 </Menu>
-                <CardContent sx={{display: 'flex', flexDirection: 'column', backgroundColor: '#000'}}>
+                <CardContent sx={{display: 'flex', flexDirection: 'column', backgroundColor: '#000', minHeight: '100vh'}}>
                     {editMode && <Button variant="outlined" color="success" onClick={() => {
                             handleToggleEditMode(page.id);
                             handleCloseMenu();

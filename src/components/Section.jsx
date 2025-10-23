@@ -101,7 +101,6 @@ export default function Section({ pageId, sectionId }) {
         <>
         <Card variant="contained" className="w-full" sx={{p:0}}>
             <CardHeader
-                subheader={isLocationVisible && <><LocationPinIcon /> {location?.name || 'No section-level location selected'}</>}
                 title={
                     editingSectionName ?
                         <div className="flex gap-4">
@@ -115,10 +114,10 @@ export default function Section({ pageId, sectionId }) {
                             <Button onClick={() => {setEditingSectionName(false)}} variant="outlined" color="error">Cancel</Button>
                             </div>
                         :
-                        <>{showName && <Typography variant="subtitle">{section.name}</Typography>}</>
+                        <>{showName && <Typography variant="subtitle">{section.name}</Typography>}    {isLocationVisible && <>(<LocationPinIcon />{location?.name || 'No section-level location selected'})</>}</>
                     }
                 action={editMode && <IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
-                sx={{p: 1, display: 'flex', flexDirection: 'row-reverse', justifyContent: 'center', width: '100%'}}
+                sx={{paddingBottom: 0, display: 'flex', flexDirection: 'row-reverse', justifyContent: 'center', width: '100%'}}
             />
             <Menu
                 id={id}
@@ -163,7 +162,7 @@ export default function Section({ pageId, sectionId }) {
                     Delete this Section
                 </MenuItem>
             </Menu>
-            <CardContent sx={{p:0}}>
+            <CardContent sx={{padding: '0 !important'}}>
                 <ResponsiveReactGridLayout
                     className="layout"
                     layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}

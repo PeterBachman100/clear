@@ -125,14 +125,19 @@ export default function DataCard({ pageId, sectionId, cardId }) {
     };
 
     const isHeaderHidden = !(editMode || isLocationVisible);
-    const subHeaderContent = <div className='flex gap-4'>{editMode && <OpenWithIcon className="draggableHandle cursor-pointer" />}{isLocationVisible && <div><LocationPinIcon /> {location?.name}</div>}</div>
+    const dragHandle = editMode ? (
+        <div className='absolute w-full h-full grid items-center justify-center z-10 bg-black/70'>
+            <OpenWithIcon className="draggableHandle cursor-pointer" fontSize='large' />
+        </div>
+        ) : null;    
+    
     return (
         <>
         <Card className={`h-full flex flex-col bg-black`}>
             {!isHeaderHidden && <CardHeader
+                title={isLocationVisible && <div className='text-sm'><LocationPinIcon /> {location?.name}</div>}
                 action={editMode && <IconButton onClick={handleOpenMenu}><MoreVertIcon /></IconButton>}
-                subheader={subHeaderContent}
-                sx={{width: '100%', p:0, position: 'absolute', flexDirection: 'row-reverse', justifyContent: 'space-between', gap: '1rem', marginLeft: '1rem', fontSize: '1rem', backgroundColor: 'black'}}
+                sx={{width: '100%', p:1, position: 'absolute', flexDirection: 'row', flexWrap: 'wrap', fontSize: '1rem', backgroundColor: 'black'}}
             ></CardHeader>}
             <Menu
                 id={id}
@@ -197,7 +202,8 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                 </MenuItem>
             </Menu>
             <CardContent sx={{height: '100%', padding: () => `${isHeaderHidden ? '8px' : '32px'} 8px 8px 8px !important`, backgroundColor: 'black'}}>
-                <div className='w-full h-full'>
+                <div className='w-full h-full relative'>
+                    {dragHandle}
                     {renderContent()}
                 </div>
             </CardContent>
