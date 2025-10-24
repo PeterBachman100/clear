@@ -346,7 +346,7 @@ export const dashboardSlice = createSlice({
       const {pageId} = action.payload;
       const newSectionId = uuidv4();
       const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, locationVisible: true, layout: [], cardIds: []};
-      const newLayoutItem = { i: newSectionId, x: 0, y: Infinity, w: 4, h: 4 };
+      const newLayoutItem = { i: newSectionId, x: 0, y: 0, w: 4, h: 4 };
       state.pages[pageId].layout.push(newLayoutItem);
       state.pages[pageId].sectionIds.push(newSectionId);
       state.sections[newSectionId] = newSection;
@@ -374,7 +374,7 @@ export const dashboardSlice = createSlice({
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
       const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: [], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
-      const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
+      const newLayoutItem = { i: newCardId, x: 0, y: 0, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
       state.cards[newCardId] = newCard;
