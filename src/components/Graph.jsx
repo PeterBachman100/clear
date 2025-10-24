@@ -213,12 +213,14 @@ export default function Graph({ weather, cardId }) {
                 position: 'none',
                 data: getVisibleRange(weather.hourly.time),
                 barGapRatio: '-1',
+                valueFormatter: timestamp => null,
             },
             {
                 id: 'hours-band',
                 scaleType: 'band',
                 position: 'none',
                 data: getVisibleRange(weather.hourly.time),
+                valueFormatter: timestamp => null,
             },
         ];
 
@@ -297,12 +299,12 @@ export default function Graph({ weather, cardId }) {
     }, [tooltipAnchorRef.current]);
 
     return (
-        <div className='flex flex-col h-full'>  
+        <div ref={tooltipAnchorRef} className='flex flex-col h-full'>  
             <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
                 <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 20} : {bottom: 0, left: 0, right: 0, top: 20}}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
-                        <div ref={tooltipAnchorRef} style={{position: 'relative'}}>
+                        <div style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
                         </div>
                         <ChartsSurface sx={{width: '100%', flex: '1',}}>
