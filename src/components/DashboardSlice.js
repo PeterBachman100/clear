@@ -281,18 +281,14 @@ export const dashboardSlice = createSlice({
 
     addPage: (state) => {
       const newPageId = uuidv4();
-      const newSectionId = uuidv4();
-      const newCardId = uuidv4();
       state.pages[newPageId] = {
         id: newPageId,
         name: 'New Page',
         editMode: false,
         locationId: null, 
         locationVisible: true,
-        sectionIds: [newSectionId]
+        sectionIds: []
       };
-      state.sections[newSectionId] = {id: newSectionId, name: 'Section Name', pageId: newPageId, locationId: null, locationVisible: true, layout: [{i: newCardId, x: 0, y: 0, h: 4, w: 12}], cardIds: [newCardId]};
-      state.cards[newCardId] = { id: newCardId, sectionId: newSectionId, locationId: null, locationVisible: true, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       state.activePageId = newPageId;
     },
 
@@ -302,7 +298,18 @@ export const dashboardSlice = createSlice({
       if (pageIds.length === 1) {
           return;
       }
+      const sectionIds = state.pages[pageId].sectionIds;
+      const cardIds = [];
+      sectionIds.forEach((sectionId) => {
+        cardIds.push(...state.sections[sectionId].cardIds);
+      })
       delete state.pages[pageId];
+      sectionIds.forEach((sectionId) => {
+        delete state.sections[sectionId];
+      })
+      cardIds.forEach((cardId) => {
+        delete state.cards[cardId];
+      })
       const remainingPageIds = Object.keys(state.pages);
       state.activePageId = remainingPageIds[0];
     },
@@ -337,6 +344,10 @@ export const dashboardSlice = createSlice({
     deleteSection: (state, action) => {
       const {pageId, sectionId} = action.payload;
       state.pages[pageId].sectionIds = state.pages[pageId].sectionIds.filter(id => id !== sectionId);
+      const cardIds = state.sections[sectionId].cardIds;
+      cardIds.forEach((cardId) => {
+        delete state.cards[cardId];
+      });
       delete state.sections[sectionId];
     },
 
@@ -350,7 +361,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: ['temperature_2m'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: [], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: Infinity, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
