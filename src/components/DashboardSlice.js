@@ -61,6 +61,9 @@ const initialDashboardState = {
       locationVisible: false,
       editMode: false,
       sectionIds: ['1'],
+      layout: [
+        {i: '1', x: 0, y: 0, h: 10, w: 12},
+      ],
     },
     '2': {
       id: '2',
@@ -69,6 +72,11 @@ const initialDashboardState = {
       locationVisible: true,
       editMode: false,
       sectionIds: ['4', '5', '6'],
+      layout: [
+        {i: '4', x: 0, y: 0, h: 10, w: 12},
+        {i: '5', x: 0, y: 10, h: 10, w: 12},
+        {i: '6', x: 0, y: 20, h: 10, w: 12},
+      ],
     },
   },
   sections: {
@@ -287,7 +295,8 @@ export const dashboardSlice = createSlice({
         editMode: false,
         locationId: null, 
         locationVisible: true,
-        sectionIds: []
+        sectionIds: [],
+        layout: []
       };
       state.activePageId = newPageId;
     },
@@ -327,8 +336,8 @@ export const dashboardSlice = createSlice({
     },
 
     updateLayout: (state, action) => {
-      const {sectionId, newLayout} = action.payload;
-      state.sections[sectionId].layout = newLayout; 
+      const {category, id, newLayout} = action.payload;
+	    state[category][id].layout = newLayout;
     },
 
 
@@ -336,7 +345,9 @@ export const dashboardSlice = createSlice({
     addSection: (state, action) => {
       const {pageId} = action.payload;
       const newSectionId = uuidv4();
-      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, locationVisible: true, layout: [], cardIds: []}
+      const newSection = {id: newSectionId, name: 'Section Name', pageId: pageId, locationId: null, locationVisible: true, layout: [], cardIds: []};
+      const newLayoutItem = { i: newSectionId, x: 0, y: Infinity, w: 4, h: 4 };
+      state.pages[pageId].layout.push(newLayoutItem);
       state.pages[pageId].sectionIds.push(newSectionId);
       state.sections[newSectionId] = newSection;
     },
@@ -344,6 +355,7 @@ export const dashboardSlice = createSlice({
     deleteSection: (state, action) => {
       const {pageId, sectionId} = action.payload;
       state.pages[pageId].sectionIds = state.pages[pageId].sectionIds.filter(id => id !== sectionId);
+      state.pages[pageId].layout = state.pages[pageId].layout.filter(item => item.i !== sectionId);
       const cardIds = state.sections[sectionId].cardIds;
       cardIds.forEach((cardId) => {
         delete state.cards[cardId];

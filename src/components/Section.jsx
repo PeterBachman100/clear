@@ -88,7 +88,7 @@ export default function Section({ pageId, sectionId }) {
     // LAYOUT
     const layout = useSelector((state) => state.dashboard.sections[sectionId].layout);
     const handleLayoutChange = (newLayout) => {
-        dispatch(updateLayout({ sectionId, newLayout }));
+        dispatch(updateLayout({ category: 'sections', id: sectionId, newLayout }));
     };
 
     //CARD
