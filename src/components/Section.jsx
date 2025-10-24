@@ -6,6 +6,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import VisibilityOutlinedIcon from '@mui/icons-material/VisibilityOutlined';
 import VisibilityOffOutlinedIcon from '@mui/icons-material/VisibilityOffOutlined';
+import OpenWithIcon from '@mui/icons-material/OpenWith';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import { EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material'
 import DataCard from "./DataCard";
@@ -96,10 +97,13 @@ export default function Section({ pageId, sectionId }) {
         dispatch(addCard({ sectionId }));
     }
 
+    const dragHandle = editMode ? 
+        <OpenWithIcon className="draggableHandleSection cursor-pointer absolute top-3 left-1/2 -translate-x-1/2" fontSize='large' />
+        : null; 
 
     return (
         <>
-        <Card variant="contained" className="w-full" sx={{p:0}}>
+        <Card className="w-full h-full" sx={{p:0}}>
             <CardHeader
                 title={
                     editingSectionName ?
@@ -162,6 +166,7 @@ export default function Section({ pageId, sectionId }) {
                     Delete this Section
                 </MenuItem>
             </Menu>
+            {dragHandle}
             <CardContent sx={{padding: '0 !important'}}>
                 <ResponsiveReactGridLayout
                     className="layout"
@@ -173,12 +178,13 @@ export default function Section({ pageId, sectionId }) {
                     draggableHandle=".draggableHandle"
                     isResizable={editMode}
                     autoSize={true}
+                    compactType={null}
                     resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
                     onLayoutChange={handleLayoutChange}
                 >
                     {cardIds.map((cardId) => {
                         return (
-                            <div key={cardId} className='bg-black'>
+                            <div key={cardId}>
                                 <DataCard pageId={pageId} sectionId={sectionId} cardId={cardId} />
                             </div>
                         );

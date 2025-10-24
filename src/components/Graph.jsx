@@ -211,7 +211,7 @@ export default function Graph({ weather, cardId }) {
                 id: 'uv-band',
                 scaleType: 'band',
                 position: 'none',
-                data: getVisibleRange(weather.hourly.time),
+                data: convertTimestampsToDateObjects(getVisibleRange(weather.hourly.time)),
                 barGapRatio: '-1',
                 valueFormatter: timestamp => null,
             },
@@ -219,7 +219,7 @@ export default function Graph({ weather, cardId }) {
                 id: 'hours-band',
                 scaleType: 'band',
                 position: 'none',
-                data: getVisibleRange(weather.hourly.time),
+                data: convertTimestampsToDateObjects(getVisibleRange(weather.hourly.time)),
                 valueFormatter: timestamp => null,
             },
         ];

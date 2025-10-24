@@ -127,7 +127,7 @@ export default function DataCard({ pageId, sectionId, cardId }) {
     const isHeaderHidden = !(editMode || isLocationVisible);
     const dragHandle = editMode ? (
         <div className='absolute w-full h-full grid items-center justify-center z-10 bg-black/70'>
-            <OpenWithIcon className="draggableHandle cursor-pointer" fontSize='large' />
+            <OpenWithIcon className="draggableHandle cursor-pointer" fontSize='medium' />
         </div>
         ) : null;    
     

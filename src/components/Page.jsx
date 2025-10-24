@@ -3,10 +3,11 @@ import Section from "./Section";
 import LocationSearch from "./LocationSearch";
 import { Typography, Button, Drawer, Card, CardHeader, CardContent, IconButton, Menu, MenuItem, TextField, Dialog, DialogTitle, DialogContent, DialogActions, FormControl, FormControlLabel, Switch } from '@mui/material';
 import { ViewComfy as ViewComfyIcon, MoreVert as MoreVertIcon, DeleteOutlined as DeleteOutlineIcon, EditOutlined as EditOutlinedIcon, Add as AddIcon, VisibilityOutlined as VisibilityOutlinedIcon, VisibilityOffOutlined as VisibilityOffOutlinedIcon, EditLocationOutlined as EditLocationOutlinedIcon, LocationPin as LocationPinIcon } from '@mui/icons-material';
-import CloseIcon from '@mui/icons-material/Close';
+import { Responsive, WidthProvider } from "react-grid-layout";
 import { useDispatch, useSelector } from 'react-redux'
-import { deletePage, updatePageName, setLocation, toggleEditMode, addSection, setLocationVisibility } from "./DashboardSlice";
+import { deletePage, updatePageName, setLocation, toggleEditMode, addSection, setLocationVisibility, updateLayout } from "./DashboardSlice";
 
+const ResponsiveReactGridLayout = WidthProvider(Responsive);
       
 export default function Page() {
 
@@ -74,6 +75,10 @@ export default function Page() {
     const handleToggleEditMode = (pageId) => {
         dispatch(toggleEditMode({pageId: pageId}));
     }
+    const layout = useSelector((state) => state.dashboard.pages[page.id].layout);
+    const handleLayoutChange = (newLayout) => {
+        dispatch(updateLayout({ category: 'pages', id: page.id, newLayout }));
+    };
 
     // Page Location Dialog
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -164,13 +169,28 @@ export default function Page() {
                             Save Dashboard
                         </Button>
                     }
-                    <div className="flex flex-col gap-4">
+                    <ResponsiveReactGridLayout
+                        className="layout"
+                        layouts={{ lg: layout, md: layout, sm: layout, xs: layout, xxs: layout }}
+                        breakpoints={{ lg: 1200, md: 1000, sm: 600, xs: 400, xxs: 0 }}
+                        cols={{ lg: 12, md: 12, sm: 12, xs: 12, xxs: 12 }}
+                        rowHeight={50}
+                        isDraggable={editMode}
+                        draggableHandle=".draggableHandleSection"
+                        isResizable={editMode}
+                        autoSize={true}
+                        compactType={null}
+                        resizeHandles={['n', 'e', 's', 'w', 'ne', 'nw', 'se', 'sw']}
+                        onLayoutChange={handleLayoutChange}
+                    >
                         {page.sectionIds.map((sectionId) => {
                             return (
-                                <Section key={sectionId} pageId={page.id} sectionId={sectionId} />
+                                <div key={sectionId}>
+                                    <Section pageId={page.id} sectionId={sectionId} />
+                                </div>
                             );
                         })}
-                    </div>
+                    </ResponsiveReactGridLayout>
                 </CardContent>
             </Card>
             <Dialog
