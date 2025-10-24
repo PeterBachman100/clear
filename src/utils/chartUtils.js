@@ -73,12 +73,12 @@ export const linePlotSlotProps = {
         }
         if (ownerState.id === 'wind_speed_10m') {
             return {
-                strokeWidth: '1px'
+                strokeWidth: '0.75px'
             }
         }
         if (ownerState.id === 'wind_gusts_10m') {
             return {
-                strokeWidth: '1px',
+                strokeWidth: '0.75px',
                 strokeDasharray: '4 12'
             }
         }

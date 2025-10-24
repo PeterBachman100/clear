@@ -128,7 +128,7 @@ export default function Graph({ weather, cardId }) {
                 
                 if(param === 'precipitation') {
                     seriesItem.type = 'bar';
-                    seriesItem.color = '#58b0db';
+                    seriesItem.color = '#203390';
                     seriesItem.xAxisId = 'hours-band';
                     seriesItem.valueFormatter = (value) => {
                         const unitAbbreviation = getUnitAbbreviation(unit);
@@ -267,7 +267,7 @@ export default function Graph({ weather, cardId }) {
                 labelAlign="start"
                 labelStyle={{fontSize: 14, fontWeight: 400}}
                 spacing={{x:0,y:-18}}
-                lineStyle={{ stroke: '#454545', strokeWidth: 1}}
+                lineStyle={{ stroke: '#3b3b3b', strokeWidth: '0.5', strokeDasharray: '5 5'}}
                 disableTooltips={true}
             />
         ));
@@ -313,31 +313,31 @@ export default function Graph({ weather, cardId }) {
                                     <stop 
                                         offset="0%" 
                                         stopColor="#1fdaff" 
-                                        stopOpacity={0.3} 
+                                        stopOpacity={0.15} 
                                     /> 
                                     <stop 
                                         offset="100%" 
                                         stopColor="#1fdaff" 
-                                        stopOpacity={0.1} 
+                                        stopOpacity={0.05} 
                                     /> 
                                 </linearGradient>
                                 <linearGradient id="cloudCoverGradient" x1="0" x2="0" y1="0" y2="1">
                                     <stop 
                                         offset="0%" 
-                                        stopColor="#545454" 
-                                        stopOpacity={1} 
+                                        stopColor="#2b2b2b" 
+                                        stopOpacity={0.8} 
                                     /> 
                                     <stop 
                                         offset="100%" 
-                                        stopColor="#545454" 
-                                        stopOpacity={0.1} 
+                                        stopColor="#2b2b2b" 
+                                        stopOpacity={0.2} 
                                     /> 
                                 </linearGradient>
                             </defs>
                             <AreaPlot skipAnimation />
+                            {isReferenceLinesVisible && dayReferenceLines}
                             <BarPlot slotProps={barPlotSlotProps} skipAnimation />
                             <LinePlot slotProps={linePlotSlotProps} skipAnimation />
-                            {isReferenceLinesVisible && dayReferenceLines}
                             {xAxis.map(axis => <ChartsXAxis key={axis.id} axisId={axis.id} position={axis.position} />)}
                             {yAxes.map(axis => <ChartsYAxis key={axis.id} axisId={axis.id} position={axis.position} label={axis.label} />)}
                             
