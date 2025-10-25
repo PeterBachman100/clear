@@ -3,7 +3,8 @@ import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxi
 import { Slider } from "@mui/material";
 import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
 import { getPrettyParameterName } from "../utils/parameters";
-import { interpolateRdYlGn, interpolateTurbo, interpolateRdYlBu } from "d3-scale-chromatic";
+import { interpolateRdYlGn, interpolateRdYlBu } from "d3-scale-chromatic";
+import { interpolateRgbBasis } from "d3-interpolate"; 
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
@@ -19,6 +20,24 @@ const convertDateToTimezoneBasedString = (date, timezone) => {
     });
     return formatter.format(date);
 }
+
+const tempColorArray = [
+    '#b500d1', // < -20 violet
+    '#6202b0', // -10 purple
+    '#4e05ed', // 0 indigo
+    '#0000d1', // 10 dark blue
+    '#217aff',  // 20
+    '#69e6ff',  // 30 light blue
+    '#66fabc',  // 40 mint
+    '#e3ff80',  // 50 light green
+    '#fcf22b',  // 60 yellow
+    '#eda600',  // 70 gold
+    '#ed6300',  // 80 orange
+    '#ed2f00',  // 90 red orange
+    '#db1d1d',  // 100 bright red
+    '#7d0000',  // > 110 dark red
+];
+const interpolateTemp = interpolateRgbBasis(tempColorArray);
 
 
 export default function Graph({ weather, cardId }) {
@@ -72,9 +91,9 @@ export default function Graph({ weather, cardId }) {
             if (unit === '°F') {
                 axis.colorMap = {
                         type: 'continuous',
-                        min: 0,
+                        min: -20,
                         max: 110,
-                        color: (t) => interpolateRdYlBu(1 - t),
+                        color: (t) => interpolateTemp(t),
                     };
             }
             if (unit === 'dimensionless') {
