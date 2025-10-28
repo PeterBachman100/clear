@@ -6,35 +6,37 @@ Clear is a customizable weather dashboard, enabling users to quickly and easily 
 
 ---
 
-![App Screenshot](./src/assets/images/app-screenshot-9.24.2025.jpg "App Screenshot")
+![App Screenshot](./src/assets/images/app-Screenshot-10-27-2025.jpg "App Screenshot")
 
 ---
 ## Features
 ### Pages
-Each page contains a customizable layout of user-created cards that display hourly weather forecast information.
+Each page contains a customizable layout of user-created sections and cards that display hourly weather forecast information.
 
 ### Graphs
-- **Add, delete, move, resize, and customize graphs**
-	- A 12-column grid layout
-	- Drag and drop resizing and movement
+- **Add, delete, move, and resize sections and cards **
+	- A nested 12-column grid layout of cards within sections
+	- Drag and drop resizing and movement for both
 - **Display any number of parameters on 1 chart:**
 	- Temperature
 	- Chance of Precipitation
 	- Precipitation Amount
-	- Total Cloud Cover
-	- Low Cloud Cover (below ~10,000 ft.)
+	- Cloud Cover
 	- Visibility
 	- Wind Speed
 	- Wind Gusts
 	- UV Index
 - **Select the forecast range:**
 	- Choose to display any range of hourly data within the next 2 weeks, e.g.
-		- The next 24 hours
+		- Today (hours 0 - 23)
 		- Tomorrow (hours 24 - 48)
+		- Tomorrow only while I'm awake (hours 6 - 22)
 		- The next 3 days (hours 0 - 72)
 		- The next 14 days (hours 0 - 336)
 - **Customize graph display:** by toggling visibility of:
 	- Hourly labels
+	- Location labels
+	- Day reference lines
 	- Legend
 	- Forecast range selection slider
 - **Cascading location selection:**
