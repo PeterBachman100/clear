@@ -26,7 +26,7 @@ const tempColorArray = [
     '#6202b0', // -10 purple
     '#4e05ed', // 0 indigo
     '#0000d1', // 10 dark blue
-    '#217aff',  // 20
+    '#217aff',  // 20 medium blue
     '#69e6ff',  // 30 light blue
     '#66fabc',  // 40 mint
     '#e3ff80',  // 50 light green
@@ -60,7 +60,7 @@ export default function Graph({ weather, cardId }) {
     // Local slider state
     const [localSliderRange, setLocalSliderRange] = useState(visibleDataRange);
 
-    // Keep local slider in sync with Redux, hide spinner after update applied
+    // Keep local slider in sync with Redux
     useEffect(() => {
         setLocalSliderRange(visibleDataRange);
     }, [visibleDataRange]);

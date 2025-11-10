@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 import Graph from './Graph';
 import Daily from './Daily';
-import { Card, CardHeader, CardActions, IconButton, CardContent, Typography, FormControl, InputLabel, Select, Menu, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
+import { Card, CardHeader, CardActions, IconButton, CardContent, Typography, FormControl, InputLabel, Select, Menu, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions, Slider } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/Delete';
 import LocationSearch from './LocationSearch';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { useDispatch, useSelector } from "react-redux";
-import { setHourlyParameters, setDailyParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility, setLocationVisibility, setTimeScale } from './DashboardSlice';
+import { setHourlyParameters, setDailyParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility, setLocationVisibility, setTimeScale, setDailyRange } from './DashboardSlice';
 import { getWeather } from "../utils/weatherThunk";
 import { selectCardLocationId } from "../utils/selectors";
 import { getPrettyParameterName, hourlyParameters, dailyParameters, timeScales } from '../utils/parameters';
@@ -76,6 +76,10 @@ export default function DataCard({ pageId, sectionId, cardId }) {
     const toggleRangeSliderVisibility = (event) => {
         dispatch(setRangeSliderVisibility({cardId, visible: event.target.checked}));
     }
+
+    // DAILY RANGE
+    const dailyRange = useSelector(state => state.dashboard.cards[cardId].dailyRange);
+    const [localDailyRange, setLocalDailyRange] = useState(dailyRange);
 
     // HOURLY LABELS
     const isHourlyLabelsVisible = useSelector(state => state.dashboard.cards[cardId].hourlyLabelsVisible);
@@ -177,19 +181,15 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                     horizontal: 'left',
                 }}
             >
-                <MenuItem>
-                    <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
+                <MenuItem onClick={() => {
+                    handleOpenDialog()
+                    handleCloseMenu();
+                }
+                }>
+                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
+                    Set Card Location
                 </MenuItem>
-                <MenuItem>
-                    <FormControlLabel control={<Switch checked={isRangeSliderVisible} onChange={toggleRangeSliderVisibility} color='secondary'/>} label="Range Slider" />
-                </MenuItem>
-                <MenuItem>
-                    <FormControlLabel control={<Switch checked={isHourlyLabelsVisible} onChange={toggleHourlyLabelsVisibility} color='secondary'/>} label="Hourly Labels" />
-                </MenuItem>
-                <MenuItem>
-                    <FormControlLabel control={<Switch checked={isReferenceLinesVisible} onChange={toggleReferenceLinesVisibility} color='secondary'/>} label="Day Reference Lines" />
-                </MenuItem>
-                <MenuItem>
+                 <MenuItem>
                     <FormControlLabel control={<Switch checked={isLocationVisible} onChange={toggleLocationVisibility} color='secondary'/>} label="Location Label" />
                 </MenuItem>
                 <MenuItem>
@@ -212,6 +212,7 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                     </FormControl>
                 </MenuItem>
                 {(timeScale === "Hourly") && 
+                    <>
                     <MenuItem>
                         <FormControl sx={{ m: 1, width: 300 }}>
                             <InputLabel id="hourlyParameters-select-label">Hourly Parameters</InputLabel>
@@ -232,8 +233,22 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                             </Select>
                         </FormControl>
                     </MenuItem>
-                }
+                    <MenuItem>
+                        <FormControlLabel control={<Switch checked={isLegendVisible} onChange={toggleLegendVisibility} color='secondary'/>} label="Legend" />
+                    </MenuItem>
+                    <MenuItem>
+                        <FormControlLabel control={<Switch checked={isRangeSliderVisible} onChange={toggleRangeSliderVisibility} color='secondary'/>} label="Range Slider" />
+                    </MenuItem>
+                    <MenuItem>
+                        <FormControlLabel control={<Switch checked={isHourlyLabelsVisible} onChange={toggleHourlyLabelsVisibility} color='secondary'/>} label="Hourly Labels" />
+                    </MenuItem>
+                    <MenuItem>
+                        <FormControlLabel control={<Switch checked={isReferenceLinesVisible} onChange={toggleReferenceLinesVisibility} color='secondary'/>} label="Day Reference Lines" />
+                    </MenuItem>
+                    </>
+                } 
                 {(timeScale === "Daily") &&
+                    <>
                     <MenuItem>
                         <FormControl sx={{ m: 1, width: 300 }}>
                             <InputLabel id="dailyParameters-select-label">Daily Parameters</InputLabel>
@@ -254,15 +269,25 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                             </Select>
                         </FormControl>
                     </MenuItem>
+                    <MenuItem sx={{display: 'flex', flexDirection: 'column', gap: 6, mb: 2, px: 6}}>
+                        <Typography id="dailyRangeLabel" variant='overline' sx={{display: 'block'}} >Set Day Range</Typography>
+                        <Slider 
+                            aria-labelledby='dailyRangeLabel'
+                            value={localDailyRange}
+                            onChange={(event, newValue) => setLocalDailyRange(newValue)}
+                            onChangeCommitted={(event, newValue) => {
+                                dispatch(setDailyRange({cardId, range: newValue}));
+                            }}
+                            min={1}
+                            max={14}
+                            step={1}
+                            valueLabelDisplay="on"
+                            marks
+                        />
+                    </MenuItem>
+                    </>
                 }
-                <MenuItem onClick={() => {
-                    handleOpenDialog()
-                    handleCloseMenu();
-                }
-                }>
-                    <EditLocationOutlinedIcon sx={{ mr: 1 }} />
-                    Set Card Location
-                </MenuItem>
+                
                 <MenuItem onClick={handleDeleteCard}>
                     <DeleteOutlineIcon sx={{ mr: 1 }} color="error" />
                     Delete this Card
