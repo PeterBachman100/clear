@@ -44,7 +44,7 @@ export default function Graph({ weather, cardId }) {
 
     const dispatch = useDispatch();
 
-    const selectedParameters = useSelector((state) => state.dashboard.cards[cardId].selectedParameters);
+    const selectedHourlyParameters = useSelector((state) => state.dashboard.cards[cardId].selectedHourlyParameters);
     const visibleDataRange = useSelector((state) => state.dashboard.cards[cardId].visibleDataRange);
     const isLegendVisible = useSelector(state => state.dashboard.cards[cardId].legendVisible);
     const isRangeSliderVisible = useSelector(state => state.dashboard.cards[cardId].rangeSliderVisible);
@@ -69,7 +69,7 @@ export default function Graph({ weather, cardId }) {
 
     // MEMO-IZED Y Axes and Series
     const { yAxes, yAxesFullRange, series, seriesFullRange } = useMemo(() => {
-        const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedParameters.includes(param));
+        const orderedSelectedParameters = parameterDrawingOrder.filter(param => selectedHourlyParameters.includes(param));
 
         const yAxes = [];
         const yAxesFullRange = [];
@@ -204,7 +204,7 @@ export default function Graph({ weather, cardId }) {
         });
 
         return { yAxes, yAxesFullRange, series, seriesFullRange };
-    }, [selectedParameters, weather, visibleDataRange]);
+    }, [selectedHourlyParameters, weather, visibleDataRange]);
 
     // MEMO-IZED X AXES
     const { xAxis, xAxisFullRange } = useMemo(() => {
@@ -321,7 +321,7 @@ export default function Graph({ weather, cardId }) {
         <div ref={tooltipAnchorRef} className='flex flex-col h-full'>  
             <div style={{width: '100%', flex: '1', height: 'calc(100% - 30px'}} >
                 {/* Key needed to avoid bug in MUI library */}
-                <ChartDataProvider key={selectedParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 20} : {bottom: 0, left: 0, right: 0, top: 20}}>
+                <ChartDataProvider key={selectedHourlyParameters.length} series={series} xAxis={xAxis} yAxis={yAxes} margin={isHourlyLabelsVisible? {bottom: 0, left: 12, right: 16, top: 20} : {bottom: 0, left: 0, right: 0, top: 20}}>
                     <div style={{display: 'flex', flexDirection: 'column', height: '100%'}}>
                         <div style={{position: 'relative'}}>
                             {isLegendVisible && <ChartsLegend sx={{justifyContent: 'center'}} />}
@@ -395,7 +395,7 @@ export default function Graph({ weather, cardId }) {
                             '& .MuiSlider-rail': {border: '0.5px solid black', borderRadius: 0, color: '#ffffff00', backdropFilter: 'brightness(0.5)'},
                         }}
                     />
-                    <ChartDataProvider key={selectedParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
+                    <ChartDataProvider key={selectedHourlyParameters.length} series={seriesFullRange} xAxis={xAxisFullRange} yAxis={yAxesFullRange} margin={{top: 3, bottom: 0, left: 5, right: 5}}>                    
                         <ChartsSurface sx={{height: '95%'}}>
                             <AreaPlot skipAnimation />
                             <BarPlot slotProps={sliderBarPlotSlotProps} strokeWidth={1} skipAnimation />

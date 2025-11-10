@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Graph from './Graph';
+import Daily from './Daily';
 import { Card, CardHeader, CardActions, IconButton, CardContent, Typography, FormControl, InputLabel, Select, Menu, MenuItem, Checkbox, ListItemText, Box, Button, FormControlLabel, Switch, Dialog, DialogTitle, DialogContent, DialogActions } from "@mui/material";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import DeleteOutlineIcon from '@mui/icons-material/Delete';
@@ -7,10 +8,10 @@ import LocationSearch from './LocationSearch';
 import LocationPinIcon from '@mui/icons-material/LocationPin';
 import OpenWithIcon from '@mui/icons-material/OpenWith';
 import { useDispatch, useSelector } from "react-redux";
-import { setParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility, setLocationVisibility } from './DashboardSlice';
+import { setHourlyParameters, setDailyParameters, deleteCard, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setLocation, setReferenceLinesVisibility, setLocationVisibility, setTimeScale } from './DashboardSlice';
 import { getWeather } from "../utils/weatherThunk";
 import { selectCardLocationId } from "../utils/selectors";
-import { getPrettyParameterName, hourlyParameters } from '../utils/parameters';
+import { getPrettyParameterName, hourlyParameters, dailyParameters, timeScales } from '../utils/parameters';
 import { EditLocationOutlined as EditLocationOutlinedIcon } from '@mui/icons-material';
 
 export default function DataCard({ pageId, sectionId, cardId }) {
@@ -48,12 +49,20 @@ export default function DataCard({ pageId, sectionId, cardId }) {
         dispatch(deleteCard({sectionId: sectionId, cardId: cardId}));
     }
 
-    //PARAMETERS
-    const selectedParameters = useSelector(state => state.dashboard.cards[cardId].selectedParameters);
-    const handleSetParameters = (event) => {
+    // HOURLY PARAMETERS
+    const selectedHourlyParameters = useSelector(state => state.dashboard.cards[cardId].selectedHourlyParameters);
+    const handleSetHourlyParameters = (event) => {
         const { target: { value } } = event;
         const newParams = (typeof value === 'string' ? value.split(',') : value);
-        dispatch(setParameters({cardId: cardId, selectedParameters: newParams}));
+        dispatch(setHourlyParameters({cardId: cardId, selectedHourlyParameters: newParams}));
+    }
+
+    // DAILY PARAMETERS
+    const selectedDailyParameters = useSelector(state => state.dashboard.cards[cardId].selectedDailyParameters);
+    const handleSetDailyParameters = (event) => {
+        const {target: {value}} = event;
+        const newParams = (typeof value === 'string' ? value.split(',') : value);
+        dispatch(setDailyParameters({cardId, selectedDailyParameters: newParams}));
     }
 
     // LEGEND
@@ -86,6 +95,13 @@ export default function DataCard({ pageId, sectionId, cardId }) {
         dispatch(setLocationVisibility({category: 'cards', id: cardId, visible: event.target.checked}));
     }
 
+    // TIMESCALE
+    const timeScale = useSelector(state => state.dashboard.cards[cardId].timeScale);
+    const handleSetTimeScale = (event) => {
+        const { target: { value } } = event;
+        dispatch(setTimeScale({cardId, timeScale: value}));
+    }
+
     // Card Menu
     const [anchorEl, setAnchorEl] = useState(null);
     const handleOpenMenu = (event) => {
@@ -113,7 +129,15 @@ export default function DataCard({ pageId, sectionId, cardId }) {
             }
 
             if (weatherState.status === 'fulfilled') {
-                return <Graph weather={weatherState.data} pageId={pageId} sectionId={sectionId} cardId={cardId} />;
+                if (timeScale === "Hourly") {
+                    return <Graph weather={weatherState.data} pageId={pageId} sectionId={sectionId} cardId={cardId} />;
+                } 
+                else if (timeScale === "Daily") {
+                    return <Daily weather={weatherState.data} pageId={pageId} sectionId={sectionId} cardId={cardId} />;
+                }
+                else {
+                    return "Time Scale selection Error";
+                }
             }
         }
         
@@ -170,24 +194,67 @@ export default function DataCard({ pageId, sectionId, cardId }) {
                 </MenuItem>
                 <MenuItem>
                     <FormControl sx={{ m: 1, width: 300 }}>
-                        <InputLabel id="multiple-select-label">Parameters</InputLabel>
-                        <Select
-                            labelId="multiple-select-label"
-                            id="multiple-select"
-                            multiple
-                            value={selectedParameters}
-                            onChange={handleSetParameters}
-                            renderValue={() => 'Select Parameters'}
+                        <InputLabel id="timeScale-select-label">Time Scale</InputLabel>
+                        <Select 
+                            labelId="timeScale-select-label"
+                            id="timeScale-select"
+                            value={timeScale}
+                            onChange={handleSetTimeScale}
+                            renderValue={(timeScale) => timeScale}
                         >
-                            {hourlyParameters.map((param) => (
-                                <MenuItem key={param} value={param}>
-                                    <Checkbox checked={selectedParameters.includes(param)} color='secondary' />
-                                    <ListItemText primary={getPrettyParameterName(param)} />
+                            {timeScales.map((scale) => (
+                                <MenuItem key={scale} value={scale}>
+                                    <Checkbox checked={timeScale === scale} color='secondary' />
+                                    <ListItemText primary={scale} />
                                 </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                 </MenuItem>
+                {(timeScale === "Hourly") && 
+                    <MenuItem>
+                        <FormControl sx={{ m: 1, width: 300 }}>
+                            <InputLabel id="hourlyParameters-select-label">Hourly Parameters</InputLabel>
+                            <Select
+                                labelId="hourlyParameters-select-label"
+                                id="hourlyParameters-select"
+                                multiple
+                                value={selectedHourlyParameters}
+                                onChange={handleSetHourlyParameters}
+                                renderValue={() => 'Select Hourly Parameters'}
+                            >
+                                {hourlyParameters.map((param) => (
+                                    <MenuItem key={param} value={param}>
+                                        <Checkbox checked={selectedHourlyParameters.includes(param)} color='secondary' />
+                                        <ListItemText primary={getPrettyParameterName(param)} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </MenuItem>
+                }
+                {(timeScale === "Daily") &&
+                    <MenuItem>
+                        <FormControl sx={{ m: 1, width: 300 }}>
+                            <InputLabel id="dailyParameters-select-label">Daily Parameters</InputLabel>
+                            <Select
+                                labelId="dailyParameters-select-label"
+                                id="dailyParameters-select"
+                                multiple
+                                value={selectedDailyParameters}
+                                onChange={handleSetDailyParameters}
+                                renderValue={() => 'Select Daily Parameters'}
+                            >
+                                {dailyParameters.map((param) => (
+                                    <MenuItem key={param} value={param}>
+                                        <Checkbox checked={selectedDailyParameters.includes(param)} color='secondary' />
+                                        <ListItemText primary={getPrettyParameterName(param)} />
+                                    </MenuItem>
+                                ))}
+                            </Select>
+                        </FormControl>
+                    </MenuItem>
+                }
                 <MenuItem onClick={() => {
                     handleOpenDialog()
                     handleCloseMenu();

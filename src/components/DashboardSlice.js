@@ -136,7 +136,9 @@ const initialDashboardState = {
       id: '1',
       sectionId: '1',
       locationId: "45.97641,7.65861",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -148,7 +150,9 @@ const initialDashboardState = {
       id: '2',
       sectionId: '1',
       locationId: "36.23962,-116.81133",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -160,7 +164,9 @@ const initialDashboardState = {
       id: '3',
       sectionId: '1',
       locationId:  "25.29847,91.58225",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -172,7 +178,9 @@ const initialDashboardState = {
       id: '4',
       sectionId: '1',
       locationId: "-78.15856,16.40626",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -184,7 +192,9 @@ const initialDashboardState = {
       id: '5',
       sectionId: '1',
       locationId: "-3.07583,37.35333",
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility', 'wind_speed_10m', 'wind_gusts_10m', 'uv_index'],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -196,7 +206,9 @@ const initialDashboardState = {
       id: '6',
       sectionId: '4',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility',],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility',],
+      selectedDailyParameters: [],
       visibleDataRange: [5, 23],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -208,7 +220,9 @@ const initialDashboardState = {
       id: '7',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover',],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover',],
+      selectedDailyParameters: [],
       visibleDataRange: [29, 47],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -220,7 +234,9 @@ const initialDashboardState = {
       id: '8',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', ],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', ],
+      selectedDailyParameters: [],
       visibleDataRange: [53, 71],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -232,7 +248,9 @@ const initialDashboardState = {
       id: '9',
       sectionId: '5',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover'],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover'],
+      selectedDailyParameters: [],
       visibleDataRange: [77, 95],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -244,7 +262,9 @@ const initialDashboardState = {
       id: '10',
       sectionId: '6',
       locationId: null,
-      selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility',],
+      timeScale: 'Hourly',
+      selectedHourlyParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility',],
+      selectedDailyParameters: [],
       visibleDataRange: [0, 336],
       legendVisible: false,
       rangeSliderVisible: false,
@@ -373,7 +393,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: [], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, timeScale: 'Hourly', locationVisible: true, selectedHourlyParameters: [], selectedDailyParameters: [], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: 0, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
@@ -388,10 +408,16 @@ export const dashboardSlice = createSlice({
     },
 
 
-    // PARAMETERS
-    setParameters: (state, action) => {
-      const {cardId, selectedParameters} = action.payload;
-      state.cards[cardId].selectedParameters = selectedParameters;
+    // HOURLY PARAMETERS
+    setHourlyParameters: (state, action) => {
+      const {cardId, selectedHourlyParameters} = action.payload;
+      state.cards[cardId].selectedHourlyParameters = selectedHourlyParameters;
+    },
+
+    // DAILY PARAMETERS
+    setDailyParameters: (state, action) => {
+      const {cardId, selectedDailyParameters} = action.payload;
+      state.cards[cardId].selectedDailyParameters = selectedDailyParameters;
     },
 
 
@@ -431,9 +457,15 @@ export const dashboardSlice = createSlice({
       state[category][id].locationVisible = visible;
     },
 
+    // TIME SCALE
+    setTimeScale: (state, action) => {
+      const {cardId, timeScale} = action.payload;
+      state.cards[cardId].timeScale = timeScale;
+    }
+
   },
 });
 
-export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setReferenceLinesVisibility, setLocationVisibility } = dashboardSlice.actions;
+export const { setLocation, setActivePage, addPage, deletePage, updatePageName, toggleEditMode, updateLayout, addSection, deleteSection, updateSectionName, addCard, deleteCard, setHourlyParameters, setDailyParameters, setVisibleDataRange, setLegendVisibility, setRangeSliderVisibility, setHourlyLabelsVisibility, setReferenceLinesVisibility, setLocationVisibility, setTimeScale } = dashboardSlice.actions;
 
 export default dashboardSlice.reducer;
