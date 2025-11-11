@@ -111,3 +111,15 @@ export const sliderBarPlotSlotProps = {
         }
     }
 }
+
+export const convertTimestampsToDateObjects = (timestamps) => {
+    return timestamps.map(timestamp => new Date(timestamp * 1000));
+}
+
+export const convertDateToTimezoneBasedString = (date, timezone) => {
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        timeZone: timezone,
+    });
+    return formatter.format(date);
+}

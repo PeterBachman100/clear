@@ -1,25 +1,13 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { ChartDataProvider, ChartsLegend, ChartsSurface, ChartsXAxis, ChartsYAxis, ChartsTooltip, LinePlot, AreaPlot, ChartsReferenceLine, ChartsAxisHighlight, BarPlot  } from "@mui/x-charts";
 import { Slider } from "@mui/material";
-import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps } from "../utils/chartUtils";
+import { getUnitAbbreviation, getDomainLimitByUnit, parameterDrawingOrder, linePlotSlotProps, barPlotSlotProps, sliderBarPlotSlotProps, convertTimestampsToDateObjects, convertDateToTimezoneBasedString } from "../utils/chartUtils";
 import { getPrettyParameterName } from "../utils/parameters";
 import { interpolateRdYlGn, interpolateRdYlBu } from "d3-scale-chromatic";
 import { interpolateRgbBasis } from "d3-interpolate"; 
 import { useDispatch, useSelector } from "react-redux";
 import { setVisibleDataRange } from "./DashboardSlice";
 import { TemperatureGradientIcon, UVIndexIcon, WindGustIcon, VisibilityIcon, CloudCoverIcon, PrecipitationProbabilityIcon, PrecipitationIcon } from "../assets/legendIcons";
-
-const convertTimestampsToDateObjects = (timestamps) => {
-    return timestamps.map(timestamp => new Date(timestamp * 1000));
-}
-
-const convertDateToTimezoneBasedString = (date, timezone) => {
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        hour: 'numeric',
-        timeZone: timezone,
-    });
-    return formatter.format(date);
-}
 
 const tempColorArray = [
     '#b500d1', // < -20 violet
