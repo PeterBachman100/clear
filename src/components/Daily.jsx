@@ -1,15 +1,7 @@
 import { useSelector } from "react-redux";
-import { getPrettyParameterName } from "../utils/parameters";
+import { convertTimestampToLocalDayString, getUnitAbbreviation } from "../utils/chartUtils";
+import { getPrettyParameterName, formatDailyParameter } from "../utils/parameters";
 import { Card } from "@mui/material";
-
-const convertTimestampToLocalDateString = (timestamp, timezone) => {
-    const date = new Date(timestamp * 1000);
-    const formatter = new Intl.DateTimeFormat('en-US', {
-        weekday: 'long',
-        timeZone: timezone,
-    });
-    return formatter.format(date);
-}
 
 export default function Daily({ weather, pageId, sectionId, cardId }) {
 
@@ -21,10 +13,10 @@ export default function Daily({ weather, pageId, sectionId, cardId }) {
         <div className="flex flex-wrap gap-1">
             {days.map(day => (
                 <Card key={day}>
-                    <h1>{convertTimestampToLocalDateString(weather.daily.time[day], weather.location.timezone)}</h1>
+                    <h1>{convertTimestampToLocalDayString(weather.daily.time[day], weather.location.timezone)}</h1>
                     {selectedDailyParameters.map(param => (
                         <p key={param}>
-                        {weather.daily.weatherVariables[param].data[day]}
+                            {getPrettyParameterName(param)}: {formatDailyParameter(param, weather.daily.weatherVariables[param].data[day], weather.location.timezone)} {getUnitAbbreviation(weather.daily.weatherVariables[param].unit)}
                         </p>
                     ))}
                 </Card>

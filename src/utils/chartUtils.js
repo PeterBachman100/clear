@@ -123,3 +123,22 @@ export const convertDateToTimezoneBasedString = (date, timezone) => {
     });
     return formatter.format(date);
 }
+
+export const convertTimestampToLocalDayString = (timestamp, timezone) => {
+    const date = new Date(timestamp * 1000);
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        weekday: 'long',
+        timeZone: timezone,
+    });
+    return formatter.format(date);
+}
+
+export const convertTimestampToLocalTimeString = (timestamp, timezone) => {
+    const date = new Date(timestamp * 1000);
+    const formatter = new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: 'numeric',
+        timeZone: timezone,
+    });
+    return formatter.format(date);
+}
