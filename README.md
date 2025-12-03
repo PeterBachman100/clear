@@ -60,7 +60,5 @@ Each page contains a customizable layout of user-created sections and cards that
 ---
 
 ## Possible Future Features
-- Current Weather
-- Daily Weather
 - Save layout
 - Accounts
