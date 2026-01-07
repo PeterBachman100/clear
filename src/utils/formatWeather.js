@@ -25,8 +25,6 @@ function formatSection(data, units) {
 
 export default function formatWeather(weatherData) {
 
-    const currentWeather = formatSection(weatherData.current, weatherData.current_units);
-    const dailyWeather = formatSection(weatherData.daily, weatherData.daily_units);
     const hourlyWeather = formatSection(weatherData.hourly, weatherData.hourly_units);
 
     const formattedWeatherData = {
@@ -35,14 +33,6 @@ export default function formatWeather(weatherData) {
             longitude: weatherData.longitude,
             timezone: weatherData.timezone,
             utc_offset_seconds: weatherData.utc_offset_seconds,
-        },
-        current: {
-            time: weatherData.current.time,
-            weatherVariables: currentWeather,
-        },
-        daily: {
-            time: weatherData.daily.time,
-            weatherVariables: dailyWeather,
         },
         hourly: {
             time: weatherData.hourly.time,

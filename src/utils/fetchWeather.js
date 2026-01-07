@@ -1,14 +1,12 @@
 import formatWeather from "./formatWeather";
-import { currentParameters, hourlyParameters, dailyParameters } from "./parameters";
+import { hourlyParameters } from "./parameters";
 
 export async function fetchWeather(location) {
     
     const params = {
         "latitude": location.latitude,
         "longitude": location.longitude,
-        "daily": dailyParameters,
         "hourly": hourlyParameters,
-        "current": currentParameters,
         "timezone": location.timezone,
         "timeformat": 'unixtime',
         "forecast_days": 14,
