@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { v4 as uuidv4 } from 'uuid';
 
 const initialDashboardState = {
-  activePageId: '1',
+  activePageId: '2',
   locations: {
     "45.97641,7.65861" : {
       name: "Matterhorn",
@@ -69,13 +69,13 @@ const initialDashboardState = {
       id: '2',
       name: 'Sammamish',
       locationId: '47.64177,-122.0804',
-      locationVisible: true,
+      locationVisible: false,
       editMode: false,
       sectionIds: ['4', '5', '6'],
       layout: [
-        {i: '4', x: 0, y: 0, h: 4, w: 12},
-        {i: '5', x: 0, y: 4, h: 4, w: 12},
-        {i: '6', x: 0, y: 8, h: 4, w: 12},
+        {i: '4', x: 0, y: 0, h: 5, w: 12},
+        {i: '5', x: 0, y: 5, h: 5, w: 12},
+        {i: '6', x: 0, y: 10, h: 5, w: 12},
       ],
     },
   },
@@ -102,7 +102,7 @@ const initialDashboardState = {
       locationId: null,
       locationVisible: false,
       layout: [
-        {i: '6', x: 0, y: 0, h: 3, w: 12},
+        {i: '6', x: 0, y: 0, h: 4, w: 12},
       ],
       cardIds: ['6'],
     },
@@ -113,9 +113,9 @@ const initialDashboardState = {
       locationId: null,
       locationVisible: false,
       layout: [
-        {i: '7', x: 0, y: 0, h: 3, w: 4},
-        {i: '8', x: 4, y: 0, h: 3, w: 4},
-        {i: '9', x: 8, y: 0, h: 3, w: 4},
+        {i: '7', x: 0, y: 0, h: 4, w: 4},
+        {i: '8', x: 4, y: 0, h: 4, w: 4},
+        {i: '9', x: 8, y: 0, h: 4, w: 4},
       ],
       cardIds: ['7', '8', '9'],
     },
@@ -126,7 +126,7 @@ const initialDashboardState = {
       locationId: null,
       locationVisible: false,
       layout: [
-        {i: '10', x: 0, y: 0, h: 3, w: 12},
+        {i: '10', x: 0, y: 0, h: 4, w: 12},
       ],
       cardIds: ['10'],
     }
@@ -373,7 +373,7 @@ export const dashboardSlice = createSlice({
     addCard: (state, action) => {
       const {sectionId} = action.payload;
       const newCardId = uuidv4();
-      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: [], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
+      const newCard = { id: newCardId, sectionId: sectionId, locationId: null, locationVisible: true, selectedParameters: ['temperature_2m', 'precipitation_probability', 'precipitation', 'cloud_cover', 'visibility'], visibleDataRange: [0, 72], legendVisible: false, rangeSliderVisible: true, hourlyLabelsVisible: true, referenceLinesVisible: true, };
       const newLayoutItem = { i: newCardId, x: 0, y: 0, w: 4, h: 4 };
       state.sections[sectionId].layout.push(newLayoutItem);
       state.sections[sectionId].cardIds.push(newCardId);
