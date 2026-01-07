@@ -55,7 +55,7 @@ export const mainTheme = createTheme({
       defaultProps: {
         BackdropProps: {
           style: {
-            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backgroundColor: 'rgba(0, 0, 0, 0.2)',
           },
         },
       },

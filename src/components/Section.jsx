@@ -103,7 +103,7 @@ export default function Section({ pageId, sectionId }) {
 
     return (
         <>
-        <Card className="w-full h-full" sx={{p:0}}>
+        <Card className="w-full h-full" sx={{p:0, backgroundColor: '#0c0c0c', backgroundImage: 'none', border: '1px solid #737373'}}>
             <CardHeader
                 title={
                     editingSectionName ?
